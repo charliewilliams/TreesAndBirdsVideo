@@ -8,11 +8,12 @@ import Model.Note;
 public class BirdManager {
 
 	private static BirdManager m;
+	private PApplet parent;
 	private Random r = new Random(0);
-	Flock[] flocks = new Flock[12];
-	private PGraphics3D pg = new PGraphics3D();
-	PVector stage;
-	static PVector offScreenArea = new PVector(100, 50);
+	private Flock[] flocks = new Flock[12];
+	private PGraphics3D pg;
+	private PVector stage;
+	private static PVector offScreenArea = new PVector(100, 50);
 
 	public BirdManager(PApplet parent) {
 
@@ -21,8 +22,14 @@ public class BirdManager {
 			throw new IllegalStateException("Already instantiated");
 		}
 		m = this;
+		this.parent = parent;
 		stage = new PVector(parent.width, parent.height);
+		
+		pg = new PGraphics3D();
 		pg.noStroke();
+		pg.rectMode(PConstants.CENTER);
+		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		pg.smooth(8);
 	}
 
 	public static BirdManager instance() {
@@ -47,10 +54,17 @@ public class BirdManager {
 	
 	public void updateAndDraw() {
 		
+		pg.beginDraw();
+	    pg.background(0);
+	    
 		for (Flock f: flocks) {
 			if (f != null) {
 				f.update(pg);
 			}
 		}
+		
+		pg.endDraw();
+		
+		parent.image(pg, 0, 0);
 	}
 }

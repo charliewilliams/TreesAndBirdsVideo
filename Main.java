@@ -29,7 +29,7 @@ public class Main extends PApplet {
 	int highMel = 295000;
 
 	int millisOffset = 500;
-	int debugOffset = 180000;
+	int debugOffset = melodyStart;
 	int durationMillis;
 
 	public void settings() {
@@ -50,7 +50,7 @@ public class Main extends PApplet {
 		rectMode(CENTER);
 		colorMode(HSB, 360, 100, 100, 100);
 		
-		background(0);
+		background(0, 0, 100);
 		noStroke();
 
 		// Build our singletons
@@ -76,7 +76,7 @@ public class Main extends PApplet {
 
 		int millis = millis();
 
-		// Place the camera
+		// Place the camera, draw the background
 		sceneManager.update(millis);
 
 		// Read notes from JSON in memory; add to managers if there are new notes this tick

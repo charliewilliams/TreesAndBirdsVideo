@@ -36,6 +36,8 @@ public class SceneManager {
 	
 	public void update(int millis) {
 
+		parent.background(0, 0, 100);
+		
 		parent.camera(parent.width/2, parent.height/2, cameraZ, parent.width/2, parent.height/2, 0, 0, 1, 0);
 	}
 }
