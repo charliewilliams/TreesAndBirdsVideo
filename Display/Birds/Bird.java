@@ -22,18 +22,20 @@ public class Bird {
 	Bird(PVector stage, PVector initialPos) {
 
 		this.stage = stage;
-
-		// Initial position offscreen to the left or right
 		pos = initialPos;
-
+		vel = new PVector(0, 0, 0);
 		acc = new PVector(0, 0, 0);
-
-		// Get appearance stuff from Flock (or just have the Flock draw the birds?)
 	}
 	
 	void run(ArrayList<Bird> bl, PGraphics3D pg) {
-		t += .1;
-		flap = (float) (10 * Math.sin(t));
+		
+		if (perching) {
+			perchTimerMillis--; // TEMP, should be actual millis and not ticks
+		} else {
+			t += .1;
+			flap = (float) (10 * Math.sin(t));
+		}
+
 		//acc.add(steer(new PVector(mouseX,mouseY,300),true));
 		//acc.add(new PVector(0,.05,0));
 		if (avoidWalls) {

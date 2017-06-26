@@ -25,7 +25,7 @@ public class BirdManager {
 		this.parent = parent;
 		stage = new PVector(parent.width, parent.height);
 		
-		pg = new PGraphics3D();
+		pg = (PGraphics3D) parent.createGraphics(parent.width, parent.height, PConstants.P3D);
 		pg.noStroke();
 		pg.rectMode(PConstants.CENTER);
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
@@ -42,7 +42,8 @@ public class BirdManager {
 		Flock f = flocks[n.pitch % 12];
 
 		if (f == null) {
-			flocks[n.pitch % 12] = new Flock(n);
+			f = new Flock(n);
+			flocks[n.pitch % 12] = f;
 		}
 		
 		float posX = fromRight ? offScreenArea.x : stage.x + offScreenArea.x;
@@ -55,7 +56,7 @@ public class BirdManager {
 	public void updateAndDraw() {
 		
 		pg.beginDraw();
-	    pg.background(0);
+	    pg.background(180, 50, 100); // TEMP
 	    
 		for (Flock f: flocks) {
 			if (f != null) {
@@ -65,6 +66,6 @@ public class BirdManager {
 		
 		pg.endDraw();
 		
-		parent.image(pg, 0, 0);
+		parent.image(pg, 0, 0, parent.width, parent.height);
 	}
 }
