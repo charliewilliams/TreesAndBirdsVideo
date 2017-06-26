@@ -3,6 +3,8 @@ import processing.sound.*;
 import java.util.Date;
 import com.hamoid.*;
 import Display.*;
+import Display.Birds.BirdManager;
+import Display.Trees.TreeManager;
 import Model.*;
 
 public class Main extends PApplet {
@@ -64,7 +66,6 @@ public class Main extends PApplet {
 
 		file = new SoundFile(this, "mix.mp3");
 		durationMillis = (int)(file.duration() * 1000);
-		println(durationMillis);
 		file.jump(debugOffset / 1000.0f);
 		file.play();
 
@@ -78,8 +79,14 @@ public class Main extends PApplet {
 		// Place the camera
 		sceneManager.update(millis);
 
-		// Read notes from JSON in memory, tick over all manager classes
+		// Read notes from JSON in memory; add to managers if there are new notes this tick
 		noteManager.readNotes(millis);
+		
+		// Update & draw trees
+		TreeManager.instance().draw();
+		
+		// Update & draw birds
+		BirdManager.instance().updateAndDraw();
 
 		if (debug) {
 			int seconds = millis / 1000;

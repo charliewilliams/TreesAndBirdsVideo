@@ -1,5 +1,7 @@
 package Model;
 import Display.*;
+import Display.Birds.BirdManager;
+import Display.Trees.TreeManager;
 import processing.core.*;
 
 public class NoteManager {

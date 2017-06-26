@@ -1,5 +1,5 @@
 package Model;
-import static java.lang.Math.pow;
+//import static java.lang.Math.pow;
 
 public class Note extends Event {
 
@@ -8,10 +8,10 @@ public class Note extends Event {
 		super(startMillis);
 		isActive = false;
 		noteNumber = num;
-		pitch = num / 127.0f;
+		pitch = num;
 		velocity = vel;
 		duration = dur;
-		freq = midiToFreq(num);
+//		freq = midiToFreq(num);
 		name = noteNameFromNumber(num);
 		channel = chan;
 	}
@@ -28,12 +28,12 @@ public class Note extends Event {
 	boolean isActive;
 	public boolean isSustaining;
 	int noteNumber;
-	private float pitch;
+	public int pitch;
 	private String name;
 	public float velocity; // normalized 0-1
 	float duration; // seconds
-	private float freq;
-	int channel;
+//	private float freq;
+	public int channel;
 
 	/* Utility */
 
@@ -43,9 +43,9 @@ public class Note extends Event {
 		return noteNames[nNote] + (nOctave - 1);
 	}
 
-	private float midiToFreq(int note) {
-		return (float) ((pow(2, ((note - 69) / 12.0f))) * 440.0f);
-	}
+//	private float midiToFreq(int note) {
+//		return (float) ((pow(2, ((note - 69) / 12.0f))) * 440.0f);
+//	}
 	
 	private static String[] noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"};
 }
