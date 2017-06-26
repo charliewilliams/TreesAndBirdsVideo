@@ -114,16 +114,18 @@ public class NoteManager {
 		switch (ChannelMapping.fromInt(note.channel)) {
 		
 		case TreeGrowth:
-			TreeManager.instance().addNote(note, true);
-			break;
+//			TreeManager.instance().addNote(note, true);
+//			break;
 		case TreeGrowth2:
-			TreeManager.instance().addNote(note, false);
-			break;
+//			TreeManager.instance().addNote(note, false);
+//			break;
 			
 		case Bird:
+//			PApplet.println("Bird");
 			BirdManager.instance().addNote(note, true);
 			break;
 		case Bird2:
+//			PApplet.println("Bird2");
 			BirdManager.instance().addNote(note, false);
 			break;
 			

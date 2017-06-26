@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Bird {
 
-	private PVector pos, vel, acc, ali, coh, sep; //pos, velocity, and acceleration in a vector datatype
+	PVector pos, vel, acc, ali, coh, sep; //pos, velocity, and acceleration in a vector datatype
 	float neighborhoodRadius = 100; //radius in which it looks for fellow boids
 	float maxSpeed = 4; //maximum magnitude for the velocity vector
 	float maxSteerForce = 0.1f; //maximum magnitude of the steering vector
@@ -18,12 +18,13 @@ public class Bird {
 	boolean perching = false;
 	int perchTimerMillis;
 	PVector stage;
+	Random r = new Random(0);
 
 	Bird(PVector stage, PVector initialPos) {
 
 		this.stage = stage;
 		pos = initialPos;
-		vel = new PVector(0, 0, 0);
+		vel = new PVector(r.nextFloat() * 2 - 1, r.nextFloat() * 2 - 1, r.nextFloat() * 2 - 1);
 		acc = new PVector(0, 0, 0);
 	}
 	
@@ -97,8 +98,7 @@ public class Bird {
 		ps.translate(pos.x, pos.y, pos.z);
 		ps.rotateY((float) Math.atan2(-vel.z, vel.x));
 		ps.rotateZ((float) Math.asin(vel.y / vel.mag()));
-//		ps.stroke(hue);
-//		ps.noFill();
+		ps.stroke(hue);
 		ps.fill(hue, 100, 100);
 
 		//draw bird
@@ -129,7 +129,7 @@ public class Bird {
 		ps.vertex(-3 * sc, 2 * sc, 0);
 		ps.vertex(-3 * sc, -2 * sc, 0);
 		ps.endShape();
-		//box(10);
+//		box(10);
 		ps.popMatrix();
 	}
 

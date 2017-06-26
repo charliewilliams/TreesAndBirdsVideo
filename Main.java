@@ -29,7 +29,7 @@ public class Main extends PApplet {
 	int highMel = 295000;
 
 	int millisOffset = 500;
-	int debugOffset = 38000;
+	int debugOffset = melodyStart;
 	int durationMillis;
 
 	public void settings() {
@@ -46,11 +46,12 @@ public class Main extends PApplet {
 
 	public void setup() {
 
+		randomSeed(0);
 		frameRate(60);
 		rectMode(CENTER);
 		colorMode(HSB, 360, 100, 100, 100);
 		
-		background(0, 0, 100);
+		background(0, 0, 51);
 		noStroke();
 
 		// Build our singletons
@@ -93,7 +94,7 @@ public class Main extends PApplet {
 			int minutes = seconds / 60;
 			int displaySeconds = minutes > 0 ? seconds % 60 : seconds;
 
-			String txt_fps = String.format(getClass().getName() + " | %s | %02d:%02d | %2.0f fps", noteManager.locationString(), minutes, displaySeconds, frameRate);
+			String txt_fps = String.format(" | %s | %02d:%02d | %2.0f fps", noteManager.locationString(), minutes, displaySeconds, frameRate);
 			surface.setTitle(txt_fps);
 		}
 
@@ -106,7 +107,7 @@ public class Main extends PApplet {
 		}
 	}
 
-	public int millis() {
+	@Override public int millis() {
 		return super.millis() + debugOffset - millisOffset;
 	}
 

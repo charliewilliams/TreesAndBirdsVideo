@@ -10,12 +10,12 @@ public class Flock {
 	// TODO more stuff about speed, behavior, appearance
 	
 	
-	private ArrayList<Bird> birds = new ArrayList<Bird>();
+	ArrayList<Bird> birds = new ArrayList<Bird>();
 
 	Flock(Note n) {
 
 		// Set baseHue from note.pitch % 12
-		baseHue = 360 / (n.pitch % 12);
+		baseHue = 360 / ((n.pitch % 12) + 1);
 	}
 
 	void addBird(PVector stage, PVector pos) {
@@ -30,6 +30,7 @@ public class Flock {
 			// TODO call an Update based on what's happening in the song - call flock(), flee(), enter(), leave() etc
 			b.hue = baseHue;
 			b.run(birds, pg);
+//			PApplet.println(b.pos);
 		}
 	}
 }
