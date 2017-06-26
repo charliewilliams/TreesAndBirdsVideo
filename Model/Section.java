@@ -11,7 +11,8 @@ public enum Section {
 	Falloff,
 	HighMelody,
 	Recap,
-	Tail;
+	Tail,
+	FileEnd;
 
 	private static final Section[] values = Section.values();
 	private static int[] startPointsInMillis = {
@@ -26,17 +27,35 @@ public enum Section {
 			311000, // high melody
 			374500, // recap
 			399250, // tail
-			400000 // safety + 1
+			412000 // file end
 	};
 
 	public static Section forMillis(int millis) {
 
-		for (int i: startPointsInMillis) {
+		for (int i = 0; i < startPointsInMillis.length - 1; i++) {
 			if (millis > i && millis < startPointsInMillis[i + 1]) {
 				return values[i];
 			}
 		}
-		
+
 		return Section.Tail;
+	}
+
+	private float l = 0;
+	float length() {
+
+		if (l == 0) {
+
+			int thisStartMillis = startPointsInMillis[this.ordinal()];
+			int thisEndMillis = startPointsInMillis[this.ordinal() + 1];
+
+			l = (float) (thisEndMillis - thisStartMillis);
+		}
+
+		return l;
+	}
+
+	float pctDone(int millis) {
+		return (millis - startPointsInMillis[this.ordinal()]) / length();
 	}
 }

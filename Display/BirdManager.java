@@ -24,7 +24,7 @@ public class BirdManager {
 		return m;
 	}
 	
-	public void addNote(Note n) {
+	public void addNote(Note n, boolean fromRight) {
 		
 		
 	}

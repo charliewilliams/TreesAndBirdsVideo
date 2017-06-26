@@ -39,6 +39,7 @@ public class Main extends PApplet {
 		} else {
 			size(1920, 1080, renderer); // P2D, P3D, FX2D
 		}
+		pixelDensity(2);
 	}
 
 	public void setup() {
@@ -46,7 +47,7 @@ public class Main extends PApplet {
 		frameRate(60);
 		rectMode(CENTER);
 		colorMode(HSB, 360, 100, 100, 100);
-		pixelDensity(displayDensity());
+		
 		background(0);
 		noStroke();
 
@@ -63,6 +64,7 @@ public class Main extends PApplet {
 
 		file = new SoundFile(this, "mix.mp3");
 		durationMillis = (int)(file.duration() * 1000);
+		println(durationMillis);
 		file.jump(debugOffset / 1000.0f);
 		file.play();
 

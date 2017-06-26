@@ -9,15 +9,7 @@ public class NoteManager {
 
 	private PApplet parent;
 	private JSONReader jsonReader;
-	private TreeManager treeManager;
-	private BirdManager birdManager;
-	// Sections: first bit, rising minor, glowing major, big return, high melodies, recap
-	private int[] sectionLengths = {15, 8, 12, 5, 8, 7}; // sections are (mostly) 4-bar chunks
-	int currentSection = 0;
-	private static Section[] sectionVals = Section.values();
-	Section section() {
-		return sectionVals[currentSection];
-	}
+
 	private int[] currentPosition = {-1, -1, -1}; // phrase, bar, beat. -1 because the first thing is a downbeat
 	private int beatIndex = currentPosition.length - 1;
 	private int barIndex = beatIndex - 1;
@@ -61,21 +53,12 @@ public class NoteManager {
 		}
 	}
 
-	float pctDoneCurrentSection() {
-
-		float amountThroughCurrentBar = currentPosition[1] / 4.0f + currentPosition[2] / 16.0f;
-		float currentSectionLength = (float)sectionLengths[currentSection];
-		float amountThroughCurrentSection = currentPosition[0] / currentSectionLength;
-		//println(amountThroughCurrentSection + amountThroughCurrentBar / 16.0);
-		return amountThroughCurrentSection + amountThroughCurrentBar / 16.0f;
-	}
-
 	float pctDoneCurrentPhrase() {
 
 		float amountThroughCurrentBar = currentPosition[1] / 4.0f + currentPosition[2] / 16.0f;
-		float currentSectionLength = (float)sectionLengths[currentSection];
+		float currentSectionLength = Section.forMillis(parent.millis()).length();
 		float amountThroughCurrentSection = currentPosition[0] / currentSectionLength;
-		//println(amountThroughCurrentSection + amountThroughCurrentBar);
+		
 		return amountThroughCurrentSection + amountThroughCurrentBar;
 	}
 
@@ -93,19 +76,6 @@ public class NoteManager {
 		float pctThroughBar = (currentPosition[beatIndex] + pctThroughBeat()) / 4.0f;
 		float pct = (currentPosition[barIndex] + pctThroughBar) / 4.0f;
 		return (float) Math.sin(Math.toRadians(pct * 360 / 2.0f));
-	}
-
-	float lastPct = 0;
-	float sectionEasing() {
-
-		// provides a smooth change through the last bar of a section to the next
-
-		// If not in the last bar, return 0
-		if (currentPosition[0] == -1 || currentPosition[0] != sectionLengths[currentSection] - 1 || currentPosition[barIndex] < 3) {
-			return 0;
-		}
-
-		return (currentPosition[beatIndex] + pctThroughBeat()) / 4.0f;
 	}
 
 	// Notes on Channel 16 tell us phrase-bar-beat info, so we get those separately
@@ -135,12 +105,6 @@ public class NoteManager {
 			currentPosition[beatIndex] = 0;
 			break;
 		}
-
-		// Go to the next section if necessary
-		if (currentPosition[0] >= sectionLengths[currentSection]) {
-			currentPosition[0] = 0;
-			currentSection++;
-		}
 	}
 
 	void displayForNote(Note note) {
@@ -148,18 +112,24 @@ public class NoteManager {
 		switch (ChannelMapping.fromInt(note.channel)) {
 		
 		case TreeGrowth:
+			TreeManager.instance().addNote(note, true);
+			break;
 		case TreeGrowth2:
-			treeManager.addNote(note);
+			TreeManager.instance().addNote(note, false);
 			break;
 			
 		case Bird:
+			BirdManager.instance().addNote(note, true);
+			break;
 		case Bird2:
-			birdManager.addNote(note);
+			BirdManager.instance().addNote(note, false);
 			break;
 			
 		case TreeChangeBass:
+			TreeManager.instance().addChangeNote(note, true);
+			break;
 		case TreeChangeMelody:
-			treeManager.addChangeNote(note);
+			TreeManager.instance().addChangeNote(note, false);
 			break;
 			
 		case Click: // This will never happen
@@ -170,6 +140,7 @@ public class NoteManager {
 	}
 
 	public String locationString() {
-		return String.format("%d.%d.%d.%d", currentSection, currentPosition[0], currentPosition[1], currentPosition[2]);
+		Section s = Section.forMillis(parent.millis());
+		return String.format("%s: %d.%d.%d.%d", s.name(), s.ordinal(), currentPosition[0], currentPosition[1], currentPosition[2]);
 	}
 }

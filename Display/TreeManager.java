@@ -28,12 +28,12 @@ public class TreeManager {
 		return m;
 	}
 	
-	public void addNote(Note n) {
+	public void addNote(Note n, boolean b) {
 		
 	
 	}
 	
-	public void addChangeNote(Note n) {
+	public void addChangeNote(Note n, boolean b) {
 		
 		
 	}

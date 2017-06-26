@@ -1,6 +1,6 @@
 package Display;
 import processing.core.*;
-import java.util.*;
+//import java.util.*;
 
 public class SceneManager {
 
@@ -22,12 +22,12 @@ public class SceneManager {
 		
 		bg = parent.loadImage("paper.jpg");
 		
-		backgroundColors[0] = parent.color(39, 5, 100); // paper beige
-		backgroundColors[1] = parent.color(204, 100, 25); // night blue //color(306, 100, 25); // maroon
-		backgroundColors[2] = parent.color(0, 0, 0); // black //color(204, 100, 25); // night blue
-		backgroundColors[3] = parent.color(0, 0, 0); // black
-		backgroundColors[4] = parent.color(0, 0, 0);
-		backgroundColors[5] = parent.color(0, 0, 0);
+//		backgroundColors[0] = parent.color(39, 5, 100); // paper beige
+//		backgroundColors[1] = parent.color(204, 100, 25); // night blue //color(306, 100, 25); // maroon
+//		backgroundColors[2] = parent.color(0, 0, 0); // black //color(204, 100, 25); // night blue
+//		backgroundColors[3] = parent.color(0, 0, 0); // black
+//		backgroundColors[4] = parent.color(0, 0, 0);
+//		backgroundColors[5] = parent.color(0, 0, 0);
 	}
 
 	public static SceneManager instance() {
