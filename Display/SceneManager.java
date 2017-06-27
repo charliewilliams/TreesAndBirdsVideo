@@ -36,38 +36,55 @@ public class SceneManager {
 
 	public void update(int millis) {
 
-//		parent.background(0, 0, 100);
+		parent.background(0, 0, 100);
+		
+
 
 //				parent.camera(parent.width/2, parent.height/2, cameraZ, parent.width/2, parent.height/2, 0, 0, 1, 0);
 		
 		parent.directionalLight(255, 255, 255, 0, 1, -100); 
 		parent.noFill();
 		parent.stroke(0);
+		
+//		parent.beginCamera();
+//		parent.camera();
+//
+////		parent.rotateX(parent.frameCount / 100.0f);
+//		parent.rotateX(4.7f);
+//		parent.rotateY(6.28347f);
+//
+//		parent.translate(22, 17, -201);
+//		
+////		parent.translate(0, 0, -800);
+//		parent.endCamera();
+//		
+		parent.colorMode(PConstants.RGB, 255);
+		
+		parent.stroke(255, 50, 50);
 
 		parent.line(0, 0, 300, 0, parent.height, 300);
 		parent.line(0, 0, 900, 0, parent.height, 900);
 		parent.line(0, 0, 300, parent.width, 0, 300);
 		parent.line(0, 0, 900, parent.width, 0, 900);
+		
+		parent.stroke(50, 255, 50);
 
 		parent.line(parent.width, 0, 300, parent.width, parent.height, 300);
 		parent.line(parent.width, 0, 900, parent.width, parent.height, 900);
 		parent.line(0, parent.height, 300, parent.width, parent.height, 300);
 		parent.line(0, parent.height, 900, parent.width, parent.height, 900);
+		
+		parent.stroke(50, 50, 255);
 
 		parent.line(0, 0, 300, 0, 0, 900);
 		parent.line(0, parent.height, 300, 0, parent.height, 900);
 		parent.line(parent.width, 0, 300, parent.width, 0, 900);
 		parent.line(parent.width, parent.height, 300, parent.width, parent.height, 900);
-
-		parent.beginCamera();
-		parent.camera();
-
-		parent.rotateX(4.7f);
-		parent.rotateY(6.28347f);
-
-		parent.translate(22, 17, -201);
 		
-//		parent.translate(0, 0, -800);
-		parent.endCamera();
+		
+		
+//		parent.fill(0, 0, 0);
+//		parent.translate(parent.width / 2 - 22, -100, 400);
+//		parent.box(50);
 	}
 }
