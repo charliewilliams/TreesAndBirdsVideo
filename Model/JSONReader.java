@@ -13,6 +13,36 @@ public class JSONReader {
 	HashMap<Float, Note> notes = new HashMap<Float, Note>();
 	HashMap<Float, Pedal> pedals = new HashMap<Float, Pedal>();
 	HashMap<Float, Ictus> structure = new HashMap<Float, Ictus>();
+	
+	public void readNotes(NoteManager nm, int millis) {
+
+		for (; currentTimestampIndex < timestamps.length; currentTimestampIndex++) {
+
+			Float timestamp = timestamps[currentTimestampIndex];
+
+			// Don't read beyond the present instant
+			if (millis < timestamp * 1000) {
+				break; // doesn't increment currentTimestampIndex
+			}
+
+			Note note = notes.get(timestamp);
+			if (note != null) {
+				nm.displayForNote(note);
+			}
+			Pedal pedal = pedals.get(timestamp);
+			if (pedal != null) {
+				nm.isSustaining = pedal.level > 0;
+			}
+			Ictus beat = structure.get(timestamp);
+			if (beat != null) {
+				nm.controlEvent(beat);
+			}
+			if (note == null && pedal == null && beat == null) {
+				PApplet.println("ERROR", timestamp);
+				throw new IllegalStateException("Error for note at time" + timestamp);
+			}
+		}
+	}
 
 	public JSONReader(PApplet parent, String name) {
 

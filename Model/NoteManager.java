@@ -16,43 +16,16 @@ public class NoteManager {
 	private int beatIndex = currentPosition.length - 1;
 	private int barIndex = beatIndex - 1;
 	boolean isSustaining = false;
-	private int readAheadAmountMillis = 500;
+	private int readAheadAmountMillis = 0;
 
 	public NoteManager(PApplet parent, String fileName) {
 
 		this.parent = parent;
 		jsonReader = new JSONReader(parent, fileName);
 	}
-
+	
 	public void readNotes(int millis) {
-
-		for (; jsonReader.currentTimestampIndex < jsonReader.timestamps.length; jsonReader.currentTimestampIndex++) {
-
-			Float timestamp = jsonReader.timestamps[jsonReader.currentTimestampIndex];
-
-			// Don't read beyond the present instant
-			if (millis < timestamp * 1000 + readAheadAmountMillis) {
-				//println(millis(), "Waiting for", timestamp);
-				break; // doesn't increment currentTimestampIndex
-			}
-
-			Note note = jsonReader.notes.get(timestamp);
-			if (note != null) {
-				displayForNote(note);
-			}
-			Pedal pedal = jsonReader.pedals.get(timestamp);
-			if (pedal != null) {
-				isSustaining = pedal.level > 0;
-			}
-			Ictus beat = jsonReader.structure.get(timestamp);
-			if (beat != null) {
-				controlEvent(beat);
-			}
-			if (note == null && pedal == null && beat == null) {
-				PApplet.println("ERROR", timestamp);
-				parent.exit();
-			}
-		}
+		jsonReader.readNotes(this, millis + readAheadAmountMillis);
 	}
 
 	float pctDoneCurrentPhrase() {
@@ -114,18 +87,18 @@ public class NoteManager {
 		switch (ChannelMapping.fromInt(note.channel)) {
 		
 		case TreeGrowth:
-//			TreeManager.instance().addNote(note, true);
-//			break;
+			TreeManager.instance().addNote(note, true);
+			break;
 		case TreeGrowth2:
-//			TreeManager.instance().addNote(note, false);
-//			break;
+			TreeManager.instance().addNote(note, false);
+			break;
 			
 		case Bird:
-//			PApplet.println("Bird");
+			PApplet.println("Bird");
 			BirdManager.instance().addNote(note, true);
 			break;
 		case Bird2:
-//			PApplet.println("Bird2");
+			PApplet.println("Bird2");
 			BirdManager.instance().addNote(note, false);
 			break;
 			
