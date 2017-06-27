@@ -14,5 +14,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/cw/Developer/Processing/libraries/sound/library/macosx"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="peasycam.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

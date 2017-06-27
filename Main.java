@@ -1,5 +1,6 @@
 import processing.core.*;
 import processing.sound.*;
+import peasy.*;
 import java.util.Date;
 import com.hamoid.*;
 import Display.*;
@@ -10,7 +11,8 @@ import Model.*;
 public class Main extends PApplet {
 
 	boolean debug = true;
-
+	PeasyCam cam;
+	
 	public static void main(String[] args) {
 
 		PApplet.main("Main");
@@ -50,6 +52,8 @@ public class Main extends PApplet {
 		frameRate(60);
 		rectMode(CENTER);
 		colorMode(HSB, 360, 100, 100, 100);
+		
+		cam = new PeasyCam(this, 1000);
 		
 		background(0, 0, 51);
 		noStroke();
