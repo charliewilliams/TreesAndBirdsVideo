@@ -70,7 +70,7 @@ public class Main extends PApplet {
 		file.jump(debugOffset / 1000.0f);
 		file.play();
 
-		millisOffset += millis();
+		millisOffset += super.millis();
 	}
 
 	public void draw() {
@@ -110,7 +110,6 @@ public class Main extends PApplet {
 	@Override public int millis() {
 		return super.millis() + debugOffset - millisOffset;
 	}
-
 
 	/*
 	 *  Video exportin'
