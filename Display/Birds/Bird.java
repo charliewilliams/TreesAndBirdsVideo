@@ -11,7 +11,7 @@ public class Bird {
 	float maxSpeed = 4; //maximum magnitude for the velocity vector
 	float maxSteerForce = 0.1f; //maximum magnitude of the steering vector
 	float hue;
-	float sc = 3; //scale factor for the render of the boid
+	float sc = 2; //scale factor for the render of the boid
 	float flap = 0;
 	float t = 0;
 	boolean avoidWalls = false;
@@ -30,23 +30,12 @@ public class Bird {
 	
 	void run(ArrayList<Bird> bl, PGraphics3D pg) {
 		
-		if (perching) {
-			perchTimerMillis--; // TEMP, should be actual millis and not ticks
-		} else {
-			t += .1;
-			flap = (float) (10 * Math.sin(t));
-		}
+		perchOrFlap();
 
-		//acc.add(steer(new PVector(mouseX,mouseY,300),true));
-		//acc.add(new PVector(0,.05,0));
-		if (avoidWalls) {
-			acc.add(PVector.mult(avoid(new PVector(pos.x, stage.x, pos.z), true), 5));
-			acc.add(PVector.mult(avoid(new PVector(pos.x, 0, pos.z), true), 5));
-			acc.add(PVector.mult(avoid(new PVector(stage.x, pos.y, pos.z), true), 5));
-			acc.add(PVector.mult(avoid(new PVector(0, pos.y, pos.z), true), 5));
-			acc.add(PVector.mult(avoid(new PVector(pos.x, pos.y, 300), true), 5));
-			acc.add(PVector.mult(avoid(new PVector(pos.x, pos.y, 900), true), 5));
-		}
+//		acc.add(steer(new PVector(mouseX,mouseY,300),true));
+//		acc.add(new PVector(0,.05,0));
+		
+		checkAvoidWalls();
 		
 		// TODO add Avoid for other trees
 		
@@ -58,6 +47,48 @@ public class Bird {
 		render(pg);
 	}
 
+	void checkAvoidWalls() {
+		
+		if (!avoidWalls) {
+			return;
+		}
+		acc.add(PVector.mult(avoid(new PVector(pos.x, stage.y, pos.z), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(pos.x, 0, pos.z), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(stage.x, pos.y, pos.z), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(0, pos.y, pos.z), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(pos.x, pos.y, 300), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(pos.x, pos.y, 900), true), 5));
+	}
+	
+	void perchOrFlap() {
+		
+		if (perching) {
+			perchTimerMillis--; // TEMP, should be actual millis and not ticks
+		} else {
+			t += .1;
+			flap = (float) (10 * Math.sin(t));
+		}
+	}
+	
+	void run(ArrayList<Bird> bl, PApplet ps) {
+		
+		perchOrFlap();
+
+		acc.add(steer(new PVector(ps.mouseX, ps.mouseY, 300), true));
+		acc.add(new PVector(0f, 0.05f, 0f));
+		
+		checkAvoidWalls();
+		
+		// TODO add Avoid for other trees
+		
+		// TODO if landing add Steer toward the home tree + landing = true
+		
+		flock(bl);
+		move();
+		checkBounds();
+		render(ps);
+	}
+	
 	/////-----------behaviors---------------
 	void flock(ArrayList<Bird> bl) {
 		
@@ -93,6 +124,47 @@ public class Bird {
 	}
 
 	void render(PGraphics3D ps) {
+
+		ps.pushMatrix();
+		ps.translate(pos.x, pos.y, pos.z);
+		ps.rotateY((float) Math.atan2(-vel.z, vel.x));
+		ps.rotateZ((float) Math.asin(vel.y / vel.mag()));
+		ps.stroke(hue);
+		ps.fill(hue, 100, 100);
+
+		//draw bird
+		ps.beginShape(PConstants.TRIANGLES);
+		ps.vertex(3 * sc, 0, 0);
+		ps.vertex(-3 * sc, 2 * sc, 0);
+		ps.vertex(-3 * sc, -2 * sc, 0);
+
+		ps.vertex(3 * sc, 0, 0);
+		ps.vertex(-3 * sc, 2 * sc, 0);
+		ps.vertex(-3 * sc, 0, 2 * sc);
+
+		ps.vertex(3 * sc, 0, 0);
+		ps.vertex(-3 * sc, 0, 2 * sc);
+		ps.vertex(-3 * sc, -2 * sc, 0);
+
+		// wings
+		ps.vertex(2 * sc, 0, 0);
+		ps.vertex(-1 * sc, 0, 0);
+		ps.vertex(-1 * sc, -8 * sc, flap);
+
+		ps.vertex(2 * sc, 0, 0);
+		ps.vertex(-1 * sc, 0, 0);
+		ps.vertex(-1 * sc, 8 * sc, flap);
+		//
+
+		ps.vertex(-3 * sc, 0, 2 * sc);
+		ps.vertex(-3 * sc, 2 * sc, 0);
+		ps.vertex(-3 * sc, -2 * sc, 0);
+		ps.endShape();
+//		box(10);
+		ps.popMatrix();
+	}
+	
+	void render(PApplet ps) {
 
 		ps.pushMatrix();
 		ps.translate(pos.x, pos.y, pos.z);

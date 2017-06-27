@@ -33,4 +33,15 @@ public class Flock {
 //			PApplet.println(b.pos);
 		}
 	}
+	
+	void update(PApplet ps) {
+
+		for (Bird b: birds) {
+			
+			// TODO call an Update based on what's happening in the song - call flock(), flee(), enter(), leave() etc
+			b.hue = baseHue;
+			b.run(birds, ps);
+//			PApplet.println(b.pos);
+		}
+	}
 }

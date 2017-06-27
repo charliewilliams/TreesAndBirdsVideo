@@ -44,36 +44,33 @@ public class BirdManager {
 		if (f == null) {
 			f = new Flock(n);
 			flocks[n.pitch % 12] = f;
-
-			// Debug
-//			for (int i = 0; i < 500; i++) {
-//				f.addBird(stage, new PVector(parent.width/2, parent.height/2, 600));
-//			}
 		}
 
 		float posX = fromRight ? offScreenArea.x : stage.x + offScreenArea.x;
 		float posY = r.nextFloat() * stage.y + stage.y * 0.333f;
-		PVector pos = new PVector(posX, posY, 600);
+		PVector pos = new PVector(posX, posY, 60);
 
 		f.addBird(stage, pos);
 	}
 
 	public void updateAndDraw() {
 
-		pg.beginDraw();
-		pg.background(180, 50, 100); // TEMP
+//		pg.beginDraw();
+//		pg.background(180, 50, 100); // TEMP
 
 		for (Flock f: flocks) {
 			if (f != null) {
-				f.update(pg);
+				f.update(parent);
 			}
 		}
 
-		pg.endDraw();
-
-		parent.blendMode(PConstants.BLEND);
-		
+//		pg.endDraw();
+//
+////		parent.blendMode(PConstants.BLEND);
+//		parent.blendMode(PConstants.DILATE);
+//		
 //		parent.camera();
-		parent.image(pg, 0, 0, parent.width, parent.height);
+//		
+//		parent.image(pg, 0, 0, parent.width, parent.height);
 	}
 }
