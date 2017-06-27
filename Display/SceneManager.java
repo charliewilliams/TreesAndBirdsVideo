@@ -31,7 +31,7 @@ public class SceneManager {
 		ground_pg = parent.createGraphics(w, h);
 
 		backgroundColors[0] = parent.color(39, 5, 100); // paper beige
-		backgroundColors[1] = parent.color(204, 100, 25); // night blue //color(306, 100, 25); // maroon
+		backgroundColors[1] = parent.color(204, 100, 80); // brightness 25 is nice too // night blue //color(306, 100, 25); // maroon
 		backgroundColors[2] = parent.color(0, 0, 0); // black //color(204, 100, 25); // night blue
 		backgroundColors[3] = parent.color(0, 0, 0); // black
 		backgroundColors[4] = parent.color(0, 0, 0);
@@ -50,24 +50,24 @@ public class SceneManager {
 	}
 
 	public void update(int millis) {
-		
+
 		backgroundXOffset -= 0.1;
-		
+
 		parent.image(bg, 0, 0, w, h);
 		parent.blendMode(PConstants.MULTIPLY);
 		parent.image(sky_pg, backgroundXOffset, 0);
 
 		if (backgroundXOffset < -w) {
-			
+
 			backgroundXOffset = 0;
 			generateSky(sky_pg, millis);
 		}
-		
+
 		parent.image(ground_pg, 0, 0);
 	}
-	
+
 	static float skyNodeSize = 6;
-	
+
 	/*
 	 * Sky idea by Bárbara Almeida / CC-A-SA / https://www.openprocessing.org/sketch/184276
 	 * */
@@ -77,13 +77,13 @@ public class SceneManager {
 		pg.beginDraw();
 
 		pg.background(backgroundColors[0]);
-		
+
 		float horizonY = 2 * h / 3;
 
 		for (int y = 0; y < h; y += 2) {
 
 			pg.noStroke();
-			
+
 			for (int x = 0; x < w * 2; x += 2) {
 				//draw clouds
 				float xOff = millis / 100.0f;
@@ -102,23 +102,25 @@ public class SceneManager {
 			pg.line(0, y, w * 2, y);
 		}
 	}
-	
+
 	void generateGround(PGraphics pg) {
-		
+
 		// draw a non-changing horizon
 		pg.beginDraw();
 		pg.background(255);
 
+		generateRadialBlur(pg);
+
 		float n = 0; // noise offset
-		
+
 		for (int i = 0; i < 256; i++) {
-			
+
 			float bumpiness = parent.random(0.1f, 0.5f);
 			pg.stroke(0, 0, parent.random(5f, 20f), PApplet.map(i, 0, 256, 40, 80));
-			
+
 			pg.beginShape();
 			pg.vertex(-1, h);
-			
+
 			float baseY = h * 0.33f - 25;
 			for (int x = -1; x <= w + 50; x += 50) {
 				float relativeY = PApplet.map(parent.noise(n), 0, 1, 0, 50);
@@ -130,5 +132,16 @@ public class SceneManager {
 		}
 
 		pg.endDraw();
+	}
+
+	void generateRadialBlur(PGraphics pg) {
+
+		float lightest = 255;
+		float darkest = 100;
+		pg.noStroke();
+		for (float diam = 1.5f * w; diam > 0.5 * w; diam -= 2) {
+			pg.fill(PApplet.map(diam, 0.5f * w, 1.5f * w, lightest, darkest));
+			pg.ellipse(w / 2, h / 2, diam, diam);
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package Display.Trees;
 import Model.*;
+import Util.*;
 import processing.core.*;
 
 public class TreeManager {
@@ -10,8 +11,8 @@ public class TreeManager {
 	boolean drawingPitchClassTrees() {
 		return true; // TODO query the section for the current millis to decide
 	}
-	Tree[] pitchClassTrees = new Tree[12];
-	Tree[] perPitchTrees = new Tree[88];
+	TreeStack[] pitchClassTrees = new TreeStack[12];
+	TreeStack[] perPitchTrees = new TreeStack[88];
 
 	public TreeManager(PApplet parent) {
 
@@ -22,6 +23,7 @@ public class TreeManager {
 		m = this;
 		this.parent = parent;
 	}
+	
 
 	public void setParent(PApplet p) {
 		parent = p;
@@ -37,21 +39,29 @@ public class TreeManager {
 		// Notes are added ~500ms before they sound; use `timestamp` to determine when they should take visual effect
 
 		// Two arrays of trees: one per pitch class, one per raw pitch. (We only ever show one of these at a time)
-		Tree pitchClassTree = pitchClassTrees[n.pitch % 12];
+		int i = n.pitch % 12;
+		TreeStack pitchClassTreeStack = pitchClassTrees[i];
 
-		if (pitchClassTree == null) {
-			pitchClassTrees[n.pitch % 12] = new Tree(parent, n, true);
+		if (pitchClassTreeStack == null) {
+			
+			float eachTreeSpace = parent.width / (pitchClassTrees.length + 1);
+			PVector pos = new PVector(eachTreeSpace * i, parent.height * 0.75f);
+			
+			// TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, float noiseOffset)
+			pitchClassTrees[n.pitch % 12] = new TreeStack((int)Util.random(3, 8), parent, n, i, pos);
+			
 		} else {
-			pitchClassTree.grow();
+			
+			pitchClassTreeStack.grow(false, false);
 		}
 
-		Tree perPitchTree = perPitchTrees[n.channel];
-
-		if (perPitchTree == null) {
-			perPitchTrees[n.pitch] = new Tree(parent, n, false);
-		} else {
-			perPitchTree.grow();
-		}
+//		Tree perPitchTree = perPitchTrees[n.channel];
+//
+//		if (perPitchTree == null) {
+//			perPitchTrees[n.pitch] = new Tree(parent, n, false);
+//		} else {
+//			perPitchTree.grow(false, false);
+//		}
 	}
 
 	public void addChangeNote(Note n, boolean b) {
@@ -62,10 +72,12 @@ public class TreeManager {
 	}
 
 	public void draw() {
-
-		for (Tree t: (drawingPitchClassTrees() ? pitchClassTrees : perPitchTrees)) {
-			if (t != null) {
-				t.draw();
+		
+		for (int i = 0; i < pitchClassTrees.length; i++) {
+			
+			TreeStack stack = pitchClassTrees[i];
+			if (stack != null) {
+				stack.draw();
 			}
 		}
 	}
