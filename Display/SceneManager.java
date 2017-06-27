@@ -1,6 +1,5 @@
 package Display;
 import processing.core.*;
-//import java.util.*;
 
 public class SceneManager {
 
@@ -8,7 +7,11 @@ public class SceneManager {
 	private PApplet parent;
 	int[] backgroundColors = new int[6];
 	PImage bg;
+	private PGraphics pg;
 	float cameraZ = 600;
+	int w, h;
+	int lightColor, darkColor;
+	float backgroundXOffset = 0;
 
 	public SceneManager(PApplet parent) {
 
@@ -19,8 +22,12 @@ public class SceneManager {
 
 		m = this;
 		this.parent = parent;
+		w = parent.width;
+		h = parent.height;
 
 		bg = parent.loadImage("paper.jpg");
+		pg = parent.createGraphics(w * 2, h);
+		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 
 		backgroundColors[0] = parent.color(39, 5, 100); // paper beige
 		backgroundColors[1] = parent.color(204, 100, 25); // night blue //color(306, 100, 25); // maroon
@@ -28,6 +35,12 @@ public class SceneManager {
 		backgroundColors[3] = parent.color(0, 0, 0); // black
 		backgroundColors[4] = parent.color(0, 0, 0);
 		backgroundColors[5] = parent.color(0, 0, 0);
+		//		int bgColor = color(255, 178, 187);
+
+		lightColor = parent.color(37, 42, 100);
+		darkColor = parent.color(223, 40, 46);
+
+		generateSky(pg, 0);
 	}
 
 	public static SceneManager instance() {
@@ -35,56 +48,49 @@ public class SceneManager {
 	}
 
 	public void update(int millis) {
+		
+		backgroundXOffset -= 0.05;
+		
+		parent.image(bg, 0, 0, w, h);
+		parent.blendMode(PConstants.MULTIPLY);
+		parent.image(pg, backgroundXOffset, 0);
 
-		parent.background(0, 0, 100);
-		
+		if (backgroundXOffset < -w) {
+			
+			backgroundXOffset = 0;
+			generateSky(pg, millis);
+		}
+	}
+	
+	static float skyNodeSize = 6;
 
+	void generateSky(PGraphics pg, int millis) {
 
-//				parent.camera(parent.width/2, parent.height/2, cameraZ, parent.width/2, parent.height/2, 0, 0, 1, 0);
-		
-		parent.directionalLight(255, 255, 255, 0, 1, -100); 
-		parent.noFill();
-		parent.stroke(0);
-		
-//		parent.beginCamera();
-//		parent.camera();
-//
-////		parent.rotateX(parent.frameCount / 100.0f);
-//		parent.rotateX(4.7f);
-//		parent.rotateY(6.28347f);
-//
-//		parent.translate(22, 17, -201);
-//		
-////		parent.translate(0, 0, -800);
-//		parent.endCamera();
-//		
-		parent.colorMode(PConstants.RGB, 255);
-		
-		parent.stroke(255, 50, 50);
+		pg.beginDraw();
 
-		parent.line(0, 0, 300, 0, parent.height, 300);
-		parent.line(0, 0, 900, 0, parent.height, 900);
-		parent.line(0, 0, 300, parent.width, 0, 300);
-		parent.line(0, 0, 900, parent.width, 0, 900);
-		
-		parent.stroke(50, 255, 50);
+		pg.background(backgroundColors[0]);
+//		pg.background(darkColor);
 
-		parent.line(parent.width, 0, 300, parent.width, parent.height, 300);
-		parent.line(parent.width, 0, 900, parent.width, parent.height, 900);
-		parent.line(0, parent.height, 300, parent.width, parent.height, 300);
-		parent.line(0, parent.height, 900, parent.width, parent.height, 900);
-		
-		parent.stroke(50, 50, 255);
+		for (int y = 0; y < h; y += 2) {
 
-		parent.line(0, 0, 300, 0, 0, 900);
-		parent.line(0, parent.height, 300, 0, parent.height, 900);
-		parent.line(parent.width, 0, 300, parent.width, 0, 900);
-		parent.line(parent.width, parent.height, 300, parent.width, parent.height, 900);
-		
-		
-		
-//		parent.fill(0, 0, 0);
-//		parent.translate(parent.width / 2 - 22, -100, 400);
-//		parent.box(50);
+			pg.noStroke();
+			 
+			for (int x = 0; x < w * 2; x += 2) {
+				//draw clouds
+				float xOff = millis / 100.0f;
+				float yOff = millis / 1000.0f;
+				float n = parent.noise((x + xOff) / 200.0f, (y + yOff) / 50.0f);     
+
+				pg.fill(darkColor, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
+				pg.ellipse(x, y, skyNodeSize, skyNodeSize);
+			}
+
+			//draw the light on the bottom
+			pg.strokeWeight(3);
+			pg.stroke(lightColor, PApplet.map(y, 2 * h / 3, h, 0, 255));
+			pg.line(0, y, w * 2, y);
+		}
+
+		pg.endDraw();
 	}
 }
