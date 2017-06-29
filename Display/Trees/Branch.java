@@ -26,7 +26,7 @@ public class Branch {
 		this.origin = new PVector();
 		this.length = length;
 		this.end = new PVector(0, -length);
-		angle = suitableRangomAngle();
+		angle = PVector.angleBetween(end, origin);
 		end = new PVector(0, -length);
 	}
 
@@ -37,18 +37,7 @@ public class Branch {
 		this.origin = origin;
 		this.end = end;
 		length = PVector.dist(origin, end);
-		angle = suitableRangomAngle();
-	}
-
-	float suitableRangomAngle() {
-
-		float angle = Util.random(piOver15, piOver5);
-		if (Util.random(-1, 1) < 0) {
-			angle *= -1;
-		}
-
-		// TODO push down according to whether we're left or right of centre?
-		return angle;
+		angle = PVector.angleBetween(end, origin);
 	}
 
 	boolean grow() {
@@ -71,7 +60,7 @@ public class Branch {
 		if (Util.random(0, 1) > 0.1) {
 			children.add(makeChild());
 		}
-		// 60% chance of 2nd child
+		// 90% chance of 2nd child
 		if (Util.random(0, 1) > 0.4) {
 			children.add(makeChild());
 		}
@@ -86,11 +75,22 @@ public class Branch {
 	Branch makeChild() {
 		
 		PVector dir = PVector.sub(end, origin);
-		dir.rotate(angle);
+		dir.rotate(suitableRangomAngle());
 		dir.mult(Util.random(0.5f, 0.7f));
 		PVector newEnd = PVector.add(end, dir);
 		
 		return new Branch(parent, end, newEnd);
+	}
+	
+	private float suitableRangomAngle() {
+
+		float angle = Util.random(piOver15, piOver5);
+		if (Util.random(-1, 1) < 0) {
+			angle *= -1;
+		}
+
+		// TODO push down according to whether we're left or right of centre?
+		return angle;
 	}
 
 	boolean addFlower(Flower.Type flowerType) {

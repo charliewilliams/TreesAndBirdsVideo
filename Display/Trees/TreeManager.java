@@ -7,6 +7,7 @@ public class TreeManager {
 
 	private static TreeManager m;
 	public static TreeManager instance() { return m; }
+	private int idx = 0;
 	
 	private PApplet parent;
 
@@ -37,7 +38,9 @@ public class TreeManager {
 			int numChildren = (int)Util.random(3, 8);
 			
 			// TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, float noiseOffset)
-			pitchClassTrees[n.pitch % 12] = new TreeStack(numChildren, parent, n, i, pos);
+			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, idx, pos);
+			
+			idx += numChildren;
 			
 		} else {
 			
