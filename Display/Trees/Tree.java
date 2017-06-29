@@ -1,13 +1,11 @@
 package Display.Trees;
 import Model.Note;
-import Util.Util;
 import processing.core.*;
 import java.util.*;
 
 public class Tree {
 	
 	int idx, z;
-	float noiseOffset;
 	float leafSize = 0, flowerSize = 0;
 	PVector pos;
 	Branch root;
@@ -15,14 +13,11 @@ public class Tree {
 
 	Tree(PApplet parent, Note n, int idx, int z) {
 
-		this.idx = idx;
-		this.z = z;
-		noiseOffset = Util.random(1000, 2000);
+		this.idx = idx; // Global idx for physics
+		this.z = z; // z for alpha, gives fake depth
 		
 		// Branch(PApplet parent, PVector origin, float bSize, float theta, float depth, float noiseOffset, boolean isEnd)
-		PVector origin = new PVector();
-		PVector end = new PVector(0, -100);
-		root = new Branch(parent, origin, end);
+		root = new Branch(parent, 100);
 	}
 
 	void grow(boolean leaves, boolean flowers) {

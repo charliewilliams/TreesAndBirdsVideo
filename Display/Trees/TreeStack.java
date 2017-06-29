@@ -19,6 +19,7 @@ public class TreeStack {
 		this.pos = pos;
 		pg = parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		pg.noStroke();
 
 		for (int i = 0; i < numChildren; i++) {
 
@@ -26,6 +27,8 @@ public class TreeStack {
 			trees.add(new Tree(parent, n, baseIndex + i, i));
 		}
 	}
+	
+	static int calls = 0;
 
 	void grow(boolean leaves, boolean flowers) {
 
@@ -59,10 +62,13 @@ public class TreeStack {
 			pg.translate(pos.x, pos.y);
 
 			// Background circle
-			pg.fill(0, 100, 90, 10);
+			pg.fill(0, 100, 90, 20);
 			pg.ellipse(0, 0, 200, 200); 
 
 			for (Tree t: trees) {
+				
+				float alpha = PApplet.map(t.z, 0, trees.size(), 100, 40);
+				pg.fill(0, 100, 0, alpha);
 				t.draw(pg);
 			}
 

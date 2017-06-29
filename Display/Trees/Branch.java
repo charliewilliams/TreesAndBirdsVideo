@@ -7,7 +7,7 @@ import java.util.*;
 public class Branch {
 
 	boolean hasBird = false, finished = false;
-	PVector origin, end;
+	PVector end;
 	Tree tree; Leaf leaf; Flower flower;
 	ArrayList<Branch> children = new ArrayList<Branch>();
 	ArrayList<BranchBump> displayBumps = new ArrayList<BranchBump>();
@@ -15,52 +15,65 @@ public class Branch {
 	private PApplet parent;
 	private float diam, angle, length;
 
-	static float piOver5  = (float)(Math.PI / 5.0);
-	static float piOver10 = (float)(Math.PI / 10.0);
-	static float piOver15 = (float)(Math.PI / 15.0);
-	static float rootSize = 70;
-	static float minSize = 0.6f;
-	static int totalDepth = 150;
+	static private float piOver5  = (float)(Math.PI / 5.0);
+	static private float piOver10 = (float)(Math.PI / 10.0);
+	static private float piOver15 = (float)(Math.PI / 15.0);
 
-	Branch(PApplet parent, PVector origin, PVector end) { 
+	// Root
+	Branch(PApplet parent, float length) { 
 
 		this.parent = parent;
-		this.origin = origin.copy();
-		this.end = end.copy();
-		
-		angle = PVector.angleBetween(end, origin);
-		length = PVector.dist(origin, end);
+		this.length = length;
+		angle = angle();
+		end = new PVector(0, -length);
+	}
+
+	Branch(PApplet parent, PVector origin, float length) { 
+
+		this.parent = parent;
+		this.length = length;
+		angle = angle();
+		end = origin.copy().normalize().rotate(angle).mult(length);
+	}
+	
+	float angle() {
+		float angle = Util.random(piOver15, piOver5);
+		if (Util.random(-1, 1) < 0) {
+			angle *= -1;
+		}
+		return angle;
 	}
 
 	void grow() {
 
 		if (finished) {
+			for (Branch b: children) {
+				b.grow();
+			}
 			return;
 		}
 
-		boolean drawleftBranch = Util.random(0, 1) > 0.1;
-		boolean drawrightBranch = Util.random(0, 1) > 0.1;
+		finished = true;
 
-		if (drawleftBranch) { 
+		// 0-3 children
+
+		// 90% chance of first child
+		if (Util.random(0, 1) > 0.1) {
 			children.add(makeChild());
 		}
-		if (drawrightBranch) {
+		// 60% chance of 2nd child
+		if (Util.random(0, 1) > 0.4) {
 			children.add(makeChild());
 		}
-
-		if (!drawleftBranch && !drawrightBranch) {
-			finished = true;
+		// 10% chance of 3rd child
+		if (Util.random(0, 1) > 0.9) {
+			children.add(makeChild());
 		}
 	}
 
 	Branch makeChild() {
-
-		PVector dir = PVector.sub(end, origin);
-		dir.rotate(Util.random(piOver15, piOver5));
-		dir.mult(Util.random(0.5f, 0.7f));
-		PVector newEnd = PVector.add(end, dir);
-
-		return new Branch(parent, end, newEnd);
+		float newLength = length * Util.random(0.5f, 0.7f);
+		return new Branch(parent, end, newLength);
 	}
 
 	boolean addFlower(Flower.Type flowerType) {
@@ -90,32 +103,39 @@ public class Branch {
 
 	void draw(PGraphics pg) {
 
-		pg.pushMatrix();
-		pg.translate(origin.x, origin.y);
-		pg.rotate(angle);
-		
-		pg.line(origin.x, origin.y, end.x, end.y);
-//		
-//		for (int i = 0; i < displayBumps.size(); i++) {
-//			BranchBump b = displayBumps.get(i);
-//			float pct = i / displayBumps.size();
-//			pg.ellipse(0, pct * length, b.diam, b.diam);
-//		}
+		// Draw the basic line for our branch (debug)
+		pg.stroke(0, 0, 0, 100);
+		pg.line(0, 0, end.x, end.y);
+		pg.ellipse(end.x, end.y, 4, 4);
 
+		// Draw the nice texture-y bumps over it
+		for (int i = 0; i < displayBumps.size(); i++) {
+			BranchBump b = displayBumps.get(i);
+			float pct = i / displayBumps.size();
+			pg.ellipse(0, pct * length, b.diam, b.diam);
+		}
+
+		// Draw a tip if we don't have children
 		if (isTip()) {
-
+			
 			pg.pushMatrix();
 			pg.translate(0, length);
 			pg.quad(0, -diam/2, 2*diam, -diam/6, 2*diam, diam/6, 0, diam/2);
 			pg.popMatrix();
-
-		} else {
+		} 
+		// Draw children if we have them
+		else {
 
 			for (Branch child: children) {
+
+				pg.pushMatrix();
+				pg.translate(0, -length);
+				pg.rotate(angle);
 				child.draw(pg);
+				pg.popMatrix();
 			}
 		}
-
+		// Draw a leaf and/or flower if necessary
 		if (leaf != null) {
 			leaf.draw(pg, tree.leafSize);
 		}
@@ -123,8 +143,6 @@ public class Branch {
 		if (flower != null) {
 			flower.draw(pg, tree.flowerSize);
 		}
-
-		pg.popMatrix();
 	}
 
 	boolean isTip() {
