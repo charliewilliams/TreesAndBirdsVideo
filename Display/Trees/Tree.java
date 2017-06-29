@@ -1,5 +1,6 @@
 package Display.Trees;
 import Model.Note;
+import Util.Util;
 import processing.core.*;
 import java.util.*;
 
@@ -9,20 +10,19 @@ public class Tree {
 	float noiseOffset;
 	float leafSize = 0, flowerSize = 0;
 	PVector pos;
-	static float yVariance = 100;
 	Branch root;
 	ArrayList<Branch> branches = new ArrayList<Branch>();
 
-	Tree(PApplet parent, Note n, int idx, int z, float noiseOffset) {
+	Tree(PApplet parent, Note n, int idx, int z) {
 
 		this.idx = idx;
 		this.z = z;
-		this.noiseOffset = noiseOffset;
-		
-		float theta = (float) (Math.PI / 2.0f);
+		noiseOffset = Util.random(1000, 2000);
 		
 		// Branch(PApplet parent, PVector origin, float bSize, float theta, float depth, float noiseOffset, boolean isEnd)
-		root = new Branch(parent, new PVector(), 70.0f, theta, 150.0f, noiseOffset, false);
+		PVector origin = new PVector();
+		PVector end = new PVector(0, -100);
+		root = new Branch(parent, origin, end);
 	}
 
 	void grow(boolean leaves, boolean flowers) {

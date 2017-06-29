@@ -6,13 +6,11 @@ import processing.core.*;
 public class TreeManager {
 
 	private static TreeManager m;
+	public static TreeManager instance() { return m; }
+	
 	private PApplet parent;
 
-	boolean drawingPitchClassTrees() {
-		return true; // TODO query the section for the current millis to decide
-	}
 	TreeStack[] pitchClassTrees = new TreeStack[12];
-	TreeStack[] perPitchTrees = new TreeStack[88];
 
 	public TreeManager(PApplet parent) {
 
@@ -22,16 +20,6 @@ public class TreeManager {
 		}
 		m = this;
 		this.parent = parent;
-	}
-	
-
-	public void setParent(PApplet p) {
-		parent = p;
-	}
-
-	public static TreeManager instance() {
-
-		return m;
 	}
 
 	public void addNote(Note n, boolean b) {
@@ -44,24 +32,17 @@ public class TreeManager {
 
 		if (pitchClassTreeStack == null) {
 			
-			float eachTreeSpace = parent.width / (pitchClassTrees.length + 1);
-			PVector pos = new PVector(eachTreeSpace * i, parent.height * 0.75f);
+			float eachTreeSpace = parent.width / (pitchClassTrees.length + 2);
+			PVector pos = new PVector(eachTreeSpace * (i + 1), parent.height * 0.75f + Util.random(-10, 10));
+			int numChildren = (int)Util.random(3, 8);
 			
 			// TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, float noiseOffset)
-			pitchClassTrees[n.pitch % 12] = new TreeStack((int)Util.random(3, 8), parent, n, i, pos);
+			pitchClassTrees[n.pitch % 12] = new TreeStack(numChildren, parent, n, i, pos);
 			
 		} else {
 			
 			pitchClassTreeStack.grow(false, false);
 		}
-
-//		Tree perPitchTree = perPitchTrees[n.channel];
-//
-//		if (perPitchTree == null) {
-//			perPitchTrees[n.pitch] = new Tree(parent, n, false);
-//		} else {
-//			perPitchTree.grow(false, false);
-//		}
 	}
 
 	public void addChangeNote(Note n, boolean b) {

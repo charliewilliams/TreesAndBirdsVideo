@@ -1,6 +1,5 @@
 package Display.Trees;
 import java.util.*;
-import Util.*;
 import Model.Note;
 import processing.core.*;
 
@@ -24,7 +23,7 @@ public class TreeStack {
 		for (int i = 0; i < numChildren; i++) {
 
 			// Tree(PApplet parent, Note n, int idx, int z, float noiseOffset)
-			trees.add(new Tree(parent, n, baseIndex + i, i, Util.random(1000, 2000)));
+			trees.add(new Tree(parent, n, baseIndex + i, i));
 		}
 	}
 
