@@ -20,19 +20,20 @@ public class Tree {
 		root = new Branch(parent, 100);
 	}
 
-	void grow(boolean leaves, boolean flowers) {
-		
-		if (leaves) {
-			leafSize += 0.1;
-		} else if (flowers) {
-			flowerSize += 0.1;
-		} else {
-			root.grow();	
-		}
+	boolean grow() {
+		return root.grow();
 	}
 	
 	boolean addFlower(Flower.Type flowerType) {
 		return root.addFlower(flowerType);
+	}
+	
+	void growLeaves() {
+		leafSize += 0.1;
+	}
+	
+	void growFlowers() {
+		flowerSize += 0.1;
 	}
 
 	void draw(PGraphics pg) {

@@ -7,50 +7,60 @@ import java.util.*;
 public class Branch {
 
 	boolean hasBird = false, finished = false;
-	PVector end;
-	Tree tree; Leaf leaf; Flower flower;
-	ArrayList<Branch> children = new ArrayList<Branch>();
-	ArrayList<BranchBump> displayBumps = new ArrayList<BranchBump>();
+	private PVector origin, end;
+	private Tree tree; Leaf leaf; Flower flower;
+	private ArrayList<Branch> children = new ArrayList<Branch>();
+	private ArrayList<BranchBump> displayBumps = new ArrayList<BranchBump>();
 
 	private PApplet parent;
 	private float diam, angle, length;
 
 	static private float piOver5  = (float)(Math.PI / 5.0);
-	static private float piOver10 = (float)(Math.PI / 10.0);
+//	static private float piOver10 = (float)(Math.PI / 10.0);
 	static private float piOver15 = (float)(Math.PI / 15.0);
 
 	// Root
 	Branch(PApplet parent, float length) { 
 
 		this.parent = parent;
+		this.origin = new PVector();
 		this.length = length;
-		angle = angle();
+		this.end = new PVector(0, -length);
+		angle = suitableRangomAngle();
 		end = new PVector(0, -length);
 	}
 
-	Branch(PApplet parent, PVector origin, float length) { 
+	// Normal branch
+	Branch(PApplet parent, PVector origin, PVector end) { 
 
 		this.parent = parent;
-		this.length = length;
-		angle = angle();
-		end = origin.copy().normalize().rotate(angle).mult(length);
+		this.origin = origin;
+		this.end = end;
+		length = PVector.dist(origin, end);
+		angle = suitableRangomAngle();
 	}
-	
-	float angle() {
+
+	float suitableRangomAngle() {
+
 		float angle = Util.random(piOver15, piOver5);
 		if (Util.random(-1, 1) < 0) {
 			angle *= -1;
 		}
+
+		// TODO push down according to whether we're left or right of centre?
 		return angle;
 	}
 
-	void grow() {
+	boolean grow() {
 
 		if (finished) {
+			Collections.shuffle(children);
 			for (Branch b: children) {
-				b.grow();
+				if (b.grow()) {
+					return true;
+				};
 			}
-			return;
+			return false;
 		}
 
 		finished = true;
@@ -69,11 +79,18 @@ public class Branch {
 		if (Util.random(0, 1) > 0.9) {
 			children.add(makeChild());
 		}
+		
+		return true;
 	}
 
 	Branch makeChild() {
-		float newLength = length * Util.random(0.5f, 0.7f);
-		return new Branch(parent, end, newLength);
+		
+		PVector dir = PVector.sub(end, origin);
+		dir.rotate(angle);
+		dir.mult(Util.random(0.5f, 0.7f));
+		PVector newEnd = PVector.add(end, dir);
+		
+		return new Branch(parent, end, newEnd);
 	}
 
 	boolean addFlower(Flower.Type flowerType) {
@@ -105,34 +122,32 @@ public class Branch {
 
 		// Draw the basic line for our branch (debug)
 		pg.stroke(0, 0, 0, 100);
-		pg.line(0, 0, end.x, end.y);
+		pg.line(origin.x, origin.y, end.x, end.y);
 		pg.ellipse(end.x, end.y, 4, 4);
 
 		// Draw the nice texture-y bumps over it
-		for (int i = 0; i < displayBumps.size(); i++) {
-			BranchBump b = displayBumps.get(i);
-			float pct = i / displayBumps.size();
-			pg.ellipse(0, pct * length, b.diam, b.diam);
-		}
+		pg.pushMatrix(); {
+			pg.rotate(angle);
+			for (int i = 0; i < displayBumps.size(); i++) {
+				BranchBump b = displayBumps.get(i);
+				float pct = i / displayBumps.size();
+				pg.ellipse(0, -pct * length, b.diam, b.diam);
+			}
+		} pg.popMatrix();
 
 		// Draw a tip if we don't have children
 		if (isTip()) {
-			
-			pg.pushMatrix();
-			pg.translate(0, length);
-			pg.quad(0, -diam/2, 2*diam, -diam/6, 2*diam, diam/6, 0, diam/2);
-			pg.popMatrix();
+
+			pg.pushMatrix(); {
+				pg.translate(0, length);
+				pg.quad(0, -diam/2, 2*diam, -diam/6, 2*diam, diam/6, 0, diam/2);
+			} pg.popMatrix();
 		} 
 		// Draw children if we have them
 		else {
 
 			for (Branch child: children) {
-
-				pg.pushMatrix();
-				pg.translate(0, -length);
-				pg.rotate(angle);
 				child.draw(pg);
-				pg.popMatrix();
 			}
 		}
 		// Draw a leaf and/or flower if necessary
@@ -142,6 +157,14 @@ public class Branch {
 
 		if (flower != null) {
 			flower.draw(pg, tree.flowerSize);
+		}
+	}
+
+	void jitter() {
+
+		if (!finished) {
+			end.x += Util.random(-1, 1);
+			end.y += Util.random(-1, 1);
 		}
 	}
 

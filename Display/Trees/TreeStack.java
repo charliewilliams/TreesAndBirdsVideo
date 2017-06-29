@@ -27,15 +27,17 @@ public class TreeStack {
 			trees.add(new Tree(parent, n, baseIndex + i, i));
 		}
 	}
-	
+
 	static int calls = 0;
 
-	void grow(boolean leaves, boolean flowers) {
+	void grow() {
 
 		needsRedraw = true;
 
 		for (Tree t: trees) {
-			t.grow(false, false);
+			if (t.grow()) {
+				break;
+			}
 		}
 	}
 
@@ -66,7 +68,7 @@ public class TreeStack {
 			pg.ellipse(0, 0, 200, 200); 
 
 			for (Tree t: trees) {
-				
+
 				float alpha = PApplet.map(t.z, 0, trees.size(), 100, 40);
 				pg.fill(0, 100, 0, alpha);
 				t.draw(pg);
