@@ -5,16 +5,17 @@ import java.util.*;
 
 public class Tree {
 	
-	int idx, z;
+	int idx;
+	float alpha;
 	float leafSize = 0, flowerSize = 0;
 	PVector pos;
 	Branch root;
 	ArrayList<Branch> branches = new ArrayList<Branch>();
 
-	Tree(PApplet parent, Note n, int idx, int z) {
+	Tree(PApplet parent, Note n, int idx, float alpha) {
 
 		this.idx = idx; // Global idx for physics
-		this.z = z; // z for alpha, gives fake depth
+		this.alpha = alpha; // gives fake depth
 		
 		// Branch(PApplet parent, PVector origin, float bSize, float theta, float depth, float noiseOffset, boolean isEnd)
 		root = new Branch(parent, 100);
@@ -37,6 +38,10 @@ public class Tree {
 	}
 
 	void draw(PGraphics pg) {
-		root.draw(pg);
+		root.draw(pg, alpha);
+	}
+	
+	void jitter() {
+		root.jitter();
 	}
 }

@@ -27,14 +27,15 @@ public class TreeManager {
 
 		// Notes are added ~500ms before they sound; use `timestamp` to determine when they should take visual effect
 
-		// Two arrays of trees: one per pitch class, one per raw pitch. (We only ever show one of these at a time)
-		int i = n.pitch % 12;
+		// Offset so that e is the lowest pitch
+		int offset = 4;
+		int i = (n.pitch + offset) % 12;
 		TreeStack pitchClassTreeStack = pitchClassTrees[i];
 
 		if (pitchClassTreeStack == null) {
 			
 			float eachTreeSpace = parent.width / (pitchClassTrees.length + 2);
-			PVector pos = new PVector(eachTreeSpace * (i + 1), parent.height * 0.85f + Util.random(-20, 20));
+			PVector pos = new PVector(eachTreeSpace * (i + 1), parent.height * 0.75f + Util.random(-20, 20));
 			int numChildren = (int)Util.random(3, 8);
 			
 			// TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, float noiseOffset)

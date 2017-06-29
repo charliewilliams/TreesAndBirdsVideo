@@ -22,9 +22,8 @@ public class TreeStack {
 		pg.noStroke();
 
 		for (int i = 0; i < numChildren; i++) {
-
-			// Tree(PApplet parent, Note n, int idx, int z, float noiseOffset)
-			trees.add(new Tree(parent, n, baseIndex + i, i));
+			float alpha = PApplet.map(i, 0, numChildren, 100, 20);
+			trees.add(new Tree(parent, n, baseIndex + i, alpha));
 		}
 	}
 
@@ -34,6 +33,7 @@ public class TreeStack {
 
 		needsRedraw = true;
 
+		Collections.shuffle(trees);
 		for (Tree t: trees) {
 			if (t.grow()) {
 				break;
@@ -51,6 +51,15 @@ public class TreeStack {
 			}
 		}
 	}
+	
+	void jitter() {
+		
+		needsRedraw = true;
+		
+		for (Tree t: trees) {
+			t.jitter();
+		}
+	}
 
 	void draw() {
 
@@ -64,13 +73,11 @@ public class TreeStack {
 			pg.translate(pos.x, pos.y);
 
 			// Background circle
-			pg.fill(0, 100, 90, 20);
-			pg.ellipse(0, 0, 200, 200); 
+//			pg.noStroke();
+//			pg.fill(0, 100, 90, 20);
+//			pg.ellipse(0, -100, 200, 200); 
 
 			for (Tree t: trees) {
-
-				float alpha = PApplet.map(t.z, 0, trees.size(), 100, 40);
-				pg.fill(0, 100, 0, alpha);
 				t.draw(pg);
 			}
 
