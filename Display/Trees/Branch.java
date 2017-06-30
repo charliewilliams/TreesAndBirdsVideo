@@ -14,9 +14,11 @@ public class Branch {
 
 	private PApplet parent;
 	private float diam, angle, length;
+//	private float initialLength, finalLength;
+	private int depth;
+//	private int childDepth;
 
 	static private float piOver5  = (float)(Math.PI / 5.0);
-//	static private float piOver10 = (float)(Math.PI / 10.0);
 	static private float piOver15 = (float)(Math.PI / 15.0);
 
 	// Root
@@ -24,36 +26,57 @@ public class Branch {
 
 		this.parent = parent;
 		this.origin = new PVector();
-		this.length = length;
+		
+//		initialLength = length / 4.0f;
+//		finalLength = length;
+		this.length = length; //initialLength;
 		this.end = new PVector(0, -length);
 		angle = PVector.angleBetween(end, origin);
 		end = new PVector(0, -length);
 	}
 
 	// Normal branch
-	Branch(PApplet parent, PVector origin, PVector end) { 
+	Branch(PApplet parent, PVector origin, PVector end, int depth) { 
 
 		this.parent = parent;
 		this.origin = origin;
 		this.end = end;
+		this.depth = depth;
 		length = PVector.dist(origin, end);
 		angle = PVector.angleBetween(end, origin);
 	}
 
+//	static private int maxDepthForMutableLength = 3;
+//	static private int childDepthOverWhichParentLengthGrows = 3;
+	
+//	private void updateLengthAndEndpoint() {
+//		
+//		if (depth <= maxDepthForMutableLength && childDepth <= childDepthOverWhichParentLengthGrows) {
+//			
+//			PVector dir = PVector.sub(end, origin);
+//			dir.setMag(PApplet.map(childDepth / (float)childDepthOverWhichParentLengthGrows, 0, 1, initialLength, finalLength));
+//			end = PVector.add(origin, dir);
+//			length = PVector.dist(origin, end);
+//		}
+//	}
+	
 	boolean grow() {
 
 		if (finished) {
 			Collections.shuffle(children);
 			for (Branch b: children) {
+				
 				if (b.grow()) {
+					
+//					updateLengthAndEndpoint();
+//					childDepth++;
+					
 					return true;
 				};
 			}
 			return false;
 		}
-
-		finished = true;
-
+		
 		// 0-3 children
 
 		// 90% chance of first child
@@ -69,6 +92,9 @@ public class Branch {
 			children.add(makeChild());
 		}
 		
+		finished = true;
+//		childDepth++;
+		
 		return true;
 	}
 
@@ -79,7 +105,7 @@ public class Branch {
 		dir.mult(Util.random(0.5f, 0.7f));
 		PVector newEnd = PVector.add(end, dir);
 		
-		return new Branch(parent, end, newEnd);
+		return new Branch(parent, end, newEnd, depth + 1);
 	}
 	
 	private float suitableRangomAngle() {
@@ -119,6 +145,8 @@ public class Branch {
 	}
 
 	void draw(PGraphics pg, float alpha) {
+		
+		
 
 		// Draw the basic line for our branch (debug)
 		pg.stroke(0, 0, 0, alpha);
