@@ -7,8 +7,7 @@ import processing.opengl.*;
 public class Flock {
 
 	int baseHue;
-	// TODO more stuff about speed, behavior, appearance
-	
+	// TODO more flock-specific stuff about tweaking speed, behavior, appearance
 	
 	ArrayList<Bird> birds = new ArrayList<Bird>();
 
@@ -23,24 +22,13 @@ public class Flock {
 		birds.add(new Bird(stage, pos));
 	}
 
-	void update(PGraphics3D pg) {
+	void update(PGraphics2D pg) {
 
 		for (Bird b: birds) {
 			
 			// TODO call an Update based on what's happening in the song - call flock(), flee(), enter(), leave() etc
 			b.hue = baseHue;
 			b.run(birds, pg);
-//			PApplet.println(b.pos);
-		}
-	}
-	
-	void update(PApplet ps) {
-
-		for (Bird b: birds) {
-			
-			// TODO call an Update based on what's happening in the song - call flock(), flee(), enter(), leave() etc
-			b.hue = baseHue;
-			b.run(birds, ps);
 //			PApplet.println(b.pos);
 		}
 	}

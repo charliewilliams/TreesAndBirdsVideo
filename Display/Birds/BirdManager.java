@@ -11,7 +11,7 @@ public class BirdManager {
 	private PApplet parent;
 	private Random r = new Random(0);
 	private Flock[] flocks = new Flock[12];
-	private PGraphics3D pg;
+	private PGraphics2D pg;
 	private PVector stage;
 	private static PVector offScreenArea = new PVector(100, 50);
 
@@ -23,9 +23,12 @@ public class BirdManager {
 		}
 		m = this;
 		this.parent = parent;
-		stage = new PVector(parent.width, parent.height);
+		
+		// Make the stage include the offscreen areas
+		stage = new PVector(parent.width + offScreenArea.x * 2, parent.height + offScreenArea.y);
+//		stage = new PVector(parent.width, parent.height);
 
-		pg = (PGraphics3D) parent.createGraphics(parent.width, parent.height, PConstants.P3D);
+		pg = (PGraphics2D) parent.createGraphics((int)stage.x, (int)stage.y, PConstants.P2D);
 		pg.noStroke();
 		pg.rectMode(PConstants.CENTER);
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
@@ -46,21 +49,21 @@ public class BirdManager {
 			flocks[n.pitch % 12] = f;
 		}
 
-		float posX = fromRight ? offScreenArea.x : stage.x + offScreenArea.x;
-		float posY = r.nextFloat() * stage.y + stage.y * 0.333f;
+		float posX = fromRight ? stage.x : 0;
+		float posY = r.nextFloat() * stage.y * 0.3333f;
 		PVector pos = new PVector(posX, posY);
 
+//		PApplet.println(pos);
 		f.addBird(stage, pos);
 	}
 
 	public void updateAndDraw() {
 
 		pg.beginDraw();
-//		pg.background(180, 50, 100); // TEMP
+		pg.background(0, 0, 0, 0);
 
 		for (Flock f: flocks) {
 			if (f != null) {
-//				f.update(parent);
 				f.update(pg);
 			}
 		}
@@ -70,8 +73,6 @@ public class BirdManager {
 		parent.blendMode(PConstants.BLEND);
 //		parent.blendMode(PConstants.DILATE);
 		
-//		parent.camera();
-		
-//		parent.image(pg, 0, 0, parent.width, parent.height);
+		parent.image(pg, -offScreenArea.x, -offScreenArea.y);
 	}
 }

@@ -4,12 +4,14 @@ import processing.opengl.*;
 
 import java.util.*;
 
+import Util.Util;
+
 public class Bird {
 
-	PVector pos, vel, acc, ali, coh, sep; //pos, velocity, and acceleration in a vector datatype
+	PVector pos, vel, acc; //pos, velocity, and acceleration in a vector datatype
 	float neighborhoodRadius = 100; //radius in which it looks for fellow boids
-	float maxSpeed = 4; //maximum magnitude for the velocity vector
-	float maxSteerForce = 0.1f; //maximum magnitude of the steering vector
+	float maxSpeed = 2; //4; //maximum magnitude for the velocity vector
+	float maxSteerForce = 0.03f; //0.1f; //maximum magnitude of the steering vector
 	float hue;
 	float sc = 2; //scale factor for the render of the boid
 	float flap = 0;
@@ -24,11 +26,13 @@ public class Bird {
 
 		this.stage = stage;
 		pos = initialPos;
-		vel = new PVector(r.nextFloat() * 2 - 1, r.nextFloat() * 2 - 1, r.nextFloat() * 2 - 1);
-		acc = new PVector(0, 0, 0);
+		
+	    float angle = Util.random(0, (float)(Math.PI * 2.0));
+	    vel = new PVector((float)Math.cos(angle), (float)Math.sin(angle));
+		acc = new PVector(0, 0);
 	}
 	
-	void run(ArrayList<Bird> bl, PGraphics3D pg) {
+	void run(ArrayList<Bird> bl, PGraphics2D pg) {
 		
 		perchOrFlap();
 
@@ -52,12 +56,12 @@ public class Bird {
 		if (!avoidWalls) {
 			return;
 		}
-		acc.add(PVector.mult(avoid(new PVector(pos.x, stage.y, pos.z), true), 5));
-		acc.add(PVector.mult(avoid(new PVector(pos.x, 0, pos.z), true), 5));
-		acc.add(PVector.mult(avoid(new PVector(stage.x, pos.y, pos.z), true), 5));
-		acc.add(PVector.mult(avoid(new PVector(0, pos.y, pos.z), true), 5));
-		acc.add(PVector.mult(avoid(new PVector(pos.x, pos.y, 300), true), 5));
-		acc.add(PVector.mult(avoid(new PVector(pos.x, pos.y, 900), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(pos.x, stage.y), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(pos.x, 0), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(stage.x, pos.y), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(0, pos.y), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(pos.x, pos.y), true), 5));
+		acc.add(PVector.mult(avoid(new PVector(pos.x, pos.y), true), 5));
 	}
 	
 	void perchOrFlap() {
@@ -70,31 +74,12 @@ public class Bird {
 		}
 	}
 	
-	void run(ArrayList<Bird> bl, PApplet ps) {
-		
-		perchOrFlap();
-
-		acc.add(steer(new PVector(ps.mouseX, ps.mouseY, 300), true));
-		acc.add(new PVector(0f, 0.05f, 0f));
-		
-		checkAvoidWalls();
-		
-		// TODO add Avoid for other trees
-		
-		// TODO if landing add Steer toward the home tree + landing = true
-		
-		flock(bl);
-		move();
-		checkBounds();
-		render(ps);
-	}
-	
 	/////-----------behaviors---------------
 	void flock(ArrayList<Bird> bl) {
 		
-		ali = alignment(bl);
-		coh = cohesion(bl);
-		sep = separation(bl);
+		PVector ali = alignment(bl);
+		PVector coh = cohesion(bl);
+		PVector sep = separation(bl);
 		
 		acc.add(PVector.mult(ali, 1));
 		acc.add(PVector.mult(coh, 3));
@@ -123,86 +108,25 @@ public class Bird {
 		if (pos.z < 300)    	pos.z = 900;
 	}
 
-	void render(PGraphics3D ps) {
+	void render(PGraphics2D ps) {
 
-		ps.pushMatrix();
-		ps.translate(pos.x, pos.y, pos.z);
-		ps.rotateY((float) Math.atan2(-vel.z, vel.x));
-		ps.rotateZ((float) Math.asin(vel.y / vel.mag()));
-		ps.stroke(hue);
-		ps.fill(hue, 100, 100);
-
-		//draw bird
-		ps.beginShape(PConstants.TRIANGLES);
-		ps.vertex(3 * sc, 0, 0);
-		ps.vertex(-3 * sc, 2 * sc, 0);
-		ps.vertex(-3 * sc, -2 * sc, 0);
-
-		ps.vertex(3 * sc, 0, 0);
-		ps.vertex(-3 * sc, 2 * sc, 0);
-		ps.vertex(-3 * sc, 0, 2 * sc);
-
-		ps.vertex(3 * sc, 0, 0);
-		ps.vertex(-3 * sc, 0, 2 * sc);
-		ps.vertex(-3 * sc, -2 * sc, 0);
-
-		// wings
-		ps.vertex(2 * sc, 0, 0);
-		ps.vertex(-1 * sc, 0, 0);
-		ps.vertex(-1 * sc, -8 * sc, flap);
-
-		ps.vertex(2 * sc, 0, 0);
-		ps.vertex(-1 * sc, 0, 0);
-		ps.vertex(-1 * sc, 8 * sc, flap);
-		//
-
-		ps.vertex(-3 * sc, 0, 2 * sc);
-		ps.vertex(-3 * sc, 2 * sc, 0);
-		ps.vertex(-3 * sc, -2 * sc, 0);
-		ps.endShape();
-//		box(10);
-		ps.popMatrix();
-	}
-	
-	void render(PApplet ps) {
-
-		ps.pushMatrix();
-		ps.translate(pos.x, pos.y, pos.z);
-		ps.rotateY((float) Math.atan2(-vel.z, vel.x));
-		ps.rotateZ((float) Math.asin(vel.y / vel.mag()));
-		ps.stroke(hue);
-		ps.fill(hue, 100, 100);
-
-		//draw bird
-		ps.beginShape(PConstants.TRIANGLES);
-		ps.vertex(3 * sc, 0, 0);
-		ps.vertex(-3 * sc, 2 * sc, 0);
-		ps.vertex(-3 * sc, -2 * sc, 0);
-
-		ps.vertex(3 * sc, 0, 0);
-		ps.vertex(-3 * sc, 2 * sc, 0);
-		ps.vertex(-3 * sc, 0, 2 * sc);
-
-		ps.vertex(3 * sc, 0, 0);
-		ps.vertex(-3 * sc, 0, 2 * sc);
-		ps.vertex(-3 * sc, -2 * sc, 0);
-
-		// wings
-		ps.vertex(2 * sc, 0, 0);
-		ps.vertex(-1 * sc, 0, 0);
-		ps.vertex(-1 * sc, -8 * sc, flap);
-
-		ps.vertex(2 * sc, 0, 0);
-		ps.vertex(-1 * sc, 0, 0);
-		ps.vertex(-1 * sc, 8 * sc, flap);
-		//
-
-		ps.vertex(-3 * sc, 0, 2 * sc);
-		ps.vertex(-3 * sc, 2 * sc, 0);
-		ps.vertex(-3 * sc, -2 * sc, 0);
-		ps.endShape();
-//		box(10);
-		ps.popMatrix();
+	    // Draw a triangle rotated in the direction of velocity
+	    float theta = (float) (vel.heading() + Math.toRadians(90));
+	    // heading2D() above is now heading() but leaving old syntax until Processing.js catches up
+	    
+	    float r = 2;
+	    
+	    ps.fill(200, 100);
+	    ps.stroke(255);
+	    ps.pushMatrix();
+	    ps.translate(pos.x, pos.y);
+	    ps.rotate(theta);
+	    ps.beginShape(PConstants.TRIANGLES);
+	    ps.vertex(0, -r*2);
+	    ps.vertex(-r, r*2);
+	    ps.vertex(r, r*2);
+	    ps.endShape();
+	    ps.popMatrix();
 	}
 
 	//steering. If arrival==true, the boid slows to meet the target. Credit to Craig Reynolds

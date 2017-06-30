@@ -29,7 +29,7 @@ public class Main extends PApplet {
 	int highMel = 295000;
 
 	int millisOffset = 500;
-	int debugOffset = musicStart;
+	int debugOffset = melodyStart;
 	int durationMillis;
 
 	public void settings() {
