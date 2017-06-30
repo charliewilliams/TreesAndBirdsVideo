@@ -104,8 +104,6 @@ public class Bird {
 		if (pos.x < 0)      	pos.x = stage.x;
 		if (pos.y > stage.y) 	pos.y = 0;
 		if (pos.y < 0)      	pos.y = stage.y;
-		if (pos.z > 900)    	pos.z = 300;
-		if (pos.z < 300)    	pos.z = 900;
 	}
 
 	void render(PGraphics2D ps) {
@@ -139,7 +137,7 @@ public class Bird {
 		} else {
 			PVector targetOffset = PVector.sub(target, pos);
 			float distance=targetOffset.mag();
-			float rampedSpeed = maxSpeed*(distance/100);
+			float rampedSpeed = maxSpeed * (distance / 100);
 			float clippedSpeed = Math.min(rampedSpeed, maxSpeed);
 			PVector desiredVelocity = PVector.mult(targetOffset, (clippedSpeed/distance));
 			steer.set(PVector.sub(desiredVelocity, vel));
@@ -152,20 +150,20 @@ public class Bird {
 
 		PVector steer = new PVector(); //creates vector for steering
 		steer.set(PVector.sub(pos, target)); //steering vector points away from target
-		if (weight)
+		if (weight) {
 			steer.mult((float) (1/Math.sqrt(PVector.dist(pos, target))));
-		//steer.limit(maxSteerForce); //limits the steering force to maxSteerForce
+		}
+//		steer.limit(maxSteerForce); //limits the steering force to maxSteerForce
 		return steer;
 	}
 
 	PVector separation(ArrayList<Bird> boids) {
 
-		PVector posSum = new PVector(0, 0, 0);
+		PVector posSum = new PVector(0, 0);
 		PVector repulse;
 		
-		for (int i=0; i<boids.size(); i++) {
+		for (Bird b: boids) {
 			
-			Bird b = boids.get(i);
 			float d = PVector.dist(pos, b.pos);
 			if (d > 0 && d <= neighborhoodRadius) {
 				repulse = PVector.sub(pos, b.pos);
@@ -179,11 +177,10 @@ public class Bird {
 
 	PVector alignment(ArrayList<Bird> boids) {
 
-		PVector velSum = new PVector(0, 0, 0);
+		PVector velSum = new PVector(0, 0);
 		int count = 0;
-		for (int i = 0; i < boids.size(); i++) {
+		for (Bird b: boids) {
 
-			Bird b = boids.get(i);
 			float d = PVector.dist(pos, b.pos);
 			if (d > 0 && d <= neighborhoodRadius) {
 				velSum.add(b.vel);
@@ -199,11 +196,11 @@ public class Bird {
 
 	PVector cohesion(ArrayList<Bird> boids) {
 
-		PVector posSum = new PVector(0, 0, 0);
-		PVector steer = new PVector(0, 0, 0);
+		PVector posSum = new PVector(0, 0);
+		PVector steer = new PVector(0, 0);
 		int count = 0;
-		for (int i = 0; i < boids.size(); i++) {
-			Bird b = boids.get(i);
+		
+		for (Bird b: boids) {
 			float d = PVector.dist(pos, b.pos);
 			if (d > 0 && d <= neighborhoodRadius) {
 				posSum.add(b.pos);
