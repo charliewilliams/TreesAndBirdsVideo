@@ -14,6 +14,11 @@ public class BirdManager {
 	private PGraphics2D pg;
 	private PVector stage;
 	private static PVector offScreenArea = new PVector(100, 50);
+	
+	public static void main(String[] args) {
+
+		PApplet.main("BirdManager");
+	}
 
 	public BirdManager(PApplet parent) {
 
@@ -25,8 +30,8 @@ public class BirdManager {
 		this.parent = parent;
 		
 		// Make the stage include the offscreen areas
-		stage = new PVector(parent.width + offScreenArea.x * 2, parent.height + offScreenArea.y);
-//		stage = new PVector(parent.width, parent.height);
+//		stage = new PVector(parent.width + offScreenArea.x * 2, parent.height + offScreenArea.y);
+		stage = new PVector(parent.width, parent.height);
 
 		pg = (PGraphics2D) parent.createGraphics((int)stage.x, (int)stage.y, PConstants.P2D);
 		pg.noStroke();
@@ -49,11 +54,13 @@ public class BirdManager {
 			flocks[n.pitch % 12] = f;
 		}
 
-		float posX = fromRight ? stage.x : 0;
-		float posY = r.nextFloat() * stage.y * 0.3333f;
-		PVector pos = new PVector(posX, posY);
+//		float posX = fromRight ? stage.x - offScreenArea.x : offScreenArea.x;
+//		float posY = r.nextFloat() * stage.y * 0.3333f;
+//		PVector pos = new PVector(posX, posY);
 
-//		PApplet.println(pos);
+		PVector pos = new PVector(parent.width / 2.0f, parent.height / 2.0f);
+		
+//		PApplet.println(pos, fromRight ? "Right" : "Left");
 		f.addBird(stage, pos);
 	}
 
