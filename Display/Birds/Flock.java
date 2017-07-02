@@ -22,7 +22,7 @@ public class Flock {
 		birds.add(new Bird(stage, pos));
 	}
 
-	void update(PGraphics2D pg) {
+	void update(PGraphics3D pg) {
 
 		for (Bird b: birds) {
 			
