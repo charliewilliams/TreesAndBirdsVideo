@@ -71,16 +71,16 @@ public class TreeStack {
 		pg.translate(pos.x, pos.y);
 
 		// Background circle
-		if (circleAlpha > 0) {
-
-			pg.stroke(hue, 100, 30, circleAlpha * 0.8f);
-			pg.strokeWeight(0.5f);
-			pg.fill(hue, 100, 90, circleAlpha * 0.2f);
-			pg.ellipse(0, -100, circleDiam, circleDiam); 
-
-			circleAlpha *= 0.98;
-			circleDiam *= 0.999;
-		}
+//		if (circleAlpha > 0) {
+//
+//			pg.stroke(hue, 100, 30, circleAlpha * 0.8f);
+//			pg.strokeWeight(0.5f);
+//			pg.fill(hue, 100, 90, circleAlpha * 0.2f);
+//			pg.ellipse(0, -100, circleDiam, circleDiam); 
+//
+//			circleAlpha *= 0.98;
+//			circleDiam *= 0.999;
+//		}
 
 		for (Tree t: trees) {
 			t.draw(pg, hue);

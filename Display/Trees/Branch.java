@@ -17,6 +17,8 @@ public class Branch {
 //	private float initialLength, finalLength;
 	private int depth;
 //	private int childDepth;
+	private float circleAlpha = 0, circleDiam = 0;
+	private float maxAlpha = 100;
 
 	static private float piOver5  = (float)(Math.PI / 5.0);
 	static private float piOver15 = (float)(Math.PI / 15.0);
@@ -93,6 +95,8 @@ public class Branch {
 		}
 		
 		finished = true;
+		circleAlpha = maxAlpha;
+		circleDiam = 0;
 //		childDepth++;
 		
 		return true;
@@ -145,6 +149,23 @@ public class Branch {
 	}
 
 	void draw(PGraphics pg, float hue, float alpha) {
+		
+		// Background circle
+		if (circleAlpha > 0) {
+
+			pg.stroke(hue, 100, 90, circleAlpha * 0.8f);
+			pg.strokeWeight(0.5f);
+			pg.fill(hue, 20, 100, circleAlpha * 0.2f);
+			pg.ellipse(end.x, end.y, circleDiam, circleDiam); 
+
+			circleAlpha *= 0.99;
+			
+			if (circleDiam < length) {
+				circleDiam += length / 50;
+			} else {
+				circleDiam *= 1.005;
+			}
+		}
 		
 		// Draw the basic line for our branch (debug)
 		pg.stroke(hue, 100, 50, alpha);
