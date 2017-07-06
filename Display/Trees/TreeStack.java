@@ -11,13 +11,16 @@ public class TreeStack {
 	private PGraphics pg;
 	private PApplet parent;
 	private PVector pos;
-	boolean needsRedraw = false;
+	private float hue, circleAlpha = 0, circleDiam = 0;
+	private float maxAlpha = 100, maxDiam = 200;
 
 	TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, PVector pos) {
 
 		this.parent = parent;
 		this.pos = pos;
+		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 100);
 		pg = parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg.pixelDensity = 2;
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg.noStroke();
 
@@ -29,9 +32,10 @@ public class TreeStack {
 
 	static int calls = 0;
 
-	void grow() {
+	void grow(Note note) {
 
-		needsRedraw = true;
+		circleAlpha = PApplet.map(note.velocity, 0, 0.5f, maxAlpha/2, maxAlpha);
+		circleDiam = PApplet.map(note.velocity, 0, 0.5f, maxDiam * 0.67f, maxDiam);
 
 		Collections.shuffle(trees);
 		for (Tree t: trees) {
@@ -43,19 +47,15 @@ public class TreeStack {
 
 	void addFlower() {
 
-		needsRedraw = true;
-
 		for (Tree t: trees) {
 			if (t.addFlower(flowerType)) {
 				break;
 			}
 		}
 	}
-	
+
 	void jitter() {
-		
-		needsRedraw = true;
-		
+
 		for (Tree t: trees) {
 			t.jitter();
 		}
@@ -63,30 +63,32 @@ public class TreeStack {
 
 	void draw() {
 
-		if (needsRedraw) {
+		pg.beginDraw();
 
-			pg.beginDraw();
+		pg.background(0, 0, 0, 0);
 
-			pg.background(0, 0, 0, 0);
+		pg.pushMatrix();
+		pg.translate(pos.x, pos.y);
 
-			pg.pushMatrix();
-			pg.translate(pos.x, pos.y);
+		// Background circle
+		if (circleAlpha > 0) {
 
-			// Background circle
-//			pg.noStroke();
-//			pg.fill(0, 100, 90, 20);
-//			pg.ellipse(0, -100, 200, 200); 
+			pg.stroke(hue, 100, 30, circleAlpha * 0.8f);
+			pg.strokeWeight(0.5f);
+			pg.fill(hue, 100, 90, circleAlpha * 0.2f);
+			pg.ellipse(0, -100, circleDiam, circleDiam); 
 
+			circleAlpha *= 0.98;
+			circleDiam *= 0.999;
+		}
 
-			pg.popMatrix();
 		for (Tree t: trees) {
 			t.draw(pg, hue);
 		}
 
-			pg.endDraw();
+		pg.popMatrix();
 
-			needsRedraw = false;
-		}
+		pg.endDraw();
 
 		parent.blendMode(PConstants.BLEND);
 		parent.image(pg, 0, 0);

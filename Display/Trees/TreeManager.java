@@ -45,7 +45,7 @@ public class TreeManager {
 			
 		} else {
 			
-			pitchClassTreeStack.grow();
+			pitchClassTreeStack.grow(n);
 		}
 	}
 
