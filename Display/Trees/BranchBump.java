@@ -1,8 +1,10 @@
 package Display.Trees;
-import processing.core.*;
 
 public class BranchBump {
 
-	PVector pos;
 	float diam;
+	
+	BranchBump(float diam) {
+		this.diam = diam;
+	}
 }

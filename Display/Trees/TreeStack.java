@@ -11,8 +11,7 @@ public class TreeStack {
 	private PGraphics pg;
 	private PApplet parent;
 	private PVector pos;
-	private float hue, circleAlpha = 0, circleDiam = 0;
-	private float maxAlpha = 100, maxDiam = 200;
+	private float hue;
 
 	TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, PVector pos) {
 
@@ -34,12 +33,9 @@ public class TreeStack {
 
 	void grow(Note note) {
 
-		circleAlpha = PApplet.map(note.velocity, 0, 0.5f, maxAlpha/2, maxAlpha);
-		circleDiam = PApplet.map(note.velocity, 0, 0.5f, maxDiam * 0.67f, maxDiam);
-
 		Collections.shuffle(trees);
 		for (Tree t: trees) {
-			if (t.grow()) {
+			if (t.grow(note)) {
 				break;
 			}
 		}
@@ -69,18 +65,6 @@ public class TreeStack {
 
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
-
-		// Background circle
-//		if (circleAlpha > 0) {
-//
-//			pg.stroke(hue, 100, 30, circleAlpha * 0.8f);
-//			pg.strokeWeight(0.5f);
-//			pg.fill(hue, 100, 90, circleAlpha * 0.2f);
-//			pg.ellipse(0, -100, circleDiam, circleDiam); 
-//
-//			circleAlpha *= 0.98;
-//			circleDiam *= 0.999;
-//		}
 
 		for (Tree t: trees) {
 			t.draw(pg, hue);

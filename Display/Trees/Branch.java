@@ -4,6 +4,8 @@ import Util.*;
 import processing.core.*;
 import java.util.*;
 
+import Model.Note;
+
 public class Branch {
 
 	boolean hasBird = false, finished = false;
@@ -32,9 +34,10 @@ public class Branch {
 //		initialLength = length / 4.0f;
 //		finalLength = length;
 		this.length = length; //initialLength;
-		this.end = new PVector(0, -length);
-		angle = PVector.angleBetween(end, origin);
 		end = new PVector(0, -length);
+		angle = PVector.angleBetween(end, origin);
+		
+		makeBumps();
 	}
 
 	// Normal branch
@@ -46,6 +49,20 @@ public class Branch {
 		this.depth = depth;
 		length = PVector.dist(origin, end);
 		angle = PVector.angleBetween(end, origin);
+		
+		makeBumps();
+	}
+	
+	private float bumpDistance = 4.0f;
+	private void makeBumps() {
+		
+		int numBumps = (int) (length / bumpDistance);
+		float noiseSeed = Util.random(0, 1000);
+		
+		for (int i = 0; i < numBumps; i++) {
+			BranchBump b = new BranchBump(parent.noise(noiseSeed + ((float)i / 5.0f)) * length / 5.0f);
+			displayBumps.add(b);
+		}
 	}
 
 //	static private int maxDepthForMutableLength = 3;
@@ -62,13 +79,13 @@ public class Branch {
 //		}
 //	}
 	
-	boolean grow() {
+	boolean grow(Note n) {
 
 		if (finished) {
 			Collections.shuffle(children);
 			for (Branch b: children) {
 				
-				if (b.grow()) {
+				if (b.grow(n)) {
 					
 //					updateLengthAndEndpoint();
 //					childDepth++;
@@ -175,10 +192,13 @@ public class Branch {
 
 		// Draw the nice texture-y bumps over it
 		pg.pushMatrix(); {
+			pg.translate(origin.x, origin.y);
 			pg.rotate(angle);
 			for (int i = 0; i < displayBumps.size(); i++) {
 				BranchBump b = displayBumps.get(i);
-				float pct = i / displayBumps.size();
+				float pct = (float)i / (float)displayBumps.size();
+				pg.noStroke();
+				pg.fill(0, 0, 0, alpha);
 				pg.ellipse(0, -pct * length, b.diam, b.diam);
 			}
 		} pg.popMatrix();

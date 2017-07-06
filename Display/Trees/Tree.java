@@ -21,8 +21,8 @@ public class Tree {
 		root = new Branch(parent, 100);
 	}
 
-	boolean grow() {
-		return root.grow();
+	boolean grow(Note n) {
+		return root.grow(n);
 	}
 	
 	boolean addFlower(Flower.Type flowerType) {
