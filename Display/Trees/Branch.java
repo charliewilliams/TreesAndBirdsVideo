@@ -144,13 +144,11 @@ public class Branch {
 		}
 	}
 
-	void draw(PGraphics pg, float alpha) {
+	void draw(PGraphics pg, float hue, float alpha) {
 		
-		
-
 		// Draw the basic line for our branch (debug)
-		pg.stroke(0, 0, 0, alpha);
-		pg.fill(0, 0, 0, alpha);
+		pg.stroke(hue, 100, 50, alpha);
+		pg.fill(hue, 100, 50, alpha);
 		pg.line(origin.x, origin.y, end.x, end.y);
 		pg.ellipse(end.x, end.y, 4, 4);
 
@@ -176,7 +174,7 @@ public class Branch {
 		else {
 
 			for (Branch child: children) {
-				child.draw(pg, alpha * 0.9f);
+				child.draw(pg, hue, alpha * 0.9f);
 			}
 		}
 		// Draw a leaf and/or flower if necessary

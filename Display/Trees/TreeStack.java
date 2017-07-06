@@ -77,11 +77,11 @@ public class TreeStack {
 //			pg.fill(0, 100, 90, 20);
 //			pg.ellipse(0, -100, 200, 200); 
 
-			for (Tree t: trees) {
-				t.draw(pg);
-			}
 
 			pg.popMatrix();
+		for (Tree t: trees) {
+			t.draw(pg, hue);
+		}
 
 			pg.endDraw();
 

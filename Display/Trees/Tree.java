@@ -37,8 +37,8 @@ public class Tree {
 		flowerSize += 0.1;
 	}
 
-	void draw(PGraphics pg) {
-		root.draw(pg, alpha);
+	void draw(PGraphics pg, float hue) {
+		root.draw(pg, hue, alpha);
 	}
 	
 	void jitter() {
