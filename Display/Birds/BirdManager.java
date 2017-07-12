@@ -34,6 +34,7 @@ public class BirdManager {
 		stage = new PVector(parent.width, parent.height);
 
 		pg = (PGraphics2D) parent.createGraphics((int)stage.x, (int)stage.y, PConstants.P2D);
+		pg.pixelDensity = 2;
 		pg.noStroke();
 		pg.rectMode(PConstants.CENTER);
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
@@ -80,6 +81,6 @@ public class BirdManager {
 		parent.blendMode(PConstants.BLEND);
 //		parent.blendMode(PConstants.DILATE);
 		
-		parent.image(pg, -offScreenArea.x, -offScreenArea.y);
+		parent.image(pg, -offScreenArea.x, -offScreenArea.y, stage.x, stage.y);
 	}
 }
