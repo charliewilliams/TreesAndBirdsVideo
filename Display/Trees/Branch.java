@@ -37,7 +37,7 @@ public class Branch {
 		end = new PVector(0, -length);
 		angle = PVector.angleBetween(end, origin);
 		
-		makeBumps();
+//		makeBumps();
 	}
 
 	// Normal branch
@@ -50,7 +50,7 @@ public class Branch {
 		length = PVector.dist(origin, end);
 		angle = PVector.angleBetween(end, origin);
 		
-		makeBumps();
+//		makeBumps();
 	}
 	
 	private float bumpDistance = 4.0f;
