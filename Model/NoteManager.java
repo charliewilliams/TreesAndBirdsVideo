@@ -81,6 +81,8 @@ public class NoteManager {
 			break;
 		}
 	}
+	
+	boolean fromRight = false;
 
 	void displayForNote(Note note) {
 		
@@ -94,12 +96,14 @@ public class NoteManager {
 			break;
 			
 		case Bird:
-//			PApplet.println("Bird");
-			BirdManager.instance().addNote(note, true);
-			break;
 		case Bird2:
-//			PApplet.println("Bird2");
-			BirdManager.instance().addNote(note, false);
+//			PApplet.println("Bird");
+			BirdManager.instance().addNote(note, fromRight);
+			fromRight = !fromRight;
+//			break;
+//		
+////			PApplet.println("Bird2");
+//			BirdManager.instance().addNote(note, fromRight);
 			break;
 			
 		case TreeChangeBass:

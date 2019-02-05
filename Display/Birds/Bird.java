@@ -20,8 +20,10 @@ public class Bird {
 	static private float maxSteerForce = 0.03f; // 0.1f; //maximum magnitude of
 												// the steering vector
 
-	private PVector pos, vel, acc; // pos, velocity, and acceleration in a
-									// vector datatype
+	private PVector pos; // pos, velocity, and acceleration in a vector datatype
+	private PVector vel;
+	private PVector acc;
+
 	float hue;
 	private float flap = 0;
 	static private float t = 0;
@@ -36,12 +38,9 @@ public class Bird {
 		pos = initialPos;
 		vel = velocityForInitialPosition(initialPos, stage);
 		acc = new PVector(0, 0);
+		
+		PApplet.println("New bird", pos);
 	}
-	
-//	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> birds, PGraphics2D pg) {
-//		// TODO Auto-generated method stub
-//		
-//	}
 
 	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg) {
 
@@ -58,13 +57,13 @@ public class Bird {
 
 		flock(allBirds, myFlock);
 		move();
-		// checkBounds();
+		checkBounds();
 		render(pg);
 
 		// PApplet.println(pos);
 	}
 
-	static float wallAvoidWeight = 1;
+	static float wallAvoidWeight = 5;
 
 	void checkAvoidWalls() {
 
@@ -139,6 +138,28 @@ public class Bird {
 
 		ps.fill(200, 100);
 		ps.stroke(255);
+
+		// Draw walls for debug
+		ps.strokeWeight(5);
+		ps.stroke(255, 0, 0, 255);
+		ps.line(0, 0, 0, stage.y);
+		ps.stroke(0, 255, 0, 255);
+		ps.line(0, stage.y, stage.x, stage.y);
+		ps.stroke(0, 0, 255, 255);
+		ps.line(stage.x, stage.y, 0, stage.y);
+		ps.stroke(255, 0, 255, 255);
+		ps.line(stage.x, 0, 0, 0);
+		ps.stroke(255);
+		/*
+		 * acc.add(PVector.mult(avoid(new PVector(stage.x, pos.y), true),
+		 * wallAvoidWeight)); acc.add(PVector.mult(avoid(new PVector(0, pos.y),
+		 * true), wallAvoidWeight)); acc.add(PVector.mult(avoid(new
+		 * PVector(pos.x, 0), true), wallAvoidWeight));
+		 * acc.add(PVector.mult(avoid(new PVector(pos.x, stage.y * 0.6666667f),
+		 * true), wallAvoidWeight));
+		 */
+		// end debug
+
 		ps.pushMatrix();
 		ps.translate(pos.x, pos.y);
 		ps.rotate(theta);
@@ -232,11 +253,11 @@ public class Bird {
 			// First two lines of code below could be condensed with new PVector
 			// setMag() method
 			// Not using this method until Processing.js catches up
-			// steer.setMag(maxspeed);
+			steer.setMag(maxSpeed);
 
 			// Implement Reynolds: Steering = Desired - Velocity
-			steer.normalize();
-			steer.mult(maxSpeed);
+			// steer.normalize();
+			// steer.mult(maxSpeed);
 			steer.sub(vel);
 			steer.limit(maxSteerForce);
 		}

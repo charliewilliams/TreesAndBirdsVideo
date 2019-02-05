@@ -41,7 +41,6 @@ public class Flock {
 			// flock(), flee(), enter(), leave() etc
 			b.hue = baseHue;
 			b.run(allBirds, birds, pg);
-			// PApplet.println(b.pos);
 		}
 	}
 
