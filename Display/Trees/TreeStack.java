@@ -1,5 +1,8 @@
 package Display.Trees;
+
 import java.util.*;
+
+import Display.Birds.Bird;
 import Model.Note;
 import processing.core.*;
 
@@ -19,7 +22,7 @@ public class TreeStack {
 		this.pos = pos;
 		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 100);
 		pg = parent.createGraphics(parent.width, parent.height, PConstants.P2D);
-		pg.pixelDensity = 2;
+		// pg.pixelDensity = 2;
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg.noStroke();
 
@@ -34,7 +37,7 @@ public class TreeStack {
 	void grow(Note note) {
 
 		Collections.shuffle(trees);
-		for (Tree t: trees) {
+		for (Tree t : trees) {
 			if (t.grow(note)) {
 				break;
 			}
@@ -43,7 +46,7 @@ public class TreeStack {
 
 	void addFlower() {
 
-		for (Tree t: trees) {
+		for (Tree t : trees) {
 			if (t.addFlower(flowerType)) {
 				break;
 			}
@@ -52,7 +55,7 @@ public class TreeStack {
 
 	void jitter() {
 
-		for (Tree t: trees) {
+		for (Tree t : trees) {
 			t.jitter();
 		}
 	}
@@ -66,7 +69,7 @@ public class TreeStack {
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
 
-		for (Tree t: trees) {
+		for (Tree t : trees) {
 			t.draw(pg, hue);
 		}
 
@@ -76,5 +79,22 @@ public class TreeStack {
 
 		parent.blendMode(PConstants.BLEND);
 		parent.image(pg, 0, 0);
+	}
+
+	public PVector acquireLandingSite(Bird b) {
+
+		for (Tree t : trees) {
+
+			for (Branch br : t.branches) {
+
+				if (br.canHaveBird()) {
+					
+					br.hasBird = true;
+					return br.end;
+				}
+			}
+		}
+		
+		return null;
 	}
 }

@@ -1,38 +1,54 @@
 package Display.Birds;
+
 import processing.core.*;
 import processing.opengl.*;
 import java.util.*;
 
+import Util.Util;
+
 public class Bird {
 
-	static private float neighborhoodRadius = 100; //radius in which it looks for fellow boids
-	static private float desiredseparation = 25.0f;
-	static private float maxSpeed = 2; //4; //maximum magnitude for the velocity vector
-	static private float maxSteerForce = 0.03f; //0.1f; //maximum magnitude of the steering vector
-	
-	private PVector pos, vel, acc; //pos, velocity, and acceleration in a vector datatype
+	public enum State {
+		flying, to_land, landed
+	}
+
+	static private float neighborhoodRadius = 500; // radius in which it looks
+													// for fellow boids
+	static private float desiredseparation = 75.0f;
+	static private float maxSpeed = 3; // 4; //maximum magnitude for the
+										// velocity vector
+	static private float maxSteerForce = 0.03f; // 0.1f; //maximum magnitude of
+												// the steering vector
+
+	private PVector pos, vel, acc; // pos, velocity, and acceleration in a
+									// vector datatype
 	float hue;
 	private float flap = 0;
 	static private float t = 0;
-	private boolean avoidWalls = false;
-	private boolean perching = false;
-	private int perchTimerMillis;
+	private boolean avoidWalls = true;
+	State state = State.flying;
 	private PVector stage;
+	PVector landingSite;
 
 	Bird(PVector stage, PVector initialPos) {
 
 		this.stage = stage;
 		pos = initialPos;
-		vel = PVector.random2D();
+		vel = velocityForInitialPosition(initialPos, stage);
 		acc = new PVector(0, 0);
 	}
+	
+//	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> birds, PGraphics2D pg) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
-	void run(ArrayList<Bird> bl, PGraphics2D pg) {
+	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg) {
 
 		perchOrFlap();
 
-		//		acc.add(steer(new PVector(mouseX,mouseY,300),true));
-		//		acc.add(new PVector(0,.05,0));
+		// acc.add(steer(new PVector(mouseX,mouseY,300),true));
+		// acc.add(new PVector(0,.05,0));
 
 		checkAvoidWalls();
 
@@ -40,48 +56,49 @@ public class Bird {
 
 		// TODO if landing add Steer toward the home tree + landing = true
 
-		flock(bl);
+		flock(allBirds, myFlock);
 		move();
-//		checkBounds();
+		// checkBounds();
 		render(pg);
-		
-//		PApplet.println(pos);
+
+		// PApplet.println(pos);
 	}
 
-	static float wallAvoidWeight = 5;
+	static float wallAvoidWeight = 1;
+
 	void checkAvoidWalls() {
 
 		if (!avoidWalls) {
 			return;
 		}
-		PVector avoidGround = avoid(new PVector(pos.x, stage.y * 0.6667f), true);
-//		PApplet.println(avoidGround);
-		acc.add(PVector.mult(avoidGround, wallAvoidWeight));
-		PVector avoidLeftWall = avoid(new PVector(pos.x, 0), true);
-		PApplet.println(avoidLeftWall);
-		acc.add(PVector.mult(avoidLeftWall, wallAvoidWeight));
+		// PVector avoidGround = avoid(new PVector(pos.x, stage.y * 0.6666667f),
+		// true);
+		// PApplet.println(avoidGround);
+		// acc.add(PVector.mult(avoidGround, wallAvoidWeight));
+		// PVector avoidLeftWall = avoid(new PVector(0, pos.y), true);
+		// PApplet.println(avoidLeftWall);
+		// acc.add(PVector.mult(avoidLeftWall, wallAvoidWeight));
+
 		acc.add(PVector.mult(avoid(new PVector(stage.x, pos.y), true), wallAvoidWeight));
 		acc.add(PVector.mult(avoid(new PVector(0, pos.y), true), wallAvoidWeight));
-		acc.add(PVector.mult(avoid(new PVector(pos.x, pos.y), true), wallAvoidWeight));
-		acc.add(PVector.mult(avoid(new PVector(pos.x, pos.y), true), wallAvoidWeight));
+		acc.add(PVector.mult(avoid(new PVector(pos.x, 0), true), wallAvoidWeight));
+		acc.add(PVector.mult(avoid(new PVector(pos.x, stage.y * 0.6666667f), true), wallAvoidWeight));
 	}
 
 	void perchOrFlap() {
 
-		if (perching) {
-			perchTimerMillis--; // TEMP, should be actual millis and not ticks
-		} else {
+		if (state != State.landed) {
 			t += .1;
 			flap = (float) (10 * Math.sin(t));
 		}
 	}
 
-	/////-----------behaviors---------------
-	void flock(ArrayList<Bird> bl) {
+	///// -----------behaviors---------------
+	void flock(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock) {
 
-		PVector ali = alignment(bl);
-		PVector coh = cohesion(bl);
-		PVector sep = separation(bl);
+		PVector ali = alignment(myFlock);
+		PVector coh = cohesion(myFlock);
+		PVector sep = separation(allBirds);
 
 		acc.add(PVector.mult(ali, 1));
 		acc.add(PVector.mult(coh, 3));
@@ -90,29 +107,33 @@ public class Bird {
 
 	void scatter() {
 	}
-	////------------------------------------
+	//// ------------------------------------
 
 	void move() {
 
-		vel.add(acc); //add acceleration to velocity
-		vel.limit(maxSpeed); //make sure the velocity vector magnitude does not exceed maxSpeed
-		pos.add(vel); //add velocity to position
-		acc.mult(0); //reset acceleration
+		vel.add(acc); // add acceleration to velocity
+		vel.limit(maxSpeed); // make sure the velocity vector magnitude does not
+								// exceed maxSpeed
+		pos.add(vel); // add velocity to position
+		acc.mult(0); // reset acceleration
 	}
 
 	void checkBounds() {
 
-		if (pos.x > stage.x)  	pos.x = 0;
-		if (pos.x < 0)      	pos.x = stage.x;
-		if (pos.y > stage.y) 	pos.y = 0;
-		if (pos.y < 0)      	pos.y = stage.y;
+		if (pos.x > stage.x)
+			pos.x = 0;
+		if (pos.x < 0)
+			pos.x = stage.x;
+		if (pos.y > stage.y)
+			pos.y = 0;
+		if (pos.y < 0)
+			pos.y = stage.y;
 	}
 
 	void render(PGraphics2D ps) {
 
 		// Draw a triangle rotated in the direction of velocity
 		float theta = (float) (vel.heading() + Math.toRadians(90));
-		// heading2D() above is now heading() but leaving old syntax until Processing.js catches up
 
 		float r = 2;
 
@@ -122,59 +143,66 @@ public class Bird {
 		ps.translate(pos.x, pos.y);
 		ps.rotate(theta);
 		ps.beginShape(PConstants.TRIANGLES);
-		ps.vertex(0, -r*2);
-		ps.vertex(-r, r*2);
-		ps.vertex(r, r*2);
+		ps.vertex(0, -r * 2);
+		ps.vertex(-r, r * 2);
+		ps.vertex(r, r * 2);
 		ps.endShape();
 		ps.popMatrix();
 	}
 
-	//steering. If arrival==true, the boid slows to meet the target. Credit to Craig Reynolds
+	// steering. If arrival==true, the boid slows to meet the target. Credit to
+	// Craig Reynolds
 	PVector steer(PVector target, boolean arrival) {
 
-		PVector steer = new PVector(); //creates vector for steering
+		PVector steer = new PVector(); // creates vector for steering
 		if (!arrival) {
-			steer = PVector.sub(target, pos); //steering vector points towards target (switch target and pos for avoiding)
-			steer.limit(maxSteerForce); //limits the steering force to maxSteerForce
+			steer = PVector.sub(target, pos); // steering vector points towards
+												// target (switch target and pos
+												// for avoiding)
+			steer.limit(maxSteerForce); // limits the steering force to
+										// maxSteerForce
 		} else {
 			PVector targetOffset = PVector.sub(target, pos);
 			float distance = targetOffset.mag();
 			float rampedSpeed = maxSpeed * (distance / 100);
 			float clippedSpeed = Math.min(rampedSpeed, maxSpeed);
-			PVector desiredVelocity = PVector.mult(targetOffset, (clippedSpeed/distance));
+			PVector desiredVelocity = PVector.mult(targetOffset, (clippedSpeed / distance));
 			steer.set(PVector.sub(desiredVelocity, vel));
 		}
 		return steer;
 	}
 
-	//avoid. If weight == true avoidance vector is larger the closer the boid is to the target
+	// avoid. If weight == true avoidance vector is larger the closer the boid
+	// is to the target
 	PVector avoid(PVector target, boolean weight) {
 
-		PVector steer = new PVector(); //creates vector for steering
-		steer.set(PVector.sub(pos, target)); //steering vector points away from target
+		PVector steer = new PVector(); // creates vector for steering
+		steer.set(PVector.sub(pos, target)); // steering vector points away from
+												// target
 		if (weight) {
-			steer.mult((float) (1/Math.sqrt(PVector.dist(pos, target))));
+			steer.mult((float) (1 / Math.sqrt(PVector.dist(pos, target))));
 		}
-		steer.limit(maxSteerForce); //limits the steering force to maxSteerForce
+		steer.limit(maxSteerForce); // limits the steering force to
+									// maxSteerForce
 		return steer;
 	}
 
 	PVector separation(ArrayList<Bird> boids) {
 
-		//		PVector posSum = new PVector(0, 0);
-		//		PVector repulse;
-		//		
-		//		for (Bird b: boids) {
-		//			
-		//			float d = PVector.dist(pos, b.pos);
-		//			if (d > 0 && d <= neighborhoodRadius) {
-		//				repulse = PVector.sub(pos, b.pos);
-		//				repulse.normalize();
-		//				repulse.div(d);
-		//				posSum.add(repulse);
-		//			}
-		//		}
-		//		return posSum;
+		// PVector posSum = new PVector(0, 0);
+		// PVector repulse;
+		//
+		// for (Bird b: boids) {
+		//
+		// float d = PVector.dist(pos, b.pos);
+		// if (d > 0 && d <= neighborhoodRadius) {
+		// repulse = PVector.sub(pos, b.pos);
+		// repulse.normalize();
+		// repulse.div(d);
+		// posSum.add(repulse);
+		// }
+		// }
+		// return posSum;
 
 		/* Shiffman */
 
@@ -189,19 +217,20 @@ public class Bird {
 				// Calculate vector pointing away from neighbor
 				PVector diff = PVector.sub(pos, other.pos);
 				diff.normalize();
-				diff.div(d);        // Weight by distance
+				diff.div(d); // Weight by distance
 				steer.add(diff);
-				count++;            // Keep track of how many
+				count++; // Keep track of how many
 			}
 		}
 		// Average -- divide by how many
 		if (count > 0) {
-			steer.div((float)count);
+			steer.div((float) count);
 		}
 
 		// As long as the vector is greater than 0
 		if (steer.mag() > 0) {
-			// First two lines of code below could be condensed with new PVector setMag() method
+			// First two lines of code below could be condensed with new PVector
+			// setMag() method
 			// Not using this method until Processing.js catches up
 			// steer.setMag(maxspeed);
 
@@ -216,21 +245,21 @@ public class Bird {
 
 	PVector alignment(ArrayList<Bird> boids) {
 
-		//		PVector velSum = new PVector(0, 0);
-		//		int count = 0;
-		//		for (Bird b: boids) {
+		// PVector velSum = new PVector(0, 0);
+		// int count = 0;
+		// for (Bird b: boids) {
 		//
-		//			float d = PVector.dist(pos, b.pos);
-		//			if (d > 0 && d <= neighborhoodRadius) {
-		//				velSum.add(b.vel);
-		//				count++;
-		//			}
-		//		}
-		//		if (count > 0) {
-		//			velSum.div((float)count);
-		//			velSum.limit(maxSteerForce);
-		//		}
-		//		return velSum;
+		// float d = PVector.dist(pos, b.pos);
+		// if (d > 0 && d <= neighborhoodRadius) {
+		// velSum.add(b.vel);
+		// count++;
+		// }
+		// }
+		// if (count > 0) {
+		// velSum.div((float)count);
+		// velSum.limit(maxSteerForce);
+		// }
+		// return velSum;
 
 		/**/
 
@@ -244,43 +273,42 @@ public class Bird {
 			}
 		}
 		if (count > 0) {
-			sum.div((float)count);
+			sum.div((float) count);
 			sum.setMag(maxSpeed);
 
 			// Implement Reynolds: Steering = Desired - Velocity
 			PVector steer = PVector.sub(sum, vel);
 			steer.limit(maxSteerForce);
 			return steer;
-		} 
-		else {
+		} else {
 			return new PVector(0, 0);
 		}
 	}
 
 	PVector cohesion(ArrayList<Bird> boids) {
 
-//		PVector posSum = new PVector(0, 0);
-//		PVector steer = new PVector(0, 0);
-//		int count = 0;
-//
-//		for (Bird b: boids) {
-//			float d = PVector.dist(pos, b.pos);
-//			if (d > 0 && d <= neighborhoodRadius) {
-//				posSum.add(b.pos);
-//				count++;
-//			}
-//		}
-//		if (count > 0) {
-//			posSum.div((float)count);
-//		}
-//		steer = PVector.sub(posSum, pos);
-//		steer.limit(maxSteerForce); 
-//		return steer;
-		
-		/**/
-		
+		// PVector posSum = new PVector(0, 0);
+		// PVector steer = new PVector(0, 0);
+		// int count = 0;
+		//
+		// for (Bird b: boids) {
+		// float d = PVector.dist(pos, b.pos);
+		// if (d > 0 && d <= neighborhoodRadius) {
+		// posSum.add(b.pos);
+		// count++;
+		// }
+		// }
+		// if (count > 0) {
+		// posSum.div((float)count);
+		// }
+		// steer = PVector.sub(posSum, pos);
+		// steer.limit(maxSteerForce);
+		// return steer;
 
-		PVector sum = new PVector(0, 0);   // Start with empty vector to accumulate all positions
+		/**/
+
+		PVector sum = new PVector(0, 0); // Start with empty vector to
+											// accumulate all positions
 		int count = 0;
 		for (Bird other : boids) {
 			float d = PVector.dist(pos, other.pos);
@@ -291,11 +319,27 @@ public class Bird {
 		}
 		if (count > 0) {
 			sum.div(count);
-			return steer(sum, perching);  // Steer towards the position
-		} 
-		else {
+			return steer(sum, state == State.to_land); // Steer towards the
+														// position. TODO
+														// instead of slowing
+														// when we're going to
+														// land, slow when we're
+														// close to the landing
+														// site
+		} else {
 			return new PVector(0, 0);
 		}
 	}
-}
 
+	PVector velocityForInitialPosition(PVector initialPos, PVector stage) {
+
+		boolean isLeft = initialPos.x < stage.x / 2.0;
+		float yVel = Util.random(-0.5f, 0.8f);
+
+		if (isLeft) {
+			return new PVector(1, yVel);
+		} else {
+			return new PVector(-1, yVel);
+		}
+	}
+}

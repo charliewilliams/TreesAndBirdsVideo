@@ -9,7 +9,8 @@ import Model.Note;
 public class Branch {
 
 	boolean hasBird = false, finished = false;
-	private PVector origin, end;
+	private PVector origin;
+	PVector end;
 	private Tree tree; Leaf leaf; Flower flower;
 	private ArrayList<Branch> children = new ArrayList<Branch>();
 	private ArrayList<BranchBump> displayBumps = new ArrayList<BranchBump>();
@@ -243,7 +244,7 @@ public class Branch {
 
 	boolean canHaveBird() {
 
-		if (isTip()) {
+		if (hasBird || isTip()) {
 			return false;
 		}
 		for (Branch child: children) {

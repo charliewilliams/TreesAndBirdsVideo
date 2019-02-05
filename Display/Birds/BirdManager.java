@@ -3,6 +3,7 @@ import processing.core.*;
 import processing.opengl.*;
 import java.util.*;
 
+import Display.Trees.TreeManager;
 import Model.Note;
 
 public class BirdManager {
@@ -11,6 +12,7 @@ public class BirdManager {
 	private PApplet parent;
 	private Random r = new Random(0);
 	private Flock[] flocks = new Flock[12];
+	ArrayList<Bird> allBirds = new ArrayList<Bird>();
 	private PGraphics2D pg;
 	private PVector stage;
 	private static PVector offScreenArea = new PVector(100, 50);
@@ -30,11 +32,11 @@ public class BirdManager {
 		this.parent = parent;
 		
 		// Make the stage include the offscreen areas
-//		stage = new PVector(parent.width + offScreenArea.x * 2, parent.height + offScreenArea.y);
-		stage = new PVector(parent.width, parent.height);
+		stage = new PVector(parent.width + offScreenArea.x * 2, parent.height + offScreenArea.y);
+//		stage = new PVector(parent.width, parent.height);
 
 		pg = (PGraphics2D) parent.createGraphics((int)stage.x, (int)stage.y, PConstants.P2D);
-		pg.pixelDensity = 2;
+//		pg.pixelDensity = 2;
 		pg.noStroke();
 		pg.rectMode(PConstants.CENTER);
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
@@ -51,18 +53,18 @@ public class BirdManager {
 		Flock f = flocks[n.pitch % 12];
 
 		if (f == null) {
-			f = new Flock(n);
+			f = new Flock(n, TreeManager.instance().treeStackFor(n));
 			flocks[n.pitch % 12] = f;
 		}
 
-//		float posX = fromRight ? stage.x - offScreenArea.x : offScreenArea.x;
-//		float posY = r.nextFloat() * stage.y * 0.3333f;
-//		PVector pos = new PVector(posX, posY);
+		float posX = fromRight ? stage.x - offScreenArea.x : offScreenArea.x;
+		float posY = r.nextFloat() * stage.y * 0.3333f;
+		PVector pos = new PVector(posX, posY);
 
-		PVector pos = new PVector(parent.width / 2.0f, parent.height / 2.0f);
+//		PVector pos = new PVector(parent.width / 2.0f, parent.height / 2.0f);
 		
 //		PApplet.println(pos, fromRight ? "Right" : "Left");
-		f.addBird(stage, pos);
+		allBirds.add(f.addBird(stage, pos));
 	}
 
 	public void updateAndDraw() {
@@ -72,7 +74,7 @@ public class BirdManager {
 
 		for (Flock f: flocks) {
 			if (f != null) {
-				f.update(pg);
+				f.update(pg, allBirds);
 			}
 		}
 
@@ -81,6 +83,7 @@ public class BirdManager {
 		parent.blendMode(PConstants.BLEND);
 //		parent.blendMode(PConstants.DILATE);
 		
-		parent.image(pg, -offScreenArea.x, -offScreenArea.y, stage.x, stage.y);
+//		parent.image(pg, -offScreenArea.x, -offScreenArea.y, stage.x, stage.y);
+		parent.image(pg, 0, 0, parent.width, parent.height);
 	}
 }
