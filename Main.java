@@ -1,7 +1,7 @@
 import processing.core.*;
 import processing.sound.*;
-import java.util.Date;
-import com.hamoid.*;
+//import java.util.Date;
+//import com.hamoid.*;
 import Display.*;
 import Display.Birds.BirdManager;
 import Display.Trees.TreeManager;
@@ -9,8 +9,13 @@ import Model.*;
 
 public class Main extends PApplet {
 
-	boolean debug = true;
-	
+	boolean renderVideo = false;
+	boolean renderGlow = true;
+	int _frameRate = 30;
+	int totalFrames;
+	int prerollMillis = renderVideo ? 10000 : 2000;
+	int audioMillisPreroll = 2200;
+
 	public static void main(String[] args) {
 
 		PApplet.main("Main");
@@ -29,17 +34,15 @@ public class Main extends PApplet {
 	int highMel = 295000;
 
 	int millisOffset = 500;
-	int debugOffset = melodyStart;
+	int debugOffsetMillis = melodyStart;
 	int durationMillis;
 
 	public void settings() {
 
-		if (debug) {
-			size(1280, 720, P2D);
-		} else {
-			size(1920, 1080, P2D); // P2D, P3D, FX2D
-		}
-		pixelDensity(2);
+//		pixelDensity(2);
+		size(1692, 720, P2D); // P2D, P3D, FX2D
+		// size(2538, 1080, P2D);
+		
 	}
 
 	public void setup() {
@@ -47,8 +50,9 @@ public class Main extends PApplet {
 		randomSeed(0);
 		frameRate(60);
 		rectMode(CENTER);
+		ellipseMode(CENTER);
 		colorMode(HSB, 360, 100, 100, 100);
-		
+
 		background(0, 0, 51);
 		noStroke();
 
@@ -57,88 +61,63 @@ public class Main extends PApplet {
 		new TreeManager(this);
 		new BirdManager(this);
 
-		if (exportVideo) {
-			startVideoExport();
-		}
-
 		noteManager = new NoteManager(this, "song.json");
 
 		file = new SoundFile(this, "mix.mp3");
-		durationMillis = (int)(file.duration() * 1000);
-		file.jump(debugOffset / 1000.0f);
+		durationMillis = (int) (file.duration() * 1000);
+		file.jump(debugOffsetMillis / 1000.0f);
 		file.play();
+
+		if (renderVideo) {
+			float offsetSecs = (prerollMillis * 2 + audioMillisPreroll) / 1000;
+			totalFrames = (int) ((file.duration() + offsetSecs) * _frameRate);
+			println("Rendering", totalFrames, "frames.");
+		}
 
 		millisOffset += super.millis();
 	}
 
+	int _millis() {
+
+		if (renderVideo) {
+			// Don't base this off millis at all, you'll drop frames.
+			return frameCount * 1000 / _frameRate + debugOffsetMillis - prerollMillis;
+		} else {
+			return millis() + debugOffsetMillis - prerollMillis;
+		}
+	}
+
 	public void draw() {
 
-		int millis = millis();
+		int millis = _millis();
 
 		// Place the camera, draw the background
 		sceneManager.update(millis);
 
-		// Read notes from JSON in memory; add to managers if there are new notes this tick
+		// Read notes from JSON in memory; add to managers if there are new
+		// notes this tick
 		noteManager.readNotes(millis);
-		
+
 		// Update & draw trees
 		TreeManager.instance().draw();
-		
+
 		// Update & draw birds
 		BirdManager.instance().updateAndDraw();
 
-		if (debug) {
-			int seconds = millis / 1000;
-			int minutes = seconds / 60;
-			int displaySeconds = minutes > 0 ? seconds % 60 : seconds;
+		int seconds = millis / 1000;
+		int minutes = seconds / 60;
+		int displaySeconds = minutes > 0 ? seconds % 60 : seconds;
 
-			String txt_fps = String.format(" | %s | %02d:%02d | %2.0f fps", noteManager.locationString(), minutes, displaySeconds, frameRate);
-			surface.setTitle(txt_fps);
+		String txt_fps = String.format(" | %s | %02d:%02d | %2.0f fps", noteManager.locationString(), minutes,
+				displaySeconds, frameRate);
+		surface.setTitle(txt_fps);
+
+		if (renderVideo) {
+			saveFrame("temp/#####.png");
+
+			if (frameCount > totalFrames) {
+				exit();
+			}
 		}
-
-		if (exportVideo) {
-			videoExport.saveFrame();
-		}
-
-		if (millis > durationMillis) {
-			endMovieAndExit();
-		}
-	}
-
-	@Override public int millis() {
-		return super.millis() + debugOffset - millisOffset;
-	}
-
-	/*
-	 *  Video exportin'
-	 * */
-
-	VideoExport videoExport;
-
-	boolean exportVideo = !debug;
-
-	void startVideoExport() {
-
-		Date d = new Date();
-		videoExport = new VideoExport(this, "exp-" + d.getTime() + ".mp4");
-		videoExport.setQuality(90, 1); // Video, audio
-		videoExport.setFrameRate(30);
-		videoExport.setDebugging(false);
-		videoExport.startMovie();
-	}
-
-	public void keyPressed() {
-
-		if (exportVideo && key == 'q') {
-			endMovieAndExit();
-		}
-	}
-
-	void endMovieAndExit() {
-
-		if (exportVideo) {
-			videoExport.endMovie();
-		}
-		exit();
 	}
 }

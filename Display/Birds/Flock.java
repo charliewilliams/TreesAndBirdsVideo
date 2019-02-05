@@ -8,6 +8,7 @@ public class Flock {
 
 	int baseHue;
 	// TODO more flock-specific stuff about tweaking speed, behavior, appearance
+	// private class array of sizes or whatever
 	
 	ArrayList<Bird> birds = new ArrayList<Bird>();
 
