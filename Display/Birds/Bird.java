@@ -27,16 +27,16 @@ public class Bird {
 	float hue;
 	private float flap = 0;
 	static private float t = 0;
-	private boolean avoidWalls = true;
 	State state = State.flying;
 	private PVector stage;
 	PVector landingSite;
 	
-	float bottomWallY = stage.y * 0.666667f;
+	float bottomWallY;
 
 	Bird(PVector stage, PVector initialPos) {
 
 		this.stage = stage;
+		bottomWallY = stage.y * 0.666667f;
 		pos = initialPos;
 		vel = velocityForInitialPosition(initialPos, stage);
 		acc = new PVector(0, 0);
@@ -48,9 +48,6 @@ public class Bird {
 
 		perchOrFlap();
 
-		// acc.add(steer(new PVector(mouseX,mouseY,300),true));
-		// acc.add(new PVector(0,.05,0));
-
 		checkAvoidWalls();
 
 		// TODO add Avoid for other trees
@@ -59,80 +56,26 @@ public class Bird {
 
 		flock(allBirds, myFlock);
 		move();
-		checkBounds();
 		render(pg);
-
-		// PApplet.println(pos);
-	}
-	
-	class Wall {
-		PVector p1, p2;
-		long c;
-		Wall(PVector p1_, PVector p2_) {
-			p1 = p1_;
-			p2 = p2_;
-		}
-		void draw(PGraphics pg) {
-			pg.stroke(c);
-			pg.line(p1.x, p1.y, p2.x, p2.y);
-		}
-	}
-	
-	ArrayList<Wall>walls = new ArrayList<Wall>();
-	
-	void buildWalls() {
-		
-		float[] xCoords1 = { 0,           0,           stage.x,     stage.x };
-		float[] xCoords2 = { 0,           stage.x,     stage.x,     0 };
-		float[] yCoords1 = { 0,           bottomWallY, 0,           0 };
-		float[] yCoords2 = { bottomWallY, bottomWallY, bottomWallY, 0 };
-		
-		float[] xCoords = { 0, stage.x };
-		float[] yCoords = { 0, bottomWallY };
-		
-		for (int i = 0; i < 4; i++) {
-			
-			PVector p1 = new PVector(xCoords[i], yCoords[i]);
-			PVector p2 = new PVector(xCoords[i], yCoords[i]);
-			walls.add(new Wall(p1, p2));	
-		}
-		
-		
-		
-//		ps.line(0, 0, 0, bottomWallY);
-//		ps.line(0, bottomWallY, stage.x, bottomWallY);
-//		ps.line(stage.x, 0, stage.x, bottomWallY);
-//		ps.line(stage.x, 0, 0, 0);
 	}
 
-	static float wallAvoidWeight = 5;
+	private boolean avoidWalls = true;
+	static float wallAvoidWeight = 4;
 
 	void checkAvoidWalls() {
 
 		if (!avoidWalls) {
 			return;
 		}
-		// PVector avoidGround = avoid(new PVector(pos.x, stage.y * 0.6666667f),
-		// true);
-		// PApplet.println(avoidGround);
-		// acc.add(PVector.mult(avoidGround, wallAvoidWeight));
-		// PVector avoidLeftWall = avoid(new PVector(0, pos.y), true);
-		// PApplet.println(avoidLeftWall);
-		// acc.add(PVector.mult(avoidLeftWall, wallAvoidWeight));
-		
-		/*
-		
-		
-		ps.line(0, 0, 0, bottomWallY);
-		ps.line(0, bottomWallY, stage.x, bottomWallY);
-		ps.line(stage.x, 0, stage.x, bottomWallY);
-		ps.line(stage.x, 0, 0, 0);
-		*/
-
-		acc.add(PVector.mult(avoid(new PVector(stage.x, pos.y), true), wallAvoidWeight));
-		acc.add(PVector.mult(avoid(new PVector(0, pos.y), true), wallAvoidWeight));
-		acc.add(PVector.mult(avoid(new PVector(pos.x, 0), true), wallAvoidWeight));
-		acc.add(PVector.mult(avoid(new PVector(pos.x, stage.y * 0.6666667f), true), wallAvoidWeight));
+		 PVector avoidGround    = avoid(new PVector(pos.x,   bottomWallY), true);
+		 PVector avoidCeiling   = avoid(new PVector(pos.x,   0), true);
+		 PVector avoidLeftWall  = avoid(new PVector(0,       pos.y), true);
+		 PVector avoidRightWall = avoid(new PVector(stage.x, pos.y), true);
+		 
+		 acc.add(PVector.mult(avoidGround, wallAvoidWeight));
+		 acc.add(PVector.mult(avoidLeftWall, wallAvoidWeight));
+		 acc.add(PVector.mult(avoidCeiling, wallAvoidWeight));
+		 acc.add(PVector.mult(avoidRightWall, wallAvoidWeight));
 	}
 
 	void perchOrFlap() {
@@ -191,17 +134,7 @@ public class Bird {
 		ps.stroke(255);
 
 		// Draw walls for debug
-		drawWalls(ps);
-
-		/*
-		 * acc.add(PVector.mult(avoid(new PVector(stage.x, pos.y), true),
-		 * wallAvoidWeight)); acc.add(PVector.mult(avoid(new PVector(0, pos.y),
-		 * true), wallAvoidWeight)); acc.add(PVector.mult(avoid(new
-		 * PVector(pos.x, 0), true), wallAvoidWeight));
-		 * acc.add(PVector.mult(avoid(new PVector(pos.x, stage.y * 0.6666667f),
-		 * true), wallAvoidWeight));
-		 */
-		// end debug
+//		drawWalls(ps);
 
 		ps.pushMatrix();
 		ps.translate(pos.x, pos.y);
@@ -255,10 +188,13 @@ public class Bird {
 	PVector avoid(PVector target, boolean weight) {
 
 		PVector steer = new PVector(); // creates vector for steering
-		steer.set(PVector.sub(pos, target)); // steering vector points away from
-												// target
+		steer.set(PVector.sub(pos, target)); // steering vector points away from target
+		
+//		double dist = Math.sqrt(PVector.dist(pos, target));
+		double dist = PVector.dist(pos, target);
 		if (weight) {
-			steer.mult((float) (1 / Math.sqrt(PVector.dist(pos, target))));
+			double divisor = dist * dist + 1;
+			steer.mult((float) (1 / divisor));
 		}
 		steer.limit(maxSteerForce); // limits the steering force to
 									// maxSteerForce
