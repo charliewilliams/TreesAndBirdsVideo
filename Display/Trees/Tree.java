@@ -8,7 +8,6 @@ public class Tree {
 	int idx;
 	float alpha;
 	float leafSize = 0, flowerSize = 0;
-	PVector pos;
 	Branch root;
 	ArrayList<Branch> branches = new ArrayList<Branch>();
 

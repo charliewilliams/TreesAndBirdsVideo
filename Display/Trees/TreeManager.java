@@ -21,10 +21,11 @@ public class TreeManager {
 	public TreeStack treeStackFor(Note n) {
 
 		// Offset so that e is the lowest pitch
-		int offset = 4;
+		int offset = 8;
 		int i = (n.pitch + offset) % 12;
 		float eachTreeSpace = parent.width / (pitchClassTrees.length + 2);
-		PVector pos = new PVector(eachTreeSpace * (i + 1), parent.height * 0.75f + Util.randomf(-20, 20));
+		float yOffset = n.isBlackKey() ? 55 : 0;
+		PVector pos = new PVector(eachTreeSpace * (i + 2), parent.height * 0.8f + Util.randomf(-10, 10) - yOffset);
 		int numChildren = (int) Util.random(3, 8);
 
 		TreeStack pitchClassTreeStack = pitchClassTrees[i];

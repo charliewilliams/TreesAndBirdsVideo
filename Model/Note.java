@@ -12,8 +12,13 @@ public class Note extends Event {
 		velocity = vel;
 		duration = dur;
 //		freq = midiToFreq(num);
-		name = noteNameFromNumber(num);
+		name = noteNameFromNumber(num, true);
+		pitchClass = noteNameFromNumber(num, false);
 		channel = chan;
+	}
+	
+	public boolean isBlackKey() {
+		return pitchClass.length() > 1;
 	}
 
 	void end() {
@@ -30,6 +35,7 @@ public class Note extends Event {
 	int noteNumber;
 	public int pitch;
 	private String name;
+	public String pitchClass;
 	public float velocity; // normalized 0-1
 	float duration; // seconds
 //	private float freq;
@@ -37,10 +43,10 @@ public class Note extends Event {
 
 	/* Utility */
 
-	private String noteNameFromNumber(int num) {
+	private String noteNameFromNumber(int num, boolean withOctave) {
 		int  nNote = num % 12;
 		int  nOctave = num / 12;
-		return noteNames[nNote] + (nOctave - 1);
+		return withOctave ? noteNames[nNote] + (nOctave - 1) : noteNames[nNote];
 	}
 
 //	private float midiToFreq(int note) {
