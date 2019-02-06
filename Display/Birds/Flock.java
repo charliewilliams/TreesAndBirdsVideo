@@ -2,6 +2,8 @@ package Display.Birds;
 
 import processing.core.*;
 import Model.*;
+import Util.Util;
+
 import java.util.*;
 
 import Display.Birds.Bird.State;
@@ -29,6 +31,7 @@ public class Flock {
 	Bird addBird(PVector stage, PVector pos) {
 
 		Bird newB = new Bird(stage, pos);
+		newB.hue = baseHue + Util.random(-5, 5);
 		birds.add(newB);
 		return newB;
 	}

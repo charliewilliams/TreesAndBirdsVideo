@@ -24,7 +24,7 @@ public class Bird {
 	private PVector vel;
 	private PVector acc;
 
-	float hue;
+	float hue, sat, bri;
 	private float flap = 0;
 	static private float t = 0;
 	State state = State.flying;
@@ -40,6 +40,9 @@ public class Bird {
 		pos = initialPos;
 		vel = velocityForInitialPosition(initialPos, stage);
 		acc = new PVector(0, 0);
+		
+		sat = Util.random(50, 100);
+		bri = Util.random(50, 100);
 
 		PApplet.println("New bird", pos);
 	}
@@ -130,8 +133,8 @@ public class Bird {
 
 		float r = 2;
 
-		ps.fill(200, 100);
-		ps.stroke(255);
+		ps.fill(hue, sat, bri);
+		ps.stroke(hue, 100, 50);
 
 		// Draw walls for debug
 //		drawWalls(ps);
@@ -190,7 +193,6 @@ public class Bird {
 		PVector steer = new PVector(); // creates vector for steering
 		steer.set(PVector.sub(pos, target)); // steering vector points away from target
 		
-//		double dist = Math.sqrt(PVector.dist(pos, target));
 		double dist = PVector.dist(pos, target);
 		if (weight) {
 			double divisor = dist * dist + 1;
@@ -243,14 +245,8 @@ public class Bird {
 
 		// As long as the vector is greater than 0
 		if (steer.mag() > 0) {
-			// First two lines of code below could be condensed with new PVector
-			// setMag() method
-			// Not using this method until Processing.js catches up
-			steer.setMag(maxSpeed);
 
-			// Implement Reynolds: Steering = Desired - Velocity
-			// steer.normalize();
-			// steer.mult(maxSpeed);
+			steer.setMag(maxSpeed);
 			steer.sub(vel);
 			steer.limit(maxSteerForce);
 		}
