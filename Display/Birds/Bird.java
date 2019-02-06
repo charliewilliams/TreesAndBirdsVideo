@@ -31,6 +31,8 @@ public class Bird {
 	State state = State.flying;
 	private PVector stage;
 	PVector landingSite;
+	
+	float bottomWallY = stage.y * 0.666667f;
 
 	Bird(PVector stage, PVector initialPos) {
 
@@ -38,7 +40,7 @@ public class Bird {
 		pos = initialPos;
 		vel = velocityForInitialPosition(initialPos, stage);
 		acc = new PVector(0, 0);
-		
+
 		PApplet.println("New bird", pos);
 	}
 
@@ -62,6 +64,46 @@ public class Bird {
 
 		// PApplet.println(pos);
 	}
+	
+	class Wall {
+		PVector p1, p2;
+		long c;
+		Wall(PVector p1_, PVector p2_) {
+			p1 = p1_;
+			p2 = p2_;
+		}
+		void draw(PGraphics pg) {
+			pg.stroke(c);
+			pg.line(p1.x, p1.y, p2.x, p2.y);
+		}
+	}
+	
+	ArrayList<Wall>walls = new ArrayList<Wall>();
+	
+	void buildWalls() {
+		
+		float[] xCoords1 = { 0,           0,           stage.x,     stage.x };
+		float[] xCoords2 = { 0,           stage.x,     stage.x,     0 };
+		float[] yCoords1 = { 0,           bottomWallY, 0,           0 };
+		float[] yCoords2 = { bottomWallY, bottomWallY, bottomWallY, 0 };
+		
+		float[] xCoords = { 0, stage.x };
+		float[] yCoords = { 0, bottomWallY };
+		
+		for (int i = 0; i < 4; i++) {
+			
+			PVector p1 = new PVector(xCoords[i], yCoords[i]);
+			PVector p2 = new PVector(xCoords[i], yCoords[i]);
+			walls.add(new Wall(p1, p2));	
+		}
+		
+		
+		
+//		ps.line(0, 0, 0, bottomWallY);
+//		ps.line(0, bottomWallY, stage.x, bottomWallY);
+//		ps.line(stage.x, 0, stage.x, bottomWallY);
+//		ps.line(stage.x, 0, 0, 0);
+	}
 
 	static float wallAvoidWeight = 5;
 
@@ -77,6 +119,15 @@ public class Bird {
 		// PVector avoidLeftWall = avoid(new PVector(0, pos.y), true);
 		// PApplet.println(avoidLeftWall);
 		// acc.add(PVector.mult(avoidLeftWall, wallAvoidWeight));
+		
+		/*
+		
+		
+		ps.line(0, 0, 0, bottomWallY);
+		ps.line(0, bottomWallY, stage.x, bottomWallY);
+		ps.line(stage.x, 0, stage.x, bottomWallY);
+		ps.line(stage.x, 0, 0, 0);
+		*/
 
 		acc.add(PVector.mult(avoid(new PVector(stage.x, pos.y), true), wallAvoidWeight));
 		acc.add(PVector.mult(avoid(new PVector(0, pos.y), true), wallAvoidWeight));
@@ -140,16 +191,8 @@ public class Bird {
 		ps.stroke(255);
 
 		// Draw walls for debug
-		ps.strokeWeight(5);
-		ps.stroke(255, 0, 0, 255);
-		ps.line(0, 0, 0, stage.y);
-		ps.stroke(0, 255, 0, 255);
-		ps.line(0, stage.y, stage.x, stage.y);
-		ps.stroke(0, 0, 255, 255);
-		ps.line(stage.x, stage.y, 0, stage.y);
-		ps.stroke(255, 0, 255, 255);
-		ps.line(stage.x, 0, 0, 0);
-		ps.stroke(255);
+		drawWalls(ps);
+
 		/*
 		 * acc.add(PVector.mult(avoid(new PVector(stage.x, pos.y), true),
 		 * wallAvoidWeight)); acc.add(PVector.mult(avoid(new PVector(0, pos.y),
@@ -169,6 +212,20 @@ public class Bird {
 		ps.vertex(r, r * 2);
 		ps.endShape();
 		ps.popMatrix();
+	}
+	
+	void drawWalls(PGraphics2D ps) {
+		
+		ps.strokeWeight(5);
+		ps.stroke(255, 0, 0, 255); // left - red
+		ps.line(0, 0, 0, bottomWallY);
+		ps.stroke(0, 255, 0, 255); // bottom - green
+		ps.line(0, bottomWallY, stage.x, bottomWallY);
+		ps.stroke(0, 0, 255, 255); // right - blue
+		ps.line(stage.x, 0, stage.x, bottomWallY);
+		ps.stroke(255, 0, 255, 255); // top - magenta
+		ps.line(stage.x, 0, 0, 0);
+		ps.stroke(255);
 	}
 
 	// steering. If arrival==true, the boid slows to meet the target. Credit to
@@ -293,7 +350,8 @@ public class Bird {
 				count++;
 			}
 		}
-		if (count > 0) {
+		if (count > 0 && sum.mag() > 0) {
+			
 			sum.div((float) count);
 			sum.setMag(maxSpeed);
 

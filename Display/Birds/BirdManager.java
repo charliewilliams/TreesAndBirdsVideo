@@ -61,9 +61,6 @@ public class BirdManager {
 		float posY = r.nextFloat() * stage.y * 0.3333f;
 		PVector pos = new PVector(posX, posY);
 
-//		PVector pos = new PVector(parent.width / 2.0f, parent.height / 2.0f);
-		
-//		PApplet.println(pos, fromRight ? "Right" : "Left");
 		allBirds.add(f.addBird(stage, pos));
 	}
 
