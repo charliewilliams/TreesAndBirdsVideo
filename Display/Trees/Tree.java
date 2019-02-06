@@ -19,10 +19,14 @@ public class Tree {
 		
 		// Branch(PApplet parent, PVector origin, float bSize, float theta, float depth, float noiseOffset, boolean isEnd)
 		root = new Branch(parent, 100);
+		branches.add(root);
 	}
 
-	boolean grow(Note n) {
-		return root.grow(n);
+	ArrayList<Branch> grow(Note n) {
+		
+		ArrayList<Branch> newChildren = root.grow(n);
+		branches.addAll(newChildren);
+		return newChildren;
 	}
 	
 	boolean addFlower(Flower.Type flowerType) {

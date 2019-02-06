@@ -38,7 +38,7 @@ public class TreeStack {
 
 		Collections.shuffle(trees);
 		for (Tree t : trees) {
-			if (t.grow(note)) {
+			if (t.grow(note).size() > 0) {
 				break;
 			}
 		}
@@ -46,6 +46,7 @@ public class TreeStack {
 
 	void addFlower() {
 
+		Collections.shuffle(trees);
 		for (Tree t : trees) {
 			if (t.addFlower(flowerType)) {
 				break;
@@ -83,14 +84,18 @@ public class TreeStack {
 
 	public PVector acquireLandingSite(Bird b) {
 
+		Collections.shuffle(trees);
 		for (Tree t : trees) {
-
+			
+			Collections.shuffle(t.branches);
 			for (Branch br : t.branches) {
 
-				if (br.canHaveBird()) {
+				if (!br.hasBird) {
 					
 					br.hasBird = true;
-					return br.end;
+					PVector absolutePos = PVector.add(pos, br.end);
+					PApplet.println("Got spot", absolutePos, "for bird at", b.pos());
+					return absolutePos;
 				}
 			}
 		}

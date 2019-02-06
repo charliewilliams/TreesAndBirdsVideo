@@ -24,7 +24,7 @@ public class TreeManager {
 		int offset = 4;
 		int i = (n.pitch + offset) % 12;
 		float eachTreeSpace = parent.width / (pitchClassTrees.length + 2);
-		PVector pos = new PVector(eachTreeSpace * (i + 1), parent.height * 0.75f + Util.random(-20, 20));
+		PVector pos = new PVector(eachTreeSpace * (i + 1), parent.height * 0.75f + Util.randomf(-20, 20));
 		int numChildren = (int) Util.random(3, 8);
 
 		TreeStack pitchClassTreeStack = pitchClassTrees[i];

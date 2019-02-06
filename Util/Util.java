@@ -2,9 +2,15 @@ package Util;
 
 public class Util {
 
-	static public float random(float low, float high) {
+	static public double random(double d, double e) {
 
-		float range = high - low;
-		return (float) (Math.random() * range + low);
+		double range = e - d;
+		return Math.random() * range + d;
+	}
+	
+	static public float randomf(float d, float e) {
+
+		float range = e - d;
+		return (float)(Math.random() * range + d);
 	}
 }
