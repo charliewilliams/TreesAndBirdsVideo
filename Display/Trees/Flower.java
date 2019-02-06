@@ -22,10 +22,10 @@ public class Flower {
 		
 		case Sakura:
 			
-			float w = Util.random(155, 255);
-			pg.stroke(255, w, w, Util.random(32, 192));
-			pg.strokeWeight(Util.random(0, 8));
-			pg.point(pos.x + Util.random(-2, 2), pos.y + Util.random(-2, 2));
+			float w = Util.randomf(155, 255);
+			pg.stroke(255, w, w, Util.randomf(32, 192));
+			pg.strokeWeight(Util.randomf(0, 8));
+			pg.point(pos.x + Util.randomf(-2, 2), pos.y + Util.randomf(-2, 2));
 			break;
 			
 		case White:

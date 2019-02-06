@@ -23,17 +23,16 @@ public class TreeManager {
 		// Offset so that e is the lowest pitch
 		int offset = 8;
 		int i = (n.pitch + offset) % 12;
-		float eachTreeSpace = parent.width / (pitchClassTrees.length + 2);
-		float yOffset = n.isBlackKey() ? 55 : 0;
-		PVector pos = new PVector(eachTreeSpace * (i + 2), parent.height * 0.8f + Util.randomf(-10, 10) - yOffset);
-		int numChildren = (int) Util.random(3, 8);
-
 		TreeStack pitchClassTreeStack = pitchClassTrees[i];
 
 		if (pitchClassTreeStack == null) {
+			
+			float eachTreeSpace = parent.width / (pitchClassTrees.length + 2);
+			float yOffset = n.isBlackKey() ? 55 : 0;
+			PVector pos = new PVector(eachTreeSpace * (i + 2), parent.height * 0.8f + Util.randomf(-10, 10) - yOffset);
+			int numChildren = (int) Util.random(3, 8);
 
-			// TreeStack(int numChildren, PApplet parent, Note n, int baseIndex,
-			// float noiseOffset)
+			// TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, float noiseOffset)
 			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, idx, pos);
 
 			idx += numChildren;
@@ -65,7 +64,7 @@ public class TreeManager {
 		// Notes are added ~500ms before they sound; use `timestamp` to
 		// determine when they should take visual effect
 
-		// TODO - something different?
+		// TODO - something different? Maybe grow roots?
 		treeStackFor(n).grow(n);
 	}
 

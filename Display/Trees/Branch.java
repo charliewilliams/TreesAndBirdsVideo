@@ -11,9 +11,10 @@ public class Branch {
 	boolean hasBird = false, finished = false;
 	private PVector origin;
 	PVector end;
-	private Tree tree;
+//	private Tree tree;
 	Leaf leaf;
 	Flower flower;
+	float flowerSize, leafSize;
 	private ArrayList<Branch> children = new ArrayList<Branch>();
 	private ArrayList<BranchBump> displayBumps = new ArrayList<BranchBump>();
 
@@ -27,12 +28,14 @@ public class Branch {
 
 	static private float piOver5 = (float) (Math.PI / 5.0);
 	static private float piOver15 = (float) (Math.PI / 15.0);
+	private boolean isRoot = false;
 
 	// Root
-	Branch(PApplet parent, float length) {
+	Branch(PApplet parent, float length, float flowerSize, float leafSize) {
 
 		this.parent = parent;
 		this.origin = new PVector();
+		isRoot = true;
 
 		// initialLength = length / 4.0f;
 		// finalLength = length;
@@ -40,11 +43,13 @@ public class Branch {
 		end = new PVector(0, -length);
 		angle = PVector.angleBetween(end, origin);
 
+		this.flowerSize = flowerSize;
+		this.leafSize = leafSize;
 		// makeBumps();
 	}
 
 	// Normal branch
-	Branch(PApplet parent, PVector origin, PVector end, int depth) {
+	Branch(PApplet parent, PVector origin, PVector end, int depth, float flowerSize, float leafSize) {
 
 		this.parent = parent;
 		this.origin = origin;
@@ -53,6 +58,8 @@ public class Branch {
 		length = PVector.dist(origin, end);
 		angle = PVector.angleBetween(end, origin);
 
+		this.flowerSize = flowerSize;
+		this.leafSize = leafSize;
 		// makeBumps();
 	}
 
@@ -110,11 +117,11 @@ public class Branch {
 		// 0-3 children
 
 		// 90% chance of first child
-		if (Util.random(0, 1) > 0.1) {
+		if (Util.random(0, 1) > 0.1 || isRoot) {
 			newChildren.add(makeChild());
 		}
 		// 90% chance of 2nd child
-		if (Util.random(0, 1) > 0.4) {
+		if (Util.random(0, 1) > 0.4 || isRoot) {
 			newChildren.add(makeChild());
 		}
 		// 10% chance of 3rd child
@@ -139,7 +146,7 @@ public class Branch {
 		dir.mult(Util.randomf(0.5f, 0.7f));
 		PVector newEnd = PVector.add(end, dir);
 
-		return new Branch(parent, end, newEnd, depth + 1);
+		return new Branch(parent, end, newEnd, depth + 1, flowerSize, leafSize);
 	}
 
 	private float suitableRangomAngle() {
@@ -237,11 +244,11 @@ public class Branch {
 		}
 		// Draw a leaf and/or flower if necessary
 		if (leaf != null) {
-			leaf.draw(pg, tree.leafSize);
+			leaf.draw(pg, leafSize);
 		}
 
 		if (flower != null) {
-			flower.draw(pg, tree.flowerSize);
+			flower.draw(pg, flowerSize);
 		}
 	}
 

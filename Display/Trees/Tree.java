@@ -7,17 +7,19 @@ public class Tree {
 	
 	int idx;
 	float alpha;
-	float leafSize = 0, flowerSize = 0;
+	float leafSize = 10, flowerSize = 10;
 	Branch root;
 	ArrayList<Branch> branches = new ArrayList<Branch>();
 
-	Tree(PApplet parent, Note n, int idx, float alpha) {
+	Tree(PApplet parent, Note n, int idx, float alpha, float flowerSize, float leafSize) {
 
 		this.idx = idx; // Global idx for physics
 		this.alpha = alpha; // gives fake depth
+		this.flowerSize = flowerSize;
+		this.leafSize = leafSize;
 		
 		// Branch(PApplet parent, PVector origin, float bSize, float theta, float depth, float noiseOffset, boolean isEnd)
-		root = new Branch(parent, 100);
+		root = new Branch(parent, 100, flowerSize, leafSize);
 		branches.add(root);
 	}
 
