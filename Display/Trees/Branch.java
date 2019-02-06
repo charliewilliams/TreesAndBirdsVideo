@@ -8,10 +8,9 @@ import Model.Note;
 
 public class Branch {
 
-	boolean hasBird = false, finished = false;
+	boolean hasBird = false, finished = false, isRoot = false;
 	private PVector origin;
 	PVector end;
-//	private Tree tree;
 	Leaf leaf;
 	Flower flower;
 	float flowerSize, leafSize;
@@ -28,7 +27,6 @@ public class Branch {
 
 	static private float piOver5 = (float) (Math.PI / 5.0);
 	static private float piOver15 = (float) (Math.PI / 15.0);
-	private boolean isRoot = false;
 
 	// Root
 	Branch(PApplet parent, float length, float flowerSize, float leafSize) {
@@ -205,8 +203,14 @@ public class Branch {
 		}
 
 		// Draw the basic line for our branch (debug)
-		pg.stroke(hue, 100, 50, alpha);
-		pg.fill(hue, 100, 50, alpha);
+		if (hasBird) {
+			pg.stroke(0, 100, 100, 100);
+			pg.fill(0, 100, 100, 100);
+		} else {
+			pg.stroke(hue, 100, 50, alpha);
+			pg.fill(hue, 100, 50, alpha);
+		}
+
 		pg.line(origin.x, origin.y, end.x, end.y);
 		pg.ellipse(end.x, end.y, 4, 4);
 

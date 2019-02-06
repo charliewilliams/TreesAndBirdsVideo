@@ -103,7 +103,7 @@ public class TreeStack {
 			Collections.shuffle(t.branches);
 			for (Branch br : t.branches) {
 
-				if (!br.hasBird) {
+				if (br.hasBird == false) {
 					
 					br.hasBird = true;
 					PVector absolutePos = PVector.add(pos, br.end);

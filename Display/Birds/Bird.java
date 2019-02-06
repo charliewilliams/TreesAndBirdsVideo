@@ -4,6 +4,7 @@ import processing.core.*;
 import processing.opengl.*;
 import java.util.*;
 
+import Model.Note;
 import Util.Util;
 
 public class Bird {
@@ -38,9 +39,12 @@ public class Bird {
 	PVector landingSite;
 
 	float bottomWallY;
+	
+	Note n;
 
-	Bird(PVector stage, PVector initialPos, double flapSpeed_) {
+	Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_) {
 
+		this.n = n;
 		this.stage = stage;
 		bottomWallY = stage.y * 0.666667f;
 		pos = initialPos;
@@ -66,7 +70,10 @@ public class Bird {
 
 		// TODO add Avoid for other trees
 
-		// TODO if landing add Steer toward the home tree + landing = true
+		if (landingSite != null) {
+			float landingSiteMult = 5;
+			acc.add(PVector.mult(steer(landingSite, true), landingSiteMult));
+		}
 
 		flock(allBirds, myFlock);
 		move();
@@ -188,6 +195,11 @@ public class Bird {
 		
 		ps.strokeWeight(2);
 		ps.line(pos.x, pos.y, landingSite.x, landingSite.y);
+		
+		ps.fill(255);
+		ps.text(n.pitchClass, pos.x, pos.y);
+		ps.fill(0);
+		ps.text(n.pitchClass, landingSite.x, landingSite.y);
 	}
 
 	// steering. If arrival==true, the boid slows to meet the target. Credit to

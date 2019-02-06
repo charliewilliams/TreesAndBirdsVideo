@@ -34,7 +34,7 @@ public class Flock {
 
 	Bird addBird(PVector stage, PVector pos) {
 
-		Bird newB = new Bird(stage, pos, flapSpeed);
+		Bird newB = new Bird(note, stage, pos, flapSpeed);
 		newB.hue = baseHue + Util.randomf(-5, 5);
 		newB.size = baseSize + Util.randomf(-0.5f, 0.5f);
 		birds.add(newB);
