@@ -17,8 +17,28 @@ public class TreeManager {
 	private PApplet parent;
 
 	private TreeStack[] pitchClassTrees = new TreeStack[12];
+
 	public TreeStack treeStackFor(Note n) {
-		return pitchClassTrees[n.pitch % 12];
+
+		// Offset so that e is the lowest pitch
+		int offset = 4;
+		int i = (n.pitch + offset) % 12;
+		float eachTreeSpace = parent.width / (pitchClassTrees.length + 2);
+		PVector pos = new PVector(eachTreeSpace * (i + 1), parent.height * 0.75f + Util.random(-20, 20));
+		int numChildren = (int) Util.random(3, 8);
+
+		TreeStack pitchClassTreeStack = pitchClassTrees[i];
+
+		if (pitchClassTreeStack == null) {
+
+			// TreeStack(int numChildren, PApplet parent, Note n, int baseIndex,
+			// float noiseOffset)
+			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, idx, pos);
+
+			idx += numChildren;
+		}
+
+		return pitchClassTrees[i];
 	}
 
 	public TreeManager(PApplet parent) {
@@ -36,27 +56,7 @@ public class TreeManager {
 		// Notes are added ~500ms before they sound; use `timestamp` to
 		// determine when they should take visual effect
 
-		// Offset so that e is the lowest pitch
-		int offset = 4;
-		int i = (n.pitch + offset) % 12;
-		TreeStack pitchClassTreeStack = pitchClassTrees[i];
-
-		if (pitchClassTreeStack == null) {
-
-			float eachTreeSpace = parent.width / (pitchClassTrees.length + 2);
-			PVector pos = new PVector(eachTreeSpace * (i + 1), parent.height * 0.75f + Util.random(-20, 20));
-			int numChildren = (int) Util.random(3, 8);
-
-			// TreeStack(int numChildren, PApplet parent, Note n, int baseIndex,
-			// float noiseOffset)
-			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, idx, pos);
-
-			idx += numChildren;
-
-		} else {
-
-			pitchClassTreeStack.grow(n);
-		}
+		treeStackFor(n).grow(n);
 	}
 
 	public void addChangeNote(Note n, boolean b) {
@@ -64,7 +64,8 @@ public class TreeManager {
 		// Notes are added ~500ms before they sound; use `timestamp` to
 		// determine when they should take visual effect
 
-		// TODO
+		// TODO - something different?
+		treeStackFor(n).grow(n);
 	}
 
 	public void draw() {

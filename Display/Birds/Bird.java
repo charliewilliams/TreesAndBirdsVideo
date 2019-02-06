@@ -14,7 +14,7 @@ public class Bird {
 
 	static private float neighborhoodRadius = 500; // radius in which it looks
 													// for fellow boids
-	static private float desiredseparation = 75.0f;
+	static private float desiredseparation = 25.0f;
 	static private float maxSpeed = 3; // 4; //maximum magnitude for the
 										// velocity vector
 	static private float maxSteerForce = 0.03f; // 0.1f; //maximum magnitude of
@@ -99,7 +99,7 @@ public class Bird {
 
 		acc.add(PVector.mult(ali, 1));
 		acc.add(PVector.mult(coh, 3));
-		acc.add(PVector.mult(sep, 1));
+		acc.add(PVector.mult(sep, 5));
 	}
 
 	void scatter() {

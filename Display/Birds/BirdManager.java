@@ -72,6 +72,7 @@ public class BirdManager {
 		for (Flock f: flocks) {
 			if (f != null) {
 				f.update(pg, allBirds);
+				f.land();
 			}
 		}
 
@@ -80,7 +81,7 @@ public class BirdManager {
 		parent.blendMode(PConstants.BLEND);
 //		parent.blendMode(PConstants.DILATE);
 		
-//		parent.image(pg, -offScreenArea.x, -offScreenArea.y, stage.x, stage.y);
-		parent.image(pg, 0, 0, parent.width, parent.height);
+		parent.image(pg, -offScreenArea.x, -offScreenArea.y, stage.x, stage.y); // real version
+//		parent.image(pg, 0, 0, parent.width, parent.height); // put the offstage area onscreen for debugging
 	}
 }
