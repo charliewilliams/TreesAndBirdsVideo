@@ -15,6 +15,7 @@ public class Flock {
 	private Note note;
 	private TreeStack treeStack;
 	int baseHue;
+	float baseSize;
 	// TODO more flock-specific stuff about tweaking speed, behavior, appearance
 	// private class array of sizes or whatever
 
@@ -26,12 +27,14 @@ public class Flock {
 		treeStack = t;
 		// Set baseHue from note.pitch % 12
 		baseHue = 360 / ((note.pitch % 12) + 1);
+		baseSize = Util.random(2, 10);
 	}
 
 	Bird addBird(PVector stage, PVector pos) {
 
 		Bird newB = new Bird(stage, pos);
 		newB.hue = baseHue + Util.random(-5, 5);
+		newB.size = baseSize + Util.random(-0.5f, 0.5f);
 		birds.add(newB);
 		return newB;
 	}

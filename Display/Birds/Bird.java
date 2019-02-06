@@ -25,6 +25,7 @@ public class Bird {
 	private PVector acc;
 
 	float hue, sat, bri;
+	float size;
 	private float flap = 0;
 	static private float t = 0;
 	State state = State.flying;
@@ -131,7 +132,7 @@ public class Bird {
 		// Draw a triangle rotated in the direction of velocity
 		float theta = (float) (vel.heading() + Math.toRadians(90));
 
-		float r = 2;
+		float r = size;
 
 		ps.fill(hue, sat, bri);
 		ps.stroke(hue, 100, 50);
