@@ -41,6 +41,9 @@ public class Bird {
 	float bottomWallY;
 
 	Note n;
+	
+	static private int birdCount = 0;
+	private int birdSerialNumber;
 
 	Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_) {
 
@@ -55,6 +58,7 @@ public class Bird {
 		bri = Util.randomf(50, 100);
 		flapSpeed = flapSpeed_ + Util.random(-0.05, 0.05);
 
+		birdSerialNumber = birdCount++;
 		// PApplet.println("New bird", pos);
 	}
 
@@ -72,11 +76,11 @@ public class Bird {
 
 		if (landingSite != null) {
 
-			float landingSiteRadius = 5;
+			float landingSiteRadius = 15;
+			float landingSiteMult = 0.5f;
 			if (PVector.dist(pos, landingSite) < landingSiteRadius) {
 				state = State.landed;
 			} else {
-				float landingSiteMult = 15;
 				acc.add(PVector.mult(steer(landingSite, true), landingSiteMult));
 			}
 		}
@@ -133,8 +137,7 @@ public class Bird {
 
 		acc.y += flap / 20.0;
 		vel.add(acc); // add acceleration to velocity
-		vel.limit(maxSpeed); // make sure the velocity vector magnitude does not
-								// exceed maxSpeed
+		vel.limit(maxSpeed); // make sure the velocity vector magnitude does not exceed maxSpeed
 		pos.add(vel); // add velocity to position
 		acc.mult(0); // reset acceleration
 	}
@@ -208,8 +211,8 @@ public class Bird {
 		ps.line(pos.x, pos.y, landingSite.x, landingSite.y);
 
 		// labels
-//		ps.fill(255);
-//		ps.text(n.pitchClass, pos.x, pos.y);
+		ps.fill(255);
+		ps.text(birdSerialNumber, pos.x, pos.y);
 		ps.fill(0);
 		ps.text(n.pitchClass, landingSite.x, landingSite.y);
 	}
@@ -236,9 +239,15 @@ public class Bird {
 	PVector avoid(PVector target, boolean weight) {
 
 		PVector steer = new PVector(); // creates vector for steering
-		steer.set(PVector.sub(pos, target)); // steering vector points away from target
+		PVector direction = PVector.sub(pos, target);
+		steer.set(direction); // steering vector points away from target
 
 		double dist = PVector.dist(pos, target);
+		
+//		if (dist < 5) {
+//			PVector random = new PVector(Util.randomf(-0.5f, 0.5f), Util.randomf(-0.5f, 0.5f), 0.0f);
+//			steer = PVector.add(steer, random);
+//		}
 		if (weight) {
 			double divisor = dist * dist + 1;
 			steer.mult((float) (1 / divisor));
@@ -254,7 +263,7 @@ public class Bird {
 		// For every boid in the system, check if it's too close
 		for (Bird other : boids) {
 			
-			if (other.state != State.flying) {
+			if (this == other || other.state != State.flying) {
 				continue;
 			}
 
@@ -290,7 +299,7 @@ public class Bird {
 		int count = 0;
 		for (Bird other : boids) {
 			
-			if (other.state != State.flying) {
+			if (this == other || other.state != State.flying) {
 				continue;
 			}
 			
@@ -320,7 +329,7 @@ public class Bird {
 		int count = 0;
 		for (Bird other : boids) {
 			
-			if (other.state != State.flying) {
+			if (this == other || other.state != State.flying) {
 				continue;
 			}
 			

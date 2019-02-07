@@ -47,7 +47,7 @@ public class Flock {
 
 			// TODO call an Update based on what's happening in the song - call
 			// flock(), flee(), enter(), leave() etc
-			b.hue = baseHue;
+//			b.hue = baseHue;
 			b.run(allBirds, birds, pg);
 		}
 	}
