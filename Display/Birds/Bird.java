@@ -15,8 +15,8 @@ public class Bird {
 
 	static private float neighborhoodRadius = 500; // radius in which it looks
 													// for fellow boids
-	static private float desiredseparation = 25.0f;
-	static private float maxSpeed = 3; // 4; //maximum magnitude for the
+	static private float	desiredseparation	= 25.0f;
+	static private float	maxSpeed			= 3;	// 4; //maximum magnitude for the
 										// velocity vector
 	static private float maxSteerForce = 0.03f; // 0.1f; //maximum magnitude of
 												// the steering vector
@@ -27,19 +27,19 @@ public class Bird {
 		return pos;
 	}
 
-	private PVector vel;
-	private PVector acc;
+	private PVector	vel;
+	private PVector	acc;
 
-	float hue, sat, bri;
-	float size;
-	private double flap = 0;
-	private float t = 0;
-	State state = State.flying;
-	private PVector stage;
-	PVector landingSite;
+	float			hue, sat, bri;
+	float			size;
+	private double	flap	= 0;
+	private float	t		= 0;
+	State			state	= State.flying;
+	private PVector	stage;
+	PVector			landingSite;
 
 	float bottomWallY;
-	
+
 	Note n;
 
 	Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_) {
@@ -71,8 +71,14 @@ public class Bird {
 		// TODO add Avoid for other trees
 
 		if (landingSite != null) {
-			float landingSiteMult = 5;
-			acc.add(PVector.mult(steer(landingSite, true), landingSiteMult));
+
+			float landingSiteRadius = 5;
+			if (PVector.dist(pos, landingSite) < landingSiteRadius) {
+				state = State.landed;
+			} else {
+				float landingSiteMult = 15;
+				acc.add(PVector.mult(steer(landingSite, true), landingSiteMult));
+			}
 		}
 
 		flock(allBirds, myFlock);
@@ -80,8 +86,8 @@ public class Bird {
 		render(pg);
 	}
 
-	private boolean avoidWalls = true;
-	static float wallAvoidWeight = 4;
+	private boolean	avoidWalls		= true;
+	static float	wallAvoidWeight	= 4;
 
 	void checkAvoidWalls() {
 
@@ -100,6 +106,7 @@ public class Bird {
 	}
 
 	double flapSpeed;
+
 	void updateFlap() {
 
 		t += flapSpeed;
@@ -149,7 +156,7 @@ public class Bird {
 		// Draw a triangle rotated in the direction of velocity
 		float theta = (float) (vel.heading() + Math.toRadians(90));
 
-		float r = state == State.landed ? size : size * (float)(flap / 3 + 0.5);
+		float r = state == State.landed ? size : size * (float) (flap / 3 + 0.5);
 
 		ps.fill(hue, sat, bri);
 		ps.stroke(hue, 100, 50);
@@ -166,7 +173,7 @@ public class Bird {
 		ps.vertex(r * 2, size);
 		ps.endShape();
 		ps.popMatrix();
-		
+
 		drawLandingPoint(ps);
 	}
 
@@ -183,36 +190,32 @@ public class Bird {
 		ps.line(stage.x, 0, 0, 0);
 		ps.stroke(255);
 	}
-	
+
 	void drawLandingPoint(PGraphics2D ps) {
-		
+
 		if (landingSite == null) {
 			return;
 		}
 		ps.stroke(255, 0, 0, 255);
 		ps.strokeWeight(10);
 		ps.ellipse(landingSite.x, landingSite.y, 10, 10);
-		
+
 		ps.strokeWeight(2);
 		ps.line(pos.x, pos.y, landingSite.x, landingSite.y);
-		
+
 		ps.fill(255);
 		ps.text(n.pitchClass, pos.x, pos.y);
 		ps.fill(0);
 		ps.text(n.pitchClass, landingSite.x, landingSite.y);
 	}
 
-	// steering. If arrival==true, the boid slows to meet the target. Credit to
-	// Craig Reynolds
+	// steering. If arrival==true, the boid slows to meet the target. Credit to Craig Reynolds
 	PVector steer(PVector target, boolean arrival) {
 
 		PVector steer = new PVector(); // creates vector for steering
 		if (!arrival) {
-			steer = PVector.sub(target, pos); // steering vector points towards
-												// target (switch target and pos
-												// for avoiding)
-			steer.limit(maxSteerForce); // limits the steering force to
-										// maxSteerForce
+			steer = PVector.sub(target, pos); // steering vector points towards target (switch target and pos for avoiding)
+			steer.limit(maxSteerForce); // limits the steering force to maxSteerForce
 		} else {
 			PVector targetOffset = PVector.sub(target, pos);
 			float distance = targetOffset.mag();
@@ -224,47 +227,31 @@ public class Bird {
 		return steer;
 	}
 
-	// avoid. If weight == true avoidance vector is larger the closer the boid
-	// is to the target
+	// avoid. If weight == true avoidance vector is larger the closer the boid is to the target
 	PVector avoid(PVector target, boolean weight) {
 
 		PVector steer = new PVector(); // creates vector for steering
-		steer.set(PVector.sub(pos, target)); // steering vector points away from
-												// target
+		steer.set(PVector.sub(pos, target)); // steering vector points away from target
 
 		double dist = PVector.dist(pos, target);
 		if (weight) {
 			double divisor = dist * dist + 1;
 			steer.mult((float) (1 / divisor));
 		}
-		steer.limit(maxSteerForce); // limits the steering force to
-									// maxSteerForce
+		steer.limit(maxSteerForce); // limits the steering force to maxSteerForce
 		return steer;
 	}
 
 	PVector separation(ArrayList<Bird> boids) {
 
-		// PVector posSum = new PVector(0, 0);
-		// PVector repulse;
-		//
-		// for (Bird b: boids) {
-		//
-		// float d = PVector.dist(pos, b.pos);
-		// if (d > 0 && d <= neighborhoodRadius) {
-		// repulse = PVector.sub(pos, b.pos);
-		// repulse.normalize();
-		// repulse.div(d);
-		// posSum.add(repulse);
-		// }
-		// }
-		// return posSum;
-
-		/* Shiffman */
-
 		PVector steer = new PVector(0, 0);
 		int count = 0;
 		// For every boid in the system, check if it's too close
 		for (Bird other : boids) {
+			
+			if (other.state != State.flying) {
+				continue;
+			}
 
 			float d = PVector.dist(pos, other.pos);
 
@@ -294,27 +281,14 @@ public class Bird {
 
 	PVector alignment(ArrayList<Bird> boids) {
 
-		// PVector velSum = new PVector(0, 0);
-		// int count = 0;
-		// for (Bird b: boids) {
-		//
-		// float d = PVector.dist(pos, b.pos);
-		// if (d > 0 && d <= neighborhoodRadius) {
-		// velSum.add(b.vel);
-		// count++;
-		// }
-		// }
-		// if (count > 0) {
-		// velSum.div((float)count);
-		// velSum.limit(maxSteerForce);
-		// }
-		// return velSum;
-
-		/**/
-
 		PVector sum = new PVector(0, 0);
 		int count = 0;
 		for (Bird other : boids) {
+			
+			if (other.state != State.flying) {
+				continue;
+			}
+			
 			float d = PVector.dist(pos, other.pos);
 			if ((d > 0) && (d < neighborhoodRadius)) {
 				sum.add(other.vel);
@@ -337,30 +311,14 @@ public class Bird {
 
 	PVector cohesion(ArrayList<Bird> boids) {
 
-		// PVector posSum = new PVector(0, 0);
-		// PVector steer = new PVector(0, 0);
-		// int count = 0;
-		//
-		// for (Bird b: boids) {
-		// float d = PVector.dist(pos, b.pos);
-		// if (d > 0 && d <= neighborhoodRadius) {
-		// posSum.add(b.pos);
-		// count++;
-		// }
-		// }
-		// if (count > 0) {
-		// posSum.div((float)count);
-		// }
-		// steer = PVector.sub(posSum, pos);
-		// steer.limit(maxSteerForce);
-		// return steer;
-
-		/**/
-
-		PVector sum = new PVector(0, 0); // Start with empty vector to
-											// accumulate all positions
+		PVector sum = new PVector(0, 0); // Start with empty vector to accumulate all positions
 		int count = 0;
 		for (Bird other : boids) {
+			
+			if (other.state != State.flying) {
+				continue;
+			}
+			
 			float d = PVector.dist(pos, other.pos);
 			if ((d > 0) && (d < neighborhoodRadius)) {
 				sum.add(other.pos); // Add position
@@ -369,13 +327,7 @@ public class Bird {
 		}
 		if (count > 0) {
 			sum.div(count);
-			return steer(sum, state == State.to_land); // Steer towards the
-														// position. TODO
-														// instead of slowing
-														// when we're going to
-														// land, slow when we're
-														// close to the landing
-														// site
+			return steer(sum, state == State.to_land); // Steer towards the position.
 		} else {
 			return new PVector(0, 0);
 		}
