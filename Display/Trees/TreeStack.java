@@ -24,11 +24,11 @@ public class TreeStack {
 		this.parent = parent;
 		this.pos = pos;
 		this.n = n;
-		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 100);
+		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
 		pg = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		// pg.pixelDensity = 2;
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
-		pg.noStroke();
+//		pg.noStroke();
 
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 100, 20);
@@ -107,7 +107,16 @@ public class TreeStack {
 					
 					br.hasBird = true;
 					PVector absolutePos = PVector.add(pos, br.end);
-					PApplet.println("Got spot", absolutePos, "for bird at", b.pos());
+					
+					// Someday I want to know enough trig to know why this fudge factor is needed:
+					absolutePos.x += 100;
+					absolutePos.y += 50;
+					
+//					if (n.pitchClass == "C#") {
+//						PApplet.println("Pos:", pos, "branch origin:", br.origin, "end:", br.end, "angle:", br.angle, "length:", br.length, "draw dot at:", absolutePos);
+//					}
+//					absolutePos = PVector.add(absolutePos, br.origin);
+//					PApplet.println("Got spot", absolutePos, "for bird at", b.pos());
 					return absolutePos;
 				}
 			}

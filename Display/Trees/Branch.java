@@ -9,8 +9,7 @@ import Model.Note;
 public class Branch {
 
 	boolean hasBird = false, finished = false, isRoot = false;
-	private PVector origin;
-	PVector end;
+	PVector origin, end;
 	Leaf leaf;
 	Flower flower;
 	float flowerSize, leafSize;
@@ -18,7 +17,7 @@ public class Branch {
 	private ArrayList<BranchBump> displayBumps = new ArrayList<BranchBump>();
 
 	private PApplet parent;
-	private float diam, angle, length;
+	float diam, angle, length;
 	// private float initialLength, finalLength;
 	private int depth;
 	// private int childDepth;
@@ -204,9 +203,11 @@ public class Branch {
 
 		// Draw the basic line for our branch (debug)
 		if (hasBird) {
+			pg.strokeWeight(10);
 			pg.stroke(0, 100, 100, 100);
 			pg.fill(0, 100, 100, 100);
 		} else {
+			pg.strokeWeight(1);
 			pg.stroke(hue, 100, 50, alpha);
 			pg.fill(hue, 100, 50, alpha);
 		}

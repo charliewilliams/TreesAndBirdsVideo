@@ -196,15 +196,20 @@ public class Bird {
 		if (landingSite == null) {
 			return;
 		}
+		
+		// red
 		ps.stroke(255, 0, 0, 255);
-		ps.strokeWeight(10);
-		ps.ellipse(landingSite.x, landingSite.y, 10, 10);
+		
+		// ellipse
+//		ps.strokeWeight(10);
+//		ps.ellipse(landingSite.x, landingSite.y, 10, 10);
 
-		ps.strokeWeight(2);
+		ps.strokeWeight(1);
 		ps.line(pos.x, pos.y, landingSite.x, landingSite.y);
 
-		ps.fill(255);
-		ps.text(n.pitchClass, pos.x, pos.y);
+		// labels
+//		ps.fill(255);
+//		ps.text(n.pitchClass, pos.x, pos.y);
 		ps.fill(0);
 		ps.text(n.pitchClass, landingSite.x, landingSite.y);
 	}
