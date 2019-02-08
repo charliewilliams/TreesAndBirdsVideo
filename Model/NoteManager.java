@@ -2,6 +2,7 @@ package Model;
 import Display.*;
 import Display.Birds.BirdManager;
 import Display.Trees.TreeManager;
+import Util.Util;
 import processing.core.*;
 
 public class NoteManager {
@@ -90,7 +91,29 @@ public class NoteManager {
 		
 		case TreeGrowth:
 		case TreeGrowth2:
-			TreeManager.instance().addNote(note);
+			
+			// Special per-section behaviour
+						switch (section) {
+						case preroll:
+						case start:
+						case melodyStart:
+							TreeManager.instance().addNote(note);
+							break;
+						case risingMel:
+							TreeManager.instance().addChangeNote(note, true);
+							break;
+						case repeatedNotes:
+							TreeManager.instance().addChangeNote(note, Util.coinToss());
+							break;
+						case bigReturn:
+							
+							break;
+						case highMel:
+						case outro:
+						case end:
+							break;
+						}
+			
 			break;
 			
 		case Melody1:
@@ -130,7 +153,6 @@ public class NoteManager {
 			TreeManager.instance().addChangeNote(note, false);
 			break;
 			
-		case Click: // This will never happen
 		default:
 			break;
 		}

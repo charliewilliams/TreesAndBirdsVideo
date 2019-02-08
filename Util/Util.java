@@ -13,4 +13,8 @@ public class Util {
 		float range = e - d;
 		return (float)(Math.random() * range + d);
 	}
+
+	public static boolean coinToss() {
+		return Math.random() > 0.5f;
+	}
 }

@@ -28,7 +28,7 @@ public enum Section {
 	}
 
 	private float l = 0;
-	float length() {
+	public float length() {
 
 		if (l == 0) {
 
@@ -41,7 +41,7 @@ public enum Section {
 		return l;
 	}
 
-	float pctDone(int millis) {
+	public float pctDone(int millis) {
 		return (millis - startPointsInMillis[this.ordinal()]) / length();
 	}
 }

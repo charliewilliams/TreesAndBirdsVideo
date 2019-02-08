@@ -69,6 +69,7 @@ public class Main extends PApplet {
 		durationMillis = (int) (file.duration() * 1000);
 		file.jump(debugOffsetMillis / 1000.0f);
 		file.play();
+		file.amp(0);
 
 		if (renderVideo) {
 			float offsetSecs = (prerollMillis * 2 + audioMillisPreroll) / 1000;
@@ -100,8 +101,6 @@ public class Main extends PApplet {
 
 		// Read notes from JSON in memory; add to managers if there are newnotes this tick
 		noteManager.readNotes(millis, section);
-		TreeManager.instance().draw();
-		BirdManager.instance().updateAndDraw(millis);
 
 		// Special per-section behaviour
 		switch (section) {
@@ -118,10 +117,15 @@ public class Main extends PApplet {
 			BirdManager.instance().flyAwayAllBirds();
 			break;
 		case highMel:
+			break;
 		case outro:
 		case end:
+			BirdManager.instance().landAllBirds();
 			break;
 		}
+		
+		TreeManager.instance().draw();
+		BirdManager.instance().updateAndDraw(millis);
 
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;
@@ -138,6 +142,9 @@ public class Main extends PApplet {
 				exit();
 			}
 		}
+		
+		fill(0);
+		text("section " + section.ordinal() + " (" + section + ") – " + (int)(section.length() / 1000) + "s long – " + (int)(section.pctDone(millis) * 100) + "% done", 40, height - 40);
 	}
 
 	void checkSection(int millis) {
