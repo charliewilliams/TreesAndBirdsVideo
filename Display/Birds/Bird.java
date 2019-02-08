@@ -55,8 +55,8 @@ public class Bird {
 		vel = velocityForInitialPosition(initialPos, stage);
 		acc = new PVector(0, 0);
 
-		sat = Util.randomf(50, 100);
-		bri = Util.randomf(50, 100);
+		sat = Util.randomf(50, 80);
+		bri = Util.randomf(50, 80);
 		flapSpeed = flapSpeed_ + Util.random(-0.05, 0.05);
 
 		birdSerialNumber = birdCount++;
@@ -123,6 +123,10 @@ public class Bird {
 	double flapSpeed;
 
 	void updateFlap() {
+		
+		if (state == State.landed) {
+			return;
+		}
 
 		t += flapSpeed;
 		flap = Math.sin(t);
@@ -198,7 +202,7 @@ public class Bird {
 		// Draw a triangle rotated in the direction of velocity
 		float theta = (float) (vel.heading() + Math.toRadians(90));
 
-		float r = state == State.landed ? size : size * (float) (flap / 3 + 0.5);
+		float r = size * (float) (flap / 3 + 0.5);
 
 		ps.fill(hue, sat, bri);
 		ps.stroke(hue, 100, 50);

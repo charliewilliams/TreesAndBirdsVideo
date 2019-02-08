@@ -122,6 +122,10 @@ public class TreeStack {
 			}
 		}
 		
-		return null;
+		PVector fallback = pos.copy();
+		fallback.x += 100;
+		fallback.y += 50;
+		
+		return fallback;
 	}
 }

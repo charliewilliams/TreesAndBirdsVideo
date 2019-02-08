@@ -11,8 +11,8 @@ public class Main extends PApplet {
 	static boolean	renderGlow			= true;
 	static int		_frameRate			= 30;
 	int				totalFrames;
-	static int		prerollMillis		= renderVideo ? 10000 : 2000;
-	static int		audioMillisPreroll	= 2200;
+	static int		prerollMillis		= renderVideo ? 10000 : 0;
+	static int		audioMillisPreroll	= 4800;
 
 	public static void main(String[] args) {
 
@@ -36,7 +36,7 @@ public class Main extends PApplet {
 	Section section = Section.preroll;
 
 	int	millisOffset		= 500;
-	int	debugOffsetMillis	= melodyStart;
+	int	debugOffsetMillis	= 0; //melodyStart;
 	int	durationMillis;
 
 	public void settings() {
@@ -67,9 +67,9 @@ public class Main extends PApplet {
 
 		file = new SoundFile(this, "mix.mp3");
 		durationMillis = (int) (file.duration() * 1000);
-		file.jump(debugOffsetMillis / 1000.0f);
+		file.jump((debugOffsetMillis + audioMillisPreroll) / 1000.0f);
 		file.play();
-		file.amp(0);
+//		file.amp(0);
 
 		if (renderVideo) {
 			float offsetSecs = (prerollMillis * 2 + audioMillisPreroll) / 1000;
