@@ -1,32 +1,18 @@
 package Model;
 
 public enum Section {
-	LeadIn,
-	Opening,
-	FirstMelody,
-	FirstThirds,
-	RisingMinor,
-	RepeatedNotes,
-	BigMelody,
-	Falloff,
-	HighMelody,
-	Recap,
-	Tail,
-	FileEnd;
+	preroll, start, melodyStart, risingMel, repeatedNotes, bigReturn, highMel, outro, end;
 
 	private static final Section[] values = Section.values();
 	private static int[] startPointsInMillis = {
 			0,
 			7000, // first sound
 			38130, // first melody
-			69830, // first thirds
 			116450, // rising minor
 			175012, // repeated notes 
 			255250, // big melody
-			282750, // falloff
 			311000, // high melody
 			374500, // recap
-			399250, // tail
 			412000 // file end
 	};
 
@@ -38,7 +24,7 @@ public enum Section {
 			}
 		}
 
-		return Section.Tail;
+		return Section.end;
 	}
 
 	private float l = 0;

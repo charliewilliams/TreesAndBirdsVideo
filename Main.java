@@ -1,7 +1,5 @@
 import processing.core.*;
 import processing.sound.*;
-//import java.util.Date;
-//import com.hamoid.*;
 import Display.*;
 import Display.Birds.BirdManager;
 import Display.Trees.TreeManager;
@@ -9,40 +7,44 @@ import Model.*;
 
 public class Main extends PApplet {
 
-	boolean renderVideo = false;
-	boolean renderGlow = true;
-	int _frameRate = 30;
-	int totalFrames;
-	int prerollMillis = renderVideo ? 10000 : 2000;
-	int audioMillisPreroll = 2200;
+	static boolean	renderVideo			= false;
+	static boolean	renderGlow			= true;
+	static int		_frameRate			= 30;
+	int				totalFrames;
+	static int		prerollMillis		= renderVideo ? 10000 : 2000;
+	static int		audioMillisPreroll	= 2200;
 
 	public static void main(String[] args) {
 
 		PApplet.main("Main");
 	}
 
-	NoteManager noteManager;
-	SceneManager sceneManager;
-	SoundFile file;
+	NoteManager		noteManager;
+	SceneManager	sceneManager;
+	SoundFile		file;
 
 	// VARIOUS NAMED STARTING OFFSETS
-	int musicStart = 10000;
-	int melodyStart = 38000;
-	int risingMel = 110000;
-	int repeatedNotes = 180000;
-	int bigReturn = 251000;
-	int highMel = 295000;
+	int	musicStart		= 10000;
+	int	melodyStart		= 38000;
+	int	risingMel		= 120000;
+	int	repeatedNotes	= 180000;
+	int	bigReturn		= 251000;
+	int	highMel			= 295000;
+	int	outro			= 310000;
+	int	end				= 350000;
 
-	int millisOffset = 500;
-	int debugOffsetMillis = melodyStart;
-	int durationMillis;
+	Section section = Section.preroll;
+
+	int	millisOffset		= 500;
+	int	debugOffsetMillis	= melodyStart;
+	int	durationMillis;
 
 	public void settings() {
 
-//		pixelDensity(2);
+		//		pixelDensity(2);
 		size(1692, 720, P2D); // P2D, P3D, FX2D
 		// size(2538, 1080, P2D);
-		
+
 	}
 
 	public void setup() {
@@ -91,18 +93,35 @@ public class Main extends PApplet {
 
 		int millis = _millis();
 
+		checkSection(millis);
+
 		// Place the camera, draw the background
 		sceneManager.update(millis);
 
-		// Read notes from JSON in memory; add to managers if there are new
-		// notes this tick
-		noteManager.readNotes(millis);
-
-		// Update & draw trees
+		// Read notes from JSON in memory; add to managers if there are newnotes this tick
+		noteManager.readNotes(millis, section);
 		TreeManager.instance().draw();
+		BirdManager.instance().updateAndDraw(millis);
 
-		// Update & draw birds
-		BirdManager.instance().updateAndDraw();
+		// Special per-section behaviour
+		switch (section) {
+		case preroll:
+		case start:
+		case melodyStart:
+			break;
+		case risingMel:
+			BirdManager.instance().landAllBirds();
+			break;
+		case repeatedNotes:
+			break;
+		case bigReturn:
+			BirdManager.instance().flyAwayAllBirds();
+			break;
+		case highMel:
+		case outro:
+		case end:
+			break;
+		}
 
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;
@@ -118,6 +137,15 @@ public class Main extends PApplet {
 			if (frameCount > totalFrames) {
 				exit();
 			}
+		}
+	}
+
+	void checkSection(int millis) {
+		
+		Section s = Section.forMillis(millis);
+		
+		if (section != s) {
+			section = s;
 		}
 	}
 }

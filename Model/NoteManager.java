@@ -24,8 +24,8 @@ public class NoteManager {
 		jsonReader = new JSONReader(parent, fileName);
 	}
 	
-	public void readNotes(int millis) {
-		jsonReader.readNotes(this, millis + readAheadAmountMillis);
+	public void readNotes(int millis, Section section) {
+		jsonReader.readNotes(this, millis + readAheadAmountMillis, section);
 	}
 
 	float pctDoneCurrentPhrase() {
@@ -84,21 +84,38 @@ public class NoteManager {
 	
 	boolean fromRight = false;
 
-	void displayForNote(Note note) {
+	void displayForNote(Note note, int millis, Section section) {
 		
 		switch (ChannelMapping.fromInt(note.channel)) {
 		
 		case TreeGrowth:
-			TreeManager.instance().addNote(note, true);
-			break;
 		case TreeGrowth2:
-			TreeManager.instance().addNote(note, false);
+			TreeManager.instance().addNote(note);
 			break;
 			
-		case Bird:
-		case Bird2:
-//			PApplet.println("Bird");
-			BirdManager.instance().addNote(note, fromRight);
+		case Melody1:
+		case Melody2:
+			
+			// Special per-section behaviour
+			switch (section) {
+			case preroll:
+			case start:
+			case melodyStart:
+				break;
+			case risingMel:
+				BirdManager.instance().landAllBirds();
+				break;
+			case repeatedNotes:
+				break;
+			case bigReturn:
+				BirdManager.instance().flyAwayAllBirds();
+				break;
+			case highMel:
+			case outro:
+			case end:
+				break;
+			}
+			BirdManager.instance().addNote(note, fromRight, millis);
 			fromRight = !fromRight;
 //			break;
 //		

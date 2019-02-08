@@ -1,14 +1,14 @@
 package Display.Birds;
 
-import processing.core.*;
-import Model.*;
-import Util.Util;
-
-import java.util.*;
+import java.util.ArrayList;
 
 import Display.Birds.Bird.State;
 import Display.Trees.TreeStack;
-import processing.opengl.*;
+import Model.Note;
+import Util.Util;
+import processing.core.PApplet;
+import processing.core.PVector;
+import processing.opengl.PGraphics2D;
 
 public class Flock {
 
@@ -32,23 +32,23 @@ public class Flock {
 		flapSpeed = PApplet.map(baseSize, 2f, 10f, 0.5f, 0.01f);// Util.random(0.05, 0.5);
 	}
 
-	Bird addBird(PVector stage, PVector pos) {
+	Bird addBird(PVector stage, PVector pos, int millis) {
 
-		Bird newB = new Bird(note, stage, pos, flapSpeed);
+		Bird newB = new Bird(note, stage, pos, flapSpeed, millis);
 		newB.hue = baseHue + Util.randomf(-5, 5);
 		newB.size = baseSize + Util.randomf(-0.5f, 0.5f);
 		birds.add(newB);
 		return newB;
 	}
 
-	void update(PGraphics2D pg, ArrayList<Bird> allBirds) {
+	void update(PGraphics2D pg, ArrayList<Bird> allBirds, int millis) {
 
 		for (Bird b : birds) {
 
 			// TODO call an Update based on what's happening in the song - call
 			// flock(), flee(), enter(), leave() etc
 //			b.hue = baseHue;
-			b.run(allBirds, birds, pg);
+			b.run(allBirds, birds, pg, millis);
 		}
 	}
 

@@ -14,7 +14,7 @@ public class JSONReader {
 	HashMap<Float, Pedal> pedals = new HashMap<Float, Pedal>();
 	HashMap<Float, Ictus> structure = new HashMap<Float, Ictus>();
 	
-	public void readNotes(NoteManager nm, int millis) {
+	public void readNotes(NoteManager nm, int millis, Section section) {
 
 		for (; currentTimestampIndex < timestamps.length; currentTimestampIndex++) {
 
@@ -27,7 +27,7 @@ public class JSONReader {
 
 			Note note = notes.get(timestamp);
 			if (note != null) {
-				nm.displayForNote(note);
+				nm.displayForNote(note, millis, section);
 			}
 			Pedal pedal = pedals.get(timestamp);
 			if (pedal != null) {

@@ -1,4 +1,5 @@
 package Display;
+import Model.Section;
 import processing.core.*;
 
 public class SceneManager {
@@ -31,8 +32,8 @@ public class SceneManager {
 		ground_pg = parent.createGraphics(w, h);
 
 		backgroundColors[0] = parent.color(39, 5, 100); // paper beige
-		backgroundColors[1] = parent.color(204, 100, 80); // brightness 25 is nice too // night blue //color(306, 100, 25); // maroon
-		backgroundColors[2] = parent.color(0, 0, 0); // black //color(204, 100, 25); // night blue
+		backgroundColors[1] = parent.color(204, 100, 80); // night blue //color(306, 100, 25); // maroon
+		backgroundColors[2] = parent.color(204, 100, 25); // night blue
 		backgroundColors[3] = parent.color(0, 0, 0); // black
 		backgroundColors[4] = parent.color(0, 0, 0);
 		backgroundColors[5] = parent.color(0, 0, 0);
@@ -50,6 +51,10 @@ public class SceneManager {
 	}
 
 	public void update(int millis) {
+		
+		// TODO change background colour per section
+		// TODO blend background colours according to how far we are through the sections
+		// Since this is deterministic maybe it's just a matter of making two layers and changing the alpha according to percent done? YES
 
 		backgroundXOffset -= 0.1;
 

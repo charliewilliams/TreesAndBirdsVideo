@@ -3,8 +3,8 @@ import java.util.*;
 
 public enum ChannelMapping {
 	TreeGrowth(1), TreeGrowth2(2),
-	Bird(3),
-	Bird2(4),
+	Melody1(3),
+	Melody2(4),
 	TreeChangeBass(5),
 	TreeChangeMelody(6),
 	Click(16);

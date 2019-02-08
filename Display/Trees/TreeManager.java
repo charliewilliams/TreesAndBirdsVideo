@@ -51,21 +51,16 @@ public class TreeManager {
 		this.parent = parent;
 	}
 
-	public void addNote(Note n, boolean b) {
-
-		// Notes are added ~500ms before they sound; use `timestamp` to
-		// determine when they should take visual effect
+	public void addNote(Note n) {
 
 		treeStackFor(n).grow(n);
 	}
 
-	public void addChangeNote(Note n, boolean b) {
-
-		// Notes are added ~500ms before they sound; use `timestamp` to
-		// determine when they should take visual effect
-
-		// TODO - something different? Maybe grow roots?
-		treeStackFor(n).grow(n);
+	public void addChangeNote(Note n, boolean shouldBeLeaf) {
+		
+//		if (shouldBeLeaf) {
+			treeStackFor(n).addFlower();
+//		}
 	}
 
 	public void draw() {

@@ -48,7 +48,7 @@ public class BirdManager {
 		return m;
 	}
 
-	public void addNote(Note n, boolean fromRight) {
+	public void addNote(Note n, boolean fromRight, int millis) {
 
 		// Notes are added ~500ms before they sound; use `timestamp` to determine when they should take visual effect
 		Flock f = flocks[n.pitch % 12];
@@ -62,18 +62,17 @@ public class BirdManager {
 		float posY = r.nextFloat() * stage.y * 0.3333f + Util.randomf(-150f, 150f);
 		PVector pos = new PVector(posX, posY);
 
-		allBirds.add(f.addBird(stage, pos));
+		allBirds.add(f.addBird(stage, pos, millis));
 	}
 
-	public void updateAndDraw() {
+	public void updateAndDraw(int millis) {
 
 		pg.beginDraw();
 		pg.background(0, 0, 0, 0);
 
 		for (Flock f: flocks) {
 			if (f != null) {
-				f.update(pg, allBirds);
-				f.land(); // TODO land after timer or section change
+				f.update(pg, allBirds, millis);
 			}
 		}
 
@@ -84,5 +83,23 @@ public class BirdManager {
 		
 		parent.image(pg, -offScreenArea.x, -offScreenArea.y, stage.x, stage.y); // real version
 //		parent.image(pg, 0, 0, parent.width, parent.height); // put the offstage area onscreen for debugging
+	}
+	
+	public void landAllBirds() {
+		
+		for (Flock f: flocks) {
+			if (f != null) {
+				f.land();
+			}
+		}
+	}
+	
+	public void flyAwayAllBirds() {
+		
+		for (Flock f: flocks) {
+			if (f != null) {
+				f.flyAway();
+			}
+		}
 	}
 }

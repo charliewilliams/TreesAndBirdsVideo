@@ -1,11 +1,13 @@
 package Display.Birds;
 
-import processing.core.*;
-import processing.opengl.*;
-import java.util.*;
+import java.util.ArrayList;
 
+import Display.Trees.TreeManager;
 import Model.Note;
 import Util.Util;
+import processing.core.PConstants;
+import processing.core.PVector;
+import processing.opengl.PGraphics2D;
 
 public class Bird {
 
@@ -13,13 +15,10 @@ public class Bird {
 		flying, to_land, landed
 	}
 
-	static private float neighborhoodRadius = 500; // radius in which it looks
-													// for fellow boids
+	static private float	neighborhoodRadius	= 100;		// radius in which it looks for fellow boids
 	static private float	desiredseparation	= 25.0f;
-	static private float	maxSpeed			= 3;	// 4; //maximum magnitude for the
-										// velocity vector
-	static private float maxSteerForce = 0.03f; // 0.1f; //maximum magnitude of
-												// the steering vector
+	static private float	maxSpeed			= 3;		// 4; //maximum magnitude for the velocity vector
+	static private float	maxSteerForce		= 0.03f;	// 0.1f; //maximum magnitude of the steering vector
 
 	private PVector pos; // pos, velocity, and acceleration in a vector datatype
 
@@ -38,14 +37,16 @@ public class Bird {
 	private PVector	stage;
 	PVector			landingSite;
 
-	float bottomWallY;
+	float		bottomWallY;
+	private int	landingTimerMillis;
+	private int	toLandTimerMillis;
 
 	Note n;
-	
-	static private int birdCount = 0;
-	private int birdSerialNumber;
 
-	Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_) {
+	static private int	birdCount	= 0;
+	private int			birdSerialNumber;
+
+	public Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_, int millis) {
 
 		this.n = n;
 		this.stage = stage;
@@ -60,14 +61,24 @@ public class Bird {
 
 		birdSerialNumber = birdCount++;
 		// PApplet.println("New bird", pos);
+
+		startLandingTimer(millis);
 	}
 
-	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg) {
+	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg, int millis) {
 
-		if (state == State.landed) {
+		switch (state) {
+		case flying:
+			tickLandingTimer(millis);
+			break;
+		case landed:
 			render(pg);
 			return;
+		case to_land:
+			tickToLandTimer(millis);
+			break;
 		}
+
 		updateFlap();
 
 		checkAvoidWalls();
@@ -77,11 +88,11 @@ public class Bird {
 		if (landingSite != null) {
 
 			float landingSiteRadius = 15;
-			float landingSiteMult = 0.5f;
+			float landingSiteMult = 0.00000005f;
 			if (PVector.dist(pos, landingSite) < landingSiteRadius) {
 				state = State.landed;
 			} else {
-				acc.add(PVector.mult(steer(landingSite, true), landingSiteMult));
+				acc.add(PVector.mult(steer(landingSite, true), landingSiteMult * toLandTimerMillis));
 			}
 		}
 
@@ -115,6 +126,34 @@ public class Bird {
 
 		t += flapSpeed;
 		flap = Math.sin(t);
+	}
+
+	private int lastTickMillis;
+
+	void startLandingTimer(int millis) {
+		landingTimerMillis = (int) Util.randomf(5000f, 10000f);
+		lastTickMillis = millis;
+	}
+
+	// This timer counts how long the bird has been flying and makes it land after `landingTimerMillis`.
+	void tickLandingTimer(int millis) {
+
+		int millisSinceLastTick = millis - lastTickMillis;
+		lastTickMillis = millis;
+		landingTimerMillis -= millisSinceLastTick;
+		if (landingTimerMillis <= 0) {
+			state = State.to_land;
+			landingSite = TreeManager.instance().treeStackFor(n).acquireLandingSite(this);
+		}
+	}
+
+	// This timer counts how long we've been trying to land for; the landing site's pull gets stronger the longer we've been waiting
+	private int lastToLandTickMillis;
+
+	void tickToLandTimer(int millis) {
+
+		int millisSinceLastTick = millis - lastToLandTickMillis;
+		toLandTimerMillis += millisSinceLastTick;
 	}
 
 	///// -----------behaviors---------------
@@ -196,23 +235,25 @@ public class Bird {
 
 	void drawLandingPoint(PGraphics2D ps) {
 
+		// serial number label
+		ps.fill(255);
+		ps.text(birdSerialNumber, pos.x, pos.y);
+
 		if (landingSite == null) {
 			return;
 		}
-		
+
 		// red
 		ps.stroke(255, 0, 0, 255);
-		
+
 		// ellipse
-//		ps.strokeWeight(10);
-//		ps.ellipse(landingSite.x, landingSite.y, 10, 10);
+		//		ps.strokeWeight(10);
+		//		ps.ellipse(landingSite.x, landingSite.y, 10, 10);
 
 		ps.strokeWeight(1);
 		ps.line(pos.x, pos.y, landingSite.x, landingSite.y);
 
-		// labels
-		ps.fill(255);
-		ps.text(birdSerialNumber, pos.x, pos.y);
+		// landing site pitch class label
 		ps.fill(0);
 		ps.text(n.pitchClass, landingSite.x, landingSite.y);
 	}
@@ -243,11 +284,11 @@ public class Bird {
 		steer.set(direction); // steering vector points away from target
 
 		double dist = PVector.dist(pos, target);
-		
-//		if (dist < 5) {
-//			PVector random = new PVector(Util.randomf(-0.5f, 0.5f), Util.randomf(-0.5f, 0.5f), 0.0f);
-//			steer = PVector.add(steer, random);
-//		}
+
+		//		if (dist < 5) {
+		//			PVector random = new PVector(Util.randomf(-0.5f, 0.5f), Util.randomf(-0.5f, 0.5f), 0.0f);
+		//			steer = PVector.add(steer, random);
+		//		}
 		if (weight) {
 			double divisor = dist * dist + 1;
 			steer.mult((float) (1 / divisor));
@@ -262,8 +303,8 @@ public class Bird {
 		int count = 0;
 		// For every boid in the system, check if it's too close
 		for (Bird other : boids) {
-			
-			if (this == other || other.state != State.flying) {
+
+			if (other.state != State.flying) {
 				continue;
 			}
 
@@ -298,11 +339,11 @@ public class Bird {
 		PVector sum = new PVector(0, 0);
 		int count = 0;
 		for (Bird other : boids) {
-			
+
 			if (this == other || other.state != State.flying) {
 				continue;
 			}
-			
+
 			float d = PVector.dist(pos, other.pos);
 			if ((d > 0) && (d < neighborhoodRadius)) {
 				sum.add(other.vel);
@@ -328,11 +369,11 @@ public class Bird {
 		PVector sum = new PVector(0, 0); // Start with empty vector to accumulate all positions
 		int count = 0;
 		for (Bird other : boids) {
-			
+
 			if (this == other || other.state != State.flying) {
 				continue;
 			}
-			
+
 			float d = PVector.dist(pos, other.pos);
 			if ((d > 0) && (d < neighborhoodRadius)) {
 				sum.add(other.pos); // Add position
