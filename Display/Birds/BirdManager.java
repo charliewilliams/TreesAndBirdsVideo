@@ -58,8 +58,10 @@ public class BirdManager {
 			flocks[n.pitch % 12] = f;
 		}
 
-		float posX = fromRight ? stage.x - offScreenArea.x : offScreenArea.x + Util.randomf(-5f, 5f);
-		float posY = r.nextFloat() * stage.y * 0.3333f + Util.randomf(-150f, 150f);
+		float posX = fromRight ? stage.x - offScreenArea.x : offScreenArea.x;
+		float posY = r.nextFloat() * stage.y * 0.3333f;
+		posX += Util.randomf(-5f, 5f);
+//		posY += Util.randomf(-50f, 50f);
 		PVector pos = new PVector(posX, posY);
 
 		allBirds.add(f.addBird(stage, pos, millis));

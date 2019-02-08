@@ -20,8 +20,10 @@ public class TreeManager {
 
 	public TreeStack treeStackFor(Note n) {
 
-		// Offset so that e is the lowest pitch
-		int offset = 8;
+//		// Offset so that E is the lowest pitch
+//		int offset = 8;
+		// Offset so that A is the lowest pitch
+		int offset = 4;
 		int i = (n.pitch + offset) % 12;
 		TreeStack pitchClassTreeStack = pitchClassTrees[i];
 

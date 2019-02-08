@@ -86,8 +86,8 @@ public class NoteManager {
 		}
 	}
 
-	int birdCount = 0;
-	boolean fromRight = false;
+	int		birdCount	= 0;
+	boolean	fromRight	= false;
 
 	void displayForNote(Note note, int millis, Section section) {
 
@@ -125,16 +125,25 @@ public class NoteManager {
 		case Melody2:
 
 			BirdManager.instance().addNote(note, fromRight, millis);
-			
-			if (birdCount < 3) {
-				fromRight = false;
-			} else if (birdCount < 6) {
-				fromRight = true;
-			} else {
-				fromRight = !fromRight;	
+
+			if (birdCount >= 11) {
+				fromRight = !fromRight;
 			}
+			if (birdCount < 11) {
+				fromRight = true;
+			}
+			if (birdCount < 8) {
+				fromRight = false;
+			}
+			if (birdCount < 5) {
+				fromRight = true;
+			}
+			if (birdCount < 2) {
+				fromRight = false;
+			}
+
 			birdCount++;
-			
+
 			break;
 
 		case TreeChangeBass:
