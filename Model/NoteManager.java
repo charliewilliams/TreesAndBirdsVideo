@@ -124,7 +124,29 @@ public class NoteManager {
 		case Melody1:
 		case Melody2:
 
-			BirdManager.instance().addNote(note, fromRight, millis);
+			// Special per-section behaviour
+			switch (section) {
+			case preroll:
+			case start:
+			case melodyStart:
+				BirdManager.instance().addNote(note, fromRight, millis);
+				break;
+			case risingMel:
+				TreeManager.instance().addChangeNote(note, true);
+				break;
+			case repeatedNotes:
+				birdCount = 0;
+				TreeManager.instance().addChangeNote(note, Util.coinToss());
+				break;
+			case bigReturn:
+				// TODO bass notes glow trees?
+				break;
+			case highMel:
+				// TODO TreeManager.instance().dropLeaf(note);
+			case outro:
+			case end:
+				break;
+			}
 
 			if (birdCount >= 11) {
 				fromRight = !fromRight;

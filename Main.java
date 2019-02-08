@@ -7,12 +7,12 @@ import Model.*;
 
 public class Main extends PApplet {
 
-	static boolean	renderVideo			= false;
-	static boolean	renderGlow			= true;
-	static int		_frameRate			= 30;
+	static boolean	renderVideo				= false;
+	static boolean	renderGlow				= true;
+	static int		_frameRate				= 30;
+	static int		prerollMillis			= renderVideo ? 10000 : 0;
+	static int		moveAudioEarlierMillis	= 4800;
 	int				totalFrames;
-	static int		prerollMillis		= renderVideo ? 10000 : 0;
-	static int		audioMillisPreroll	= 4800;
 
 	public static void main(String[] args) {
 
@@ -23,10 +23,10 @@ public class Main extends PApplet {
 	SceneManager	sceneManager;
 	SoundFile		file;
 
-	// VARIOUS NAMED STARTING OFFSETS
+	// VARIOUS NAMED STARTING OFFSETS - NOT TO BE USED AS SECTION DEFINITIONS!
 	int	musicStart		= 10000;
 	int	melodyStart		= 38000;
-	int	risingMel		= 120000;
+	int	risingMel		= 104000;
 	int	repeatedNotes	= 180000;
 	int	bigReturn		= 251000;
 	int	highMel			= 295000;
@@ -36,12 +36,13 @@ public class Main extends PApplet {
 	Section section = Section.preroll;
 
 	int	millisOffset		= 500;
-	int	debugOffsetMillis	= 0; //melodyStart;
+//	int	debugOffsetMillis	= 0;
+//	int	debugOffsetMillis = melodyStart;
+	int	debugOffsetMillis = risingMel;
 	int	durationMillis;
 
 	public void settings() {
 
-		//		pixelDensity(2);
 		size(1692, 720, P2D); // P2D, P3D, FX2D
 		// size(2538, 1080, P2D);
 
@@ -58,7 +59,6 @@ public class Main extends PApplet {
 		background(0, 0, 51);
 		noStroke();
 
-		// Build our singletons
 		sceneManager = new SceneManager(this);
 		new TreeManager(this);
 		new BirdManager(this);
@@ -67,12 +67,11 @@ public class Main extends PApplet {
 
 		file = new SoundFile(this, "mix.mp3");
 		durationMillis = (int) (file.duration() * 1000);
-		file.jump((debugOffsetMillis + audioMillisPreroll) / 1000.0f);
+		file.jump((debugOffsetMillis + moveAudioEarlierMillis) / 1000.0f);
 		file.play();
-//		file.amp(0);
 
 		if (renderVideo) {
-			float offsetSecs = (prerollMillis * 2 + audioMillisPreroll) / 1000;
+			float offsetSecs = (prerollMillis * 2 + moveAudioEarlierMillis) / 1000;
 			totalFrames = (int) ((file.duration() + offsetSecs) * _frameRate);
 			println("Rendering", totalFrames, "frames.");
 		}
@@ -96,10 +95,10 @@ public class Main extends PApplet {
 
 		checkSection(millis);
 
-		// Place the camera, draw the background
+		// Draw the background
 		sceneManager.update(millis);
 
-		// Read notes from JSON in memory; add to managers if there are newnotes this tick
+		// Read notes from JSON in memory; add to managers if there are new notes this tick
 		noteManager.readNotes(millis, section);
 
 		// Special per-section behaviour
@@ -123,7 +122,7 @@ public class Main extends PApplet {
 			BirdManager.instance().landAllBirds();
 			break;
 		}
-		
+
 		TreeManager.instance().draw();
 		BirdManager.instance().updateAndDraw(millis);
 
@@ -142,15 +141,16 @@ public class Main extends PApplet {
 				exit();
 			}
 		}
-		
+
 		fill(0);
-		text("section " + section.ordinal() + " (" + section + ") – " + (int)(section.length() / 1000) + "s long – " + (int)(section.pctDone(millis) * 100) + "% done", 40, height - 40);
+		text("section " + section.ordinal() + " (" + section + ") – " + (int) (section.length() / 1000) + "s long – "
+				+ (int) (section.pctDone(millis) * 100) + "% done", 40, height - 40);
 	}
 
 	void checkSection(int millis) {
-		
+
 		Section s = Section.forMillis(millis);
-		
+
 		if (section != s) {
 			section = s;
 		}

@@ -60,9 +60,11 @@ public class TreeManager {
 
 	public void addChangeNote(Note n, boolean shouldBeLeaf) {
 		
-//		if (shouldBeLeaf) {
+		if (shouldBeLeaf) {
+			treeStackFor(n).addLeaf();
+		} else {
 			treeStackFor(n).addFlower();
-//		}
+		}
 	}
 
 	public void draw() {

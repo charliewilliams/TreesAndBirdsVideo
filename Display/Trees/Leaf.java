@@ -13,11 +13,19 @@ public class Leaf {
 		this.color = color;
 		this.alpha = alpha;
 	}
-	
+
 	void draw(PGraphics pg, float size) {
 		
+		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
 		pg.fill(color, alpha);
-		pg.ellipse(pos.x, pos.y, size, size);
+		pg.ellipse(0, 0, size, size);
+		pg.popMatrix();
+	}
+	
+	void fallTick() {
+		
+		// TODO leaves fall until they reach the floor
+		// maybe doing a sine-based sway or something
 	}
 }

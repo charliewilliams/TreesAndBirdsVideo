@@ -34,6 +34,10 @@ public class Tree {
 		return root.addFlower(flowerType);
 	}
 	
+	boolean addLeaf() {
+		return root.addLeaf();
+	}
+	
 	void growLeaves() {
 		leafSize += 0.1;
 	}

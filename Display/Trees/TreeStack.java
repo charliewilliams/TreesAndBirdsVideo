@@ -57,6 +57,16 @@ public class TreeStack {
 			}
 		}
 	}
+	
+	void addLeaf() {
+
+		Collections.shuffle(trees);
+		for (Tree t : trees) {
+			if (t.addLeaf()) {
+				break;
+			}
+		}
+	}
 
 	void jitter() {
 

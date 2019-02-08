@@ -8,24 +8,24 @@ import Model.Note;
 
 public class Branch {
 
-	boolean hasBird = false, finished = false, isRoot = false;
-	PVector origin, end;
-	Leaf leaf;
-	Flower flower;
-	float flowerSize, leafSize;
-	private ArrayList<Branch> children = new ArrayList<Branch>();
-	private ArrayList<BranchBump> displayBumps = new ArrayList<BranchBump>();
+	boolean							hasBird			= false, finished = false, isRoot = false;
+	PVector							origin, end;
+	Leaf							leaf;
+	Flower							flower;
+	float							flowerSize, leafSize;
+	private ArrayList<Branch>		children		= new ArrayList<Branch>();
+	private ArrayList<BranchBump>	displayBumps	= new ArrayList<BranchBump>();
 
-	private PApplet parent;
-	float diam, angle, length;
+	private PApplet	parent;
+	float			diam, angle, length;
 	// private float initialLength, finalLength;
 	private int depth;
 	// private int childDepth;
-	private float circleAlpha = 0, circleDiam = 0;
-	private float maxAlpha = 100;
+	private float	circleAlpha	= 0, circleDiam = 0;
+	private float	maxAlpha	= 100;
 
-	static private float piOver5 = (float) (Math.PI / 5.0);
-	static private float piOver15 = (float) (Math.PI / 15.0);
+	static private float	piOver5		= (float) (Math.PI / 5.0);
+	static private float	piOver15	= (float) (Math.PI / 15.0);
 
 	// Root
 	Branch(PApplet parent, float length, float flowerSize, float leafSize) {
@@ -163,23 +163,38 @@ public class Branch {
 
 	boolean addFlower(Flower.Type flowerType, PVector pos) {
 
-		if (leaf == null) {
-
-			for (Branch child : children) {
-				if (child.addFlower(flowerType)) {
-					return true;
-				}
-			}
-			return false;
-
-		} else {
-
-			if (flower == null) {
-				flower = new Flower(flowerType, pos);
-				return true;
-			}
+		if (flower != null) {
 			return false;
 		}
+
+		for (Branch child : children) {
+			if (child.addFlower(flowerType)) {
+				return true;
+			}
+		}
+
+		flower = new Flower(flowerType, pos);
+		return true;
+	}
+
+	boolean addLeaf() {
+		return addLeaf(end);
+	}
+
+	boolean addLeaf(PVector pos) {
+
+		if (leaf != null) {
+			return false;
+		}
+
+		for (Branch child : children) {
+			if (child.addLeaf()) {
+				return true;
+			}
+		}
+
+		leaf = new Leaf(pos, 0, 100);
+		return true;
 	}
 
 	void draw(PGraphics pg, float hue, float alpha) {
