@@ -148,19 +148,7 @@ public class SceneManager {
 	}
 
 	public void createGrass() {
-		generateGrass(grass_pg);
-	}
-
-	void generateGrass(PGraphics2D pg) {
-
-		pg.beginDraw();
-		pg.background(0, 0, 0, 0);
-		for (int i = 0; i < 12; i++) {
-			Note fakeNote = new Note(i);
-			PVector pos = TreeManager.instance().treePositionForNote(fakeNote);
-			Grass.drawGrass(pg, pos);
-		}
-		pg.endDraw();
+		Grass.generate(grass_pg);
 	}
 
 	public void renderGrass() {

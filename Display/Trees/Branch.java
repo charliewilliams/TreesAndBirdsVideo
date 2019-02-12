@@ -23,7 +23,6 @@ public class Branch {
 
 	private PApplet	parent;
 	float			diam, angle, length;
-	// private float initialLength, finalLength;
 	private int		depth;
 	private int		numberOfParents;
 	private int		maxChildren	= 2;
@@ -33,6 +32,9 @@ public class Branch {
 	static private float	piOver2		= (float) (Math.PI / 2.0);
 	static private float	piOver5		= (float) (Math.PI / 5.0);
 	static private float	piOver15	= (float) (Math.PI / 15.0);
+
+	private PVector	driftSpeed;
+	private PVector	driftMag;
 
 	// Root
 	Branch(PApplet parent, float length, float flowerSize, float leafSize) {
@@ -44,19 +46,20 @@ public class Branch {
 		circleAlpha = maxAlpha;
 		circleDiam = 0;
 
-		// initialLength = length / 4.0f;
-		// finalLength = length;
-		this.length = length; // initialLength;
+		this.length = length;
 		end = new PVector(0, -length);
 		angle = PVector.angleBetween(end, origin);
 
 		this.flowerSize = flowerSize;
 		this.leafSize = leafSize;
+
+		driftSpeed = new PVector(Util.randomf(800, 1200), Util.randomf(2000, 2500));
+		driftMag = new PVector(Util.randomf(10, 30), Util.randomf(20, 30));
 	}
 
 	// Normal branch
 	Branch(PApplet parent, PVector origin, PVector end, int depth, float flowerSize, float leafSize,
-			int numberOfParents) {
+			int numberOfParents, PVector driftSpeed, PVector driftMag) {
 
 		this.parent = parent;
 		this.origin = origin;
@@ -70,6 +73,9 @@ public class Branch {
 
 		this.flowerSize = flowerSize;
 		this.leafSize = leafSize;
+		
+		this.driftSpeed = driftSpeed;
+		this.driftMag = driftMag;
 	}
 
 	ArrayList<Branch> grow(Note n) {
@@ -91,17 +97,9 @@ public class Branch {
 			return newChildren;
 		}
 
-		// 0-3 children
-
-		// 90% chance of first child
-		//		if (Util.random(0, 1) < 0.9 || isRoot) {
 		newChildren.add(makeChild());
-		//		}
-		// 40% chance of 2nd child
-		//		if (Util.random(0, 1) < 0.4 || isRoot) {
-		//			newChildren.add(makeChild());
-		//		}
-		// 10% chance of 3rd child
+
+		// 10% chance of 2nd child
 		if (Util.random(0, 1) < 0.1) {
 			newChildren.add(makeChild());
 		}
@@ -122,7 +120,7 @@ public class Branch {
 		dir.mult(Util.randomf(0.5f, 0.7f));
 		PVector newEnd = PVector.add(end, dir);
 
-		return new Branch(parent, end, newEnd, depth + 1, flowerSize, leafSize, ++numberOfParents);
+		return new Branch(parent, end, newEnd, depth + 1, flowerSize, leafSize, ++numberOfParents, driftSpeed, driftMag);
 	}
 
 	void draw(PGraphics pg, HandyRenderer sketcher, float hue, float alpha) {
@@ -150,7 +148,7 @@ public class Branch {
 		pg.fill(hue, 100, 50, alpha);
 
 		sketcher.line(origin.x, origin.y, end.x, end.y);
-//		pg.ellipse(end.x, end.y, 4, 4);
+		//		pg.ellipse(end.x, end.y, 4, 4);
 
 		for (Branch child : children) {
 			child.draw(pg, sketcher, hue, alpha * 0.9f);
@@ -165,17 +163,12 @@ public class Branch {
 		}
 	}
 
-	//	static float jitMag = 1;
-
 	public void jitter(int millis) {
 
 		if (!finished) {
 
-			end.x += Math.sin((float) millis / 1000) / 20f;
-			end.y += Math.sin((float) millis / 2134) / 25f;
-
-			//			end.x += Util.random(-jitMag, jitMag);
-			//			end.y += Util.random(-jitMag, jitMag);
+			end.x += Math.sin((float) millis / driftSpeed.x) / driftMag.x;
+			end.y += Math.sin((float) millis / driftSpeed.y) / driftMag.y;
 		}
 
 		for (Branch child : children) {

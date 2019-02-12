@@ -8,13 +8,14 @@ import processing.opengl.PGraphics2D;
 
 public class Grass {
 
+	static int		minTuftsPerNote	= 3;
 	static int		numBlades		= 10;
 	static float	originXSpace	= 3;
-	static float	originYSpace	= 1;
-	static float	endYRange		= 10;
-	static float	endXRange		= 5;
+	static float	originYSpace	= 0.5f;
+	static float	endYRange		= 5;
+	static float	endXRange		= 2.5f;
 	static float	xSpacing		= 6;
-	static float	bladeHeight		= 40;
+	static float	bladeHeight		= 20;
 	static float	bladeWidth		= 4;
 	static float	r				= 8;
 
@@ -29,20 +30,26 @@ public class Grass {
 		pg.background(0, 0, 0, 0);
 		for (int i = 0; i < 12; i++) {
 			Note fakeNote = new Note(i);
-			PVector pos = TreeManager.instance().treePositionForNote(fakeNote);
-			Grass.drawGrass(pg, pos);
+			PVector basePos = TreeManager.instance().treePositionForNote(fakeNote);
+
+			for (int j = 0; j < minTuftsPerNote + Util.random(0, 4); j++) {
+				float xRange = 75;
+				float yRange = 40;
+				PVector pos = PVector.add(basePos, new PVector(Util.randomf(-xRange, xRange), Util.randomf(0, yRange)));
+				Grass.drawGrassTuft(pg, pos);
+			}
 		}
 		pg.endDraw();
 	}
 
-	public static void drawGrass(PGraphics2D pg, PVector origin) {
+	public static void drawGrassTuft(PGraphics2D pg, PVector origin) {
 
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 
 		PVector end = new PVector(-xSpacing * numBlades / 2, -bladeHeight);
 
-		PVector cp1 = new PVector(20, 0);
-		PVector cp2 = new PVector(20, -80);
+		PVector cp1 = new PVector(10, 0);
+		PVector cp2 = new PVector(10, -40);
 
 		pg.pushMatrix();
 		pg.translate(origin.x, origin.y);

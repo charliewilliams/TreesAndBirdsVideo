@@ -129,7 +129,7 @@ public class Main extends PApplet {
 
 		TreeManager.instance().updateAndDraw(millis);
 		BirdManager.instance().updateAndDraw(millis);
-		SceneManager.instance().renderGrass();
+//		SceneManager.instance().renderGrass();
 		
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;
