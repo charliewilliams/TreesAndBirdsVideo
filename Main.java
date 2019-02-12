@@ -65,6 +65,7 @@ public class Main extends PApplet {
 		sceneManager = new SceneManager(this);
 		new TreeManager(this);
 		new BirdManager(this);
+		sceneManager.createGrass();
 
 		noteManager = new NoteManager(this, "song.json");
 
@@ -128,7 +129,8 @@ public class Main extends PApplet {
 
 		TreeManager.instance().updateAndDraw(millis);
 		BirdManager.instance().updateAndDraw(millis);
-
+		SceneManager.instance().renderGrass();
+		
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;
 		int displaySeconds = minutes > 0 ? seconds % 60 : seconds;

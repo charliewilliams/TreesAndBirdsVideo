@@ -1,11 +1,27 @@
 package Model;
 //import static java.lang.Math.pow;
 
-public class Note extends Event {
+public class Note {
+	
+	Float startMillis;
+	boolean isActive;
+	public boolean isSustaining;
+	int noteNumber;
+	public int pitch;
+	private String name;
+	public String pitchClass;
+	public float velocity; // normalized 0-1
+	float duration; // seconds
+//	private float freq;
+	public int channel;
+	
+	public Note(int num) {
+		this(0f, num, 0f, 0f, 16);
+	}
 
 	Note(Float startMillis, int num, Float vel, Float dur, int chan) {
 
-		super(startMillis);
+		this.startMillis = startMillis;
 		isActive = false;
 		noteNumber = num;
 		pitch = num;
@@ -29,18 +45,6 @@ public class Note extends Event {
 		return name + " " + pitch + " " + velocity + " active: " + isActive;
 	}
 
-	/* Boring property boilerplate stuff */
-	boolean isActive;
-	public boolean isSustaining;
-	int noteNumber;
-	public int pitch;
-	private String name;
-	public String pitchClass;
-	public float velocity; // normalized 0-1
-	float duration; // seconds
-//	private float freq;
-	public int channel;
-
 	/* Utility */
 
 	private String noteNameFromNumber(int num, boolean withOctave) {
@@ -53,5 +57,5 @@ public class Note extends Event {
 //		return (float) ((pow(2, ((note - 69) / 12.0f))) * 440.0f);
 //	}
 	
-	private static String[] noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"};
+	private static String[] noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 }

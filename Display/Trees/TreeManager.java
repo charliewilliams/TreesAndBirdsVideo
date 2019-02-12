@@ -20,27 +20,35 @@ public class TreeManager {
 
 	public TreeStack treeStackFor(Note n) {
 
-//		// Offset so that E is the lowest pitch
-//		int offset = 8;
-		// Offset so that A is the lowest pitch
-		int offset = 4;
-		int i = (n.pitch + offset) % 12;
+		int i = treeIndexForNote(n);
 		TreeStack pitchClassTreeStack = pitchClassTrees[i];
 
 		if (pitchClassTreeStack == null) {
-			
-			float eachTreeSpace = parent.width / (pitchClassTrees.length + 2);
-			float yOffset = n.isBlackKey() ? 55 : 0;
-			PVector pos = new PVector(eachTreeSpace * (i + 2), parent.height * 0.8f + Util.randomf(-10, 10) - yOffset);
-			int numChildren = (int) Util.random(3, 8);
 
-			// TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, float noiseOffset)
-			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, idx, pos);
+			int numChildren = 1; //(int) Util.random(3, 8);
+
+			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, idx, treePositionForNote(n));
 
 			idx += numChildren;
 		}
 
 		return pitchClassTrees[i];
+	}
+
+	public int treeIndexForNote(Note n) {
+		//		// Offset so that E is the lowest pitch
+		//		int offset = 8;
+		// Offset so that A is the lowest pitch
+		int offset = 4;
+		return (n.pitch + offset) % 12;
+	}
+
+	public PVector treePositionForNote(Note n) {
+
+		int i = treeIndexForNote(n);
+		float eachTreeSpace = parent.width / (pitchClassTrees.length + 2);
+		float yOffset = n.isBlackKey() ? 55 : 0;
+		return new PVector(eachTreeSpace * (i + 2), parent.height * 0.8f + Util.randomf(-10, 10) - yOffset);
 	}
 
 	public TreeManager(PApplet parent) {

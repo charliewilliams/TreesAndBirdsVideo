@@ -1,18 +1,24 @@
 package Display;
+
+import Display.Trees.Grass;
+import Display.Trees.TreeManager;
+import Model.Note;
 import Model.Section;
 import processing.core.*;
+import processing.opengl.PGraphics2D;
 
 public class SceneManager {
 
-	private static SceneManager m;
-	private PApplet parent;
-	int[] backgroundColors = new int[6];
-	PImage bg;
-	private PGraphics sky_pg, ground_pg;
-	float cameraZ = 600;
-	int w, h;
-	int lightColor, darkColor;
-	float backgroundXOffset = 0;
+	private static SceneManager	m;
+	private PApplet				parent;
+	int[]						backgroundColors	= new int[6];
+	PImage						bg;
+	private PGraphics			sky_pg, ground_pg;
+	private PGraphics2D			grass_pg;
+	float						cameraZ				= 600;
+	int							w, h;
+	int							lightColor, darkColor;
+	float						backgroundXOffset	= 0;
 
 	public SceneManager(PApplet parent) {
 
@@ -30,6 +36,7 @@ public class SceneManager {
 		sky_pg = parent.createGraphics(w * 2, h);
 		sky_pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		ground_pg = parent.createGraphics(w, h);
+		grass_pg = (PGraphics2D) parent.createGraphics(w, h, PConstants.P2D);
 
 		backgroundColors[0] = parent.color(39, 5, 100); // paper beige
 		backgroundColors[1] = parent.color(204, 100, 80); // night blue //color(306, 100, 25); // maroon
@@ -51,7 +58,7 @@ public class SceneManager {
 	}
 
 	public void update(int millis) {
-		
+
 		// TODO change background colour per section
 		// TODO blend background colours according to how far we are through the sections
 		// Since this is deterministic maybe it's just a matter of making two layers and changing the alpha according to percent done? YES
@@ -74,8 +81,9 @@ public class SceneManager {
 	static float skyNodeSize = 6;
 
 	/*
-	 * Sky idea by Bárbara Almeida / CC-A-SA / https://www.openprocessing.org/sketch/184276
-	 * */
+	 * Sky idea by Bárbara Almeida / CC-A-SA /
+	 * https://www.openprocessing.org/sketch/184276
+	 */
 
 	void generateSky(PGraphics pg, int millis) {
 
@@ -93,7 +101,7 @@ public class SceneManager {
 				//draw clouds
 				float xOff = millis / 100.0f;
 				float yOff = millis / 1000.0f;
-				float n = parent.noise((x + xOff) / 200.0f, (y + yOff) / 50.0f);     
+				float n = parent.noise((x + xOff) / 200.0f, (y + yOff) / 50.0f);
 
 				pg.fill(darkColor, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
 				pg.ellipse(x, y, skyNodeSize, skyNodeSize);
@@ -137,6 +145,26 @@ public class SceneManager {
 		}
 
 		pg.endDraw();
+	}
+
+	public void createGrass() {
+		generateGrass(grass_pg);
+	}
+
+	void generateGrass(PGraphics2D pg) {
+
+		pg.beginDraw();
+		pg.background(0, 0, 0, 0);
+		for (int i = 0; i < 12; i++) {
+			Note fakeNote = new Note(i);
+			PVector pos = TreeManager.instance().treePositionForNote(fakeNote);
+			Grass.drawGrass(pg, pos);
+		}
+		pg.endDraw();
+	}
+
+	public void renderGrass() {
+		parent.image(grass_pg, 0, 0);
 	}
 
 	void generateRadialBlur(PGraphics pg) {
