@@ -7,7 +7,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="core.jar"/>
-	<classpathentry kind="lib" path="VideoExport.jar"/>
 	<classpathentry kind="lib" path="PixelFlow.jar"/>
 	<classpathentry kind="lib" path="gluegen-rt-natives-macosx-universal.jar"/>
 	<classpathentry kind="lib" path="jogl-all-natives-macosx-universal.jar"/>
@@ -19,5 +18,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="peasycam.jar"/>
+	<classpathentry kind="lib" path="/Users/cw/Developer/Processing/libraries/handy/library/handy.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
