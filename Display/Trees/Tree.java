@@ -39,6 +39,10 @@ public class Tree {
 		return root.addLeaf(leafType, pg);
 	}
 	
+	public boolean dropLeaf() {
+		return root.dropLeaf();
+	}
+	
 	void growLeaves() {
 		leafSize += 0.1;
 	}
@@ -47,8 +51,8 @@ public class Tree {
 		flowerSize += 0.1;
 	}
 
-	void draw(PGraphics pg, HandyRenderer sketcher, float hue) {
-		root.draw(pg, sketcher, hue, alpha);
+	void draw(PGraphics pg, PGraphics pg_front, HandyRenderer sketcher, float hue) {
+		root.draw(pg, pg_front, sketcher, hue, alpha);
 	}
 	
 	public void jitter(int millis) {

@@ -39,7 +39,7 @@ public class TreeManager {
 		//		// Offset so that E is the lowest pitch
 		//		int offset = 8;
 		// Offset so that A is the lowest pitch
-		int offset = 4;
+		int offset = 3;
 		return (n.pitch + offset) % 12;
 	}
 
@@ -66,7 +66,7 @@ public class TreeManager {
 		treeStackFor(n).grow(n);
 	}
 
-	public void addChangeNote(Note n, boolean shouldBeLeaf) {
+	public void addLeafOrFlower(Note n, boolean shouldBeLeaf) {
 
 		if (shouldBeLeaf) {
 			treeStackFor(n).addLeaf();
@@ -74,14 +74,52 @@ public class TreeManager {
 			treeStackFor(n).addFlower();
 		}
 	}
+	
+	public void dropLeaf(Note n) {
+		
+		int tries = 0;
+		int maxTries = 50;
+		
+		while (true) {			
+			if (treeStackFor(n).dropLeaf(n)) {
+				return;
+			}
+			n = new Note((int)Util.random(0, 12));
+			if (tries++ > maxTries) {
+				return;
+			}
+		}
+	}
 
-	public void updateAndDraw(int millis) {
+	public void updateRender(int millis) {
 
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];
 			if (stack != null) {
-				stack.updateAndDraw(millis);
+				stack.updateRender(millis);
+			}
+		}
+	}
+	
+	public void drawTrees() {
+
+		for (int i = 0; i < pitchClassTrees.length; i++) {
+
+			TreeStack stack = pitchClassTrees[i];
+			if (stack != null) {
+				stack.drawBack();
+			}
+		}
+	}
+	
+	public void drawOverlay() {
+
+		for (int i = 0; i < pitchClassTrees.length; i++) {
+
+			TreeStack stack = pitchClassTrees[i];
+			if (stack != null) {
+				stack.drawFront();
 			}
 		}
 	}

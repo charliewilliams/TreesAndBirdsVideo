@@ -129,7 +129,7 @@ public class Branch {
 				driftMag, hue);
 	}
 
-	void draw(PGraphics pg, HandyRenderer sketcher, float hue, float alpha) {
+	void draw(PGraphics pg, PGraphics pg_front, HandyRenderer sketcher, float hue, float alpha) {
 
 		// Background circle
 		if (circleAlpha > 0) {
@@ -154,18 +154,17 @@ public class Branch {
 		pg.fill(hue, 100, 50, alpha);
 
 		sketcher.line(origin.x, origin.y, end.x, end.y);
-		//		pg.ellipse(end.x, end.y, 4, 4);
 
 		for (Branch child : children) {
-			child.draw(pg, sketcher, hue, alpha * 0.9f);
+			child.draw(pg, pg_front, sketcher, hue, alpha * 0.9f);
 		}
 
 		if (leaf != null) {
-			leaf.draw(pg, leafSize);
+			leaf.draw(parent, pg_front, leafSize);
 		}
 
 		if (flower != null) {
-			flower.draw(pg, flowerSize);
+			flower.draw(pg_front, flowerSize);
 		}
 	}
 
@@ -223,6 +222,7 @@ public class Branch {
 			return false;
 		}
 
+		Collections.shuffle(children);
 		for (Branch child : children) {
 			if (child.addFlower(flowerType)) {
 				return true;
@@ -243,6 +243,7 @@ public class Branch {
 			return false;
 		}
 
+		Collections.shuffle(children);
 		for (Branch child : children) {
 			if (child.addLeaf(leafType, pg)) {
 				return true;
@@ -251,5 +252,22 @@ public class Branch {
 
 		leaf = new Leaf(leafType, pos, hue, pg);
 		return true;
+	}
+	
+	boolean dropLeaf() {
+		
+		if (leaf != null && !leaf.isFalling) {
+			leaf.isFalling = true;
+			return true;
+		}
+		
+		Collections.shuffle(children);
+		for (Branch child : children) {
+			if (child.dropLeaf()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

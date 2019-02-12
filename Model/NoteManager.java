@@ -104,16 +104,17 @@ public class NoteManager {
 				TreeManager.instance().addNote(note);
 				break;
 			case risingMel:
-				TreeManager.instance().addChangeNote(note, true);
+				TreeManager.instance().addLeafOrFlower(note, true);
 				break;
 			case repeatedNotes:
-				TreeManager.instance().addChangeNote(note, Util.coinToss());
+				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
 				// TODO bass notes glow trees?
+				TreeManager.instance().addNote(note);
 				break;
 			case highMel:
-				// TODO TreeManager.instance().dropLeaf(note);
+//				 TreeManager.instance().dropLeaf(note);
 			case outro:
 			case end:
 				break;
@@ -132,19 +133,21 @@ public class NoteManager {
 				BirdManager.instance().addNote(note, fromRight, millis);
 				break;
 			case risingMel:
-				TreeManager.instance().addChangeNote(note, true);
+				TreeManager.instance().addLeafOrFlower(note, true);
 				break;
 			case repeatedNotes:
 				birdCount = 0;
-				TreeManager.instance().addChangeNote(note, Util.coinToss());
+				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
 				// TODO bass notes glow trees?
+				TreeManager.instance().addNote(note);
 				break;
 			case highMel:
-				// TODO TreeManager.instance().dropLeaf(note);
+
 			case outro:
 			case end:
+				TreeManager.instance().dropLeaf(note);
 				break;
 			}
 
@@ -169,10 +172,10 @@ public class NoteManager {
 			break;
 
 		case TreeChangeBass:
-			TreeManager.instance().addChangeNote(note, true);
+			TreeManager.instance().addLeafOrFlower(note, true);
 			break;
 		case TreeChangeMelody:
-			TreeManager.instance().addChangeNote(note, false);
+			TreeManager.instance().addLeafOrFlower(note, false);
 			break;
 
 		default:

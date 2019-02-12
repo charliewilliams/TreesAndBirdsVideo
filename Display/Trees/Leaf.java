@@ -1,8 +1,13 @@
 package Display.Trees;
 
 import java.util.Random;
+
 import Util.Util;
-import processing.core.*;
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PGraphics;
+import processing.core.PShape;
+import processing.core.PVector;
 
 public class Leaf {
 
@@ -102,19 +107,34 @@ public class Leaf {
 
 	Leaf(LeafShape ls, PVector pos, float hue, PGraphics pg) {
 
-		this.pos = pos;
+		this.pos = pos.copy();
+		this.pos.x += Util.randomf(-8, 8);
+		this.pos.y += Util.randomf(-8, 8);
 		this.hue = hue;
 		this.sat = Util.randomf(70, 100);
 		this.bri = Util.randomf(70, 100);
-		this.alp = Util.randomf(20, 70);
+		this.alp = Util.randomf(30, 70);
 		angle = (float) Util.random(0, Math.PI * 2);
-		groundY = pos.y + 100;
+		groundY = PApplet.map(Util.randomf(0, 1), 0, 1, 30, 120);
 		fallSpeed = Util.randomf(0.5f, 1);
 		createShape(pg, ls);
 	}
 
-	void draw(PGraphics pg, float size) {
+	void draw(PApplet parent, PGraphics pg, float size) {
 
+		if (isFalling) {
+			fallTick(parent);
+		}
+		
+		//
+//		pg.strokeWeight(1);
+//		pg.stroke(255, 0, 0);
+//		pg.line(0, groundY, pg.width, groundY);
+//		pg.stroke(0, 255, 0);
+//		pg.line(0, 0, pg.width, 0);
+//		pg.stroke(0, 0, 255);
+//		pg.stroke(0, pos.y, pg.width, pos.y);
+		//
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
 		pg.rotate(angle);
@@ -122,14 +142,15 @@ public class Leaf {
 		pg.popMatrix();
 	}
 
-	void fallTick() {
-
-		if (!isFalling || pos.y >= groundY) {
+	void fallTick(PApplet parent) {
+		
+		if (pos.y >= groundY) {
+			alp -= 0.1;
 			return;
 		}
 
 		pos.y += fallSpeed;
-
-		// TODO maybe doing a sine-based sway or something
+		pos.x += (parent.noise(pos.y) - 0.5) * 4;
+		fallSpeed += 0.01 * fallSpeed;
 	}
 }

@@ -1,20 +1,22 @@
 package Display;
 
 import Display.Trees.Grass;
-import Display.Trees.TreeManager;
-import Model.Note;
 import Model.Section;
-import processing.core.*;
+import Util.Util;
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PGraphics;
+import processing.core.PImage;
 import processing.opengl.PGraphics2D;
 
 public class SceneManager {
 
 	private static SceneManager	m;
 	private PApplet				parent;
-	int[]						backgroundColors	= new int[6];
+	int[]						backgroundColors	= new int[10];
 	PImage						bg;
-	private PGraphics			sky_pg, ground_pg;
-	private PGraphics2D			grass_pg;
+	private PGraphics			sky_pg1, sky_pg2, ground_pg;
+	private PGraphics2D			sky_pg, grass_pg;
 	float						cameraZ				= 600;
 	int							w, h;
 	int							lightColor, darkColor;
@@ -33,23 +35,35 @@ public class SceneManager {
 		h = parent.height;
 
 		bg = parent.loadImage("paper.jpg");
-		sky_pg = parent.createGraphics(w * 2, h);
+
+		sky_pg = (PGraphics2D) parent.createGraphics(w * 2, h, PConstants.P2D);
 		sky_pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		sky_pg1 = parent.createGraphics(w * 2, h);
+		sky_pg1.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		sky_pg2 = parent.createGraphics(w * 2, h);
+		sky_pg2.colorMode(PConstants.HSB, 360, 100, 100, 100);
+
 		ground_pg = parent.createGraphics(w, h);
 		grass_pg = (PGraphics2D) parent.createGraphics(w, h, PConstants.P2D);
 
-		backgroundColors[0] = parent.color(39, 5, 100); // paper beige
-		backgroundColors[1] = parent.color(204, 100, 80); // night blue //color(306, 100, 25); // maroon
-		backgroundColors[2] = parent.color(204, 100, 25); // night blue
-		backgroundColors[3] = parent.color(0, 0, 0); // black
-		backgroundColors[4] = parent.color(0, 0, 0);
-		backgroundColors[5] = parent.color(0, 0, 0);
+		// preroll, start, melodyStart, risingMel, repeatedNotes, bigReturn, highMel, outro, end;
+		backgroundColors[Section.preroll.ordinal()]       = parent.color(39, 5, 100); // paper beige
+		backgroundColors[Section.start.ordinal()]         = parent.color(39, 5, 100); // paper beige
+		backgroundColors[Section.melodyStart.ordinal()]   = parent.color(39, 5, 100); // paper beige
+		backgroundColors[Section.risingMel.ordinal()]     = parent.color(204, 100, 80); // night blue
+		backgroundColors[Section.repeatedNotes.ordinal()] = parent.color(306, 100, 25); // maroon
+		backgroundColors[Section.bigReturn.ordinal()]     = parent.color(39, 5, 100); // paper beige
+		backgroundColors[Section.highMel.ordinal()]       = parent.color(204, 100, 25); // night blue
+		backgroundColors[Section.outro.ordinal()]         = parent.color(204, 100, 25); // night blue
+		backgroundColors[Section.end.ordinal()]           = parent.color(0, 0, 0);
+		backgroundColors[Section.end.ordinal() + 1]       = parent.color(0, 0, 0);
 		//		int bgColor = color(255, 178, 187);
 
 		lightColor = parent.color(37, 42, 100);
 		darkColor = parent.color(223, 40, 46);
 
-		generateSky(sky_pg, 0);
+		generateSky(sky_pg1, 0, 0);
+		generateSky(sky_pg2, 0, 1);
 		generateGround(ground_pg);
 	}
 
@@ -59,20 +73,35 @@ public class SceneManager {
 
 	public void update(int millis) {
 
-		// TODO change background colour per section
-		// TODO blend background colours according to how far we are through the sections
-		// Since this is deterministic maybe it's just a matter of making two layers and changing the alpha according to percent done? YES
+		float skySpeed = 0.2f;
+		backgroundXOffset -= skySpeed;
 
-		backgroundXOffset -= 0.1;
+		Section section = Section.forMillis(millis);
+		float pct = section.pctDone(millis);
+		float pg1Alpha = Util.logMapf(pct, 0, 1, 100, 0);
+		float pg2Alpha = Util.logMapf(pct, 0, 1, 0, 100);
 
 		parent.image(bg, 0, 0, w, h);
+
+		sky_pg1.tint(255, pg1Alpha);
+		sky_pg2.tint(255, pg2Alpha);
+
+		sky_pg.beginDraw();
+		sky_pg.blendMode(PConstants.BLEND);
+		sky_pg.image(sky_pg1, 0, 0);
+		sky_pg.image(sky_pg2, 0, 0);
+		sky_pg.endDraw();
+
 		parent.blendMode(PConstants.MULTIPLY);
 		parent.image(sky_pg, backgroundXOffset, 0);
 
 		if (backgroundXOffset < -w) {
 
 			backgroundXOffset = 0;
-			generateSky(sky_pg, millis);
+
+			int idx = section.ordinal();
+			generateSky(sky_pg1, millis, idx);
+			generateSky(sky_pg2, millis, idx + 1);
 		}
 
 		parent.image(ground_pg, 0, 0);
@@ -85,11 +114,11 @@ public class SceneManager {
 	 * https://www.openprocessing.org/sketch/184276
 	 */
 
-	void generateSky(PGraphics pg, int millis) {
+	void generateSky(PGraphics pg, int millis, int idx) {
 
 		pg.beginDraw();
 
-		pg.background(backgroundColors[0]);
+		pg.background(backgroundColors[idx]);
 
 		float horizonY = 2 * h / 3;
 

@@ -19,7 +19,7 @@ public class TreeStack {
 	Flower.FlowerType		flowerType;
 	Leaf.LeafShape			leafType;
 	private ArrayList<Tree>	trees	= new ArrayList<Tree>();
-	private PGraphics2D		pg;
+	public PGraphics2D		pg, pg_front;
 	private PApplet			parent;
 	private PVector			pos;
 	private float			hue;
@@ -35,10 +35,12 @@ public class TreeStack {
 		leafType = Leaf.randomType();
 		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
 		pg = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
-		// pg.pixelDensity = 2;
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg.smooth(4);
-		//		pg.noStroke();
+
+		pg_front = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_front.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		pg_front.smooth(4);
 
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 100, 20);
@@ -66,7 +68,7 @@ public class TreeStack {
 		Collections.shuffle(trees);
 		for (Tree t : trees) {
 			if (t.addFlower(flowerType)) {
-				break;
+				return;
 			}
 		}
 	}
@@ -76,36 +78,59 @@ public class TreeStack {
 		Collections.shuffle(trees);
 		for (Tree t : trees) {
 			if (t.addLeaf(leafType, pg)) {
-				break;
+				return;
 			}
 		}
 	}
 
-	void updateAndDraw(int millis) {
+	public boolean dropLeaf(Note n) {
+
+		Collections.shuffle(trees);
+		for (Tree t : trees) {
+			if (t.dropLeaf()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void updateRender(int millis) {
 
 		sketcher.setGraphics(pg);
 		sketcher.setSeed(0);
 
-		pg.beginDraw();
+		PGraphics2D[] pgs = { pg, pg_front };
 
-		pg.background(0, 0, 0, 0);
+		for (PGraphics2D p : pgs) {
 
-		pg.pushMatrix();
-		pg.translate(pos.x, pos.y);
+			p.beginDraw();
+			p.background(0, 0, 0, 0);
+			p.pushMatrix();
+			p.translate(pos.x, pos.y);
+		}
 
 		for (Tree t : trees) {
 			t.jitter(millis);
-			t.draw(pg, sketcher, hue);
+			t.draw(pg, pg_front, sketcher, hue);
 		}
 
 		drawDebugLabel(pg);
 
-		pg.popMatrix();
+		for (PGraphics2D p : pgs) {
 
-		pg.endDraw();
-
+			p.popMatrix();
+			p.endDraw();
+		}
+	}
+	
+	void drawBack() {
 		parent.blendMode(PConstants.BLEND);
 		parent.image(pg, 0, 0);
+	}
+	
+	void drawFront() {
+		parent.blendMode(PConstants.NORMAL);
+		parent.image(pg_front, 0, 0);
 	}
 
 	private void drawDebugLabel(PGraphics2D pg) {

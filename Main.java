@@ -30,7 +30,7 @@ public class Main extends PApplet {
 	int	risingMel		= 104000;
 	int	repeatedNotes	= 180000;
 	int	bigReturn		= 251000;
-	int	highMel			= 295000;
+	int	highMel			= 290000;
 	int	outro			= 310000;
 	int	end				= 350000;
 
@@ -40,7 +40,9 @@ public class Main extends PApplet {
 //	int	debugOffsetMillis	= 0;
 //	int	debugOffsetMillis = melodyStart;
 //	int	debugOffsetMillis = risingMel;
-	int debugOffsetMillis = repeatedNotes;
+//	int debugOffsetMillis = repeatedNotes;
+	int debugOffsetMillis = bigReturn;
+//	int debugOffsetMillis = highMel;
 	int	durationMillis;
 	
 	PGraphics2D grass;
@@ -128,8 +130,10 @@ public class Main extends PApplet {
 			break;
 		}
 
-		TreeManager.instance().updateAndDraw(millis);
+		TreeManager.instance().updateRender(millis);
+		TreeManager.instance().drawTrees();
 		BirdManager.instance().updateAndDraw(millis);
+		TreeManager.instance().drawOverlay();
 		
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;

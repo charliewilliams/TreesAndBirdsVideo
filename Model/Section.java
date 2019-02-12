@@ -11,7 +11,7 @@ public enum Section {
 			116450, // rising minor
 			175012, // repeated notes 
 			255250, // big melody
-			311000, // high melody
+			292000, // high melody
 			374500, // recap
 			412000 // file end
 	};
