@@ -15,6 +15,7 @@ public class Leaf {
 	PShape	shape;
 	float	angle;
 	float	hue, sat, bri, alp;
+	float	fallHue;
 	boolean	isFalling	= false;
 	float	groundY;
 	float	fallSpeed;
@@ -117,6 +118,7 @@ public class Leaf {
 		angle = (float) Util.random(0, Math.PI * 2);
 		groundY = PApplet.map(Util.randomf(0, 1), 0, 1, 30, 120);
 		fallSpeed = Util.randomf(0.5f, 1);
+		fallHue = Util.randomf(10, 50);
 		createShape(pg, ls);
 	}
 
@@ -124,16 +126,19 @@ public class Leaf {
 
 		if (isFalling) {
 			fallTick(parent);
+		} 
+		else {
+			turnColorTick();
 		}
-		
+
 		//
-//		pg.strokeWeight(1);
-//		pg.stroke(255, 0, 0);
-//		pg.line(0, groundY, pg.width, groundY);
-//		pg.stroke(0, 255, 0);
-//		pg.line(0, 0, pg.width, 0);
-//		pg.stroke(0, 0, 255);
-//		pg.stroke(0, pos.y, pg.width, pos.y);
+		//		pg.strokeWeight(1);
+		//		pg.stroke(255, 0, 0);
+		//		pg.line(0, groundY, pg.width, groundY);
+		//		pg.stroke(0, 255, 0);
+		//		pg.line(0, 0, pg.width, 0);
+		//		pg.stroke(0, 0, 255);
+		//		pg.stroke(0, pos.y, pg.width, pos.y);
 		//
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
@@ -142,15 +147,46 @@ public class Leaf {
 		pg.popMatrix();
 	}
 
-	void fallTick(PApplet parent) {
+	void turnColorTick() {
+
+		if (hue > fallHue) {
+			hue -= 0.1;
+			bri *= 0.95;
+			updateColor();
+		}
+	}
+
+	void updateColor() {
+
+		int alpha = ((int)(alp * 2.55)) << 24;
+		int brightness = ((int) (bri * 2.55) << 16);
+		int saturation = (int) (sat * 2.55) << 8;
+		int hueAngle = ((int) (hue * 0.7083333333));
 		
+		shape.setFill(alpha | brightness | saturation | hueAngle);
+	}
+
+	void fallTick(PApplet parent) {
+
 		if (pos.y >= groundY) {
-			alp -= 0.1;
+
+			if (alp > 0) {
+				alp *= 0.99;
+				sat *= 0.95;
+				updateColor();
+			} else {
+				isFalling = false;
+			}
 			return;
 		}
 
+		sat *= 0.95;
+		bri *= 0.95;
 		pos.y += fallSpeed;
 		pos.x += (parent.noise(pos.y) - 0.5) * 4;
+		angle += (parent.noise(pos.y) - 0.5) * 0.25;
 		fallSpeed += 0.01 * fallSpeed;
+
+		updateColor();
 	}
 }
