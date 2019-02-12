@@ -10,19 +10,23 @@ import processing.core.PApplet;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
 
+import org.gicentre.handy.*;
+
 public class Flock {
 
 	private Note note;
 	private TreeStack treeStack;
+	private 
 	int baseHue;
 	float baseSize;
 	double flapSpeed;
 	// TODO more flock-specific stuff about tweaking speed, behavior, appearance
 	// private class array of sizes or whatever
+	private HandyRenderer sketcher;
 
 	ArrayList<Bird> birds = new ArrayList<Bird>();
 
-	Flock(Note n, TreeStack t) {
+	Flock(Note n, TreeStack t, PApplet a) {
 
 		note = n;
 		treeStack = t;
@@ -30,6 +34,9 @@ public class Flock {
 		baseHue = 360 / ((note.pitch % 12) + 1);
 		baseSize = Util.randomf(2, 10);
 		flapSpeed = PApplet.map(baseSize, 2f, 10f, 0.5f, 0.01f);// Util.random(0.05, 0.5);
+		sketcher = HandyPresets.createWaterAndInk(a); // new HandyRenderer(a);
+		sketcher.setRoughness(Util.randomf(0, 2));
+		sketcher.setStrokeWeight(Util.randomf(0.15f, 0.5f));
 	}
 
 	Bird addBird(PVector stage, PVector pos, int millis) {
@@ -44,11 +51,8 @@ public class Flock {
 	void update(PGraphics2D pg, ArrayList<Bird> allBirds, int millis) {
 
 		for (Bird b : birds) {
-
-			// TODO call an Update based on what's happening in the song - call
-			// flock(), flee(), enter(), leave() etc
-//			b.hue = baseHue;
-			b.run(allBirds, birds, pg, millis);
+			sketcher.setGraphics(pg);
+			b.run(allBirds, birds, pg, millis, sketcher);
 		}
 	}
 

@@ -54,7 +54,7 @@ public class BirdManager {
 		Flock f = flocks[n.pitch % 12];
 
 		if (f == null) {
-			f = new Flock(n, TreeManager.instance().treeStackFor(n));
+			f = new Flock(n, TreeManager.instance().treeStackFor(n), parent);
 			flocks[n.pitch % 12] = f;
 		}
 

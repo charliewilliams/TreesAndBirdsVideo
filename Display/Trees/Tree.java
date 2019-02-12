@@ -2,6 +2,7 @@ package Display.Trees;
 import Model.Note;
 import processing.core.*;
 import java.util.*;
+import org.gicentre.handy.*;
 
 public class Tree {
 	
@@ -19,7 +20,7 @@ public class Tree {
 		this.leafSize = leafSize;
 		
 		// Branch(PApplet parent, PVector origin, float bSize, float theta, float depth, float noiseOffset, boolean isEnd)
-		root = new Branch(parent, 100, flowerSize, leafSize);
+		root = new Branch(parent, 80, flowerSize, leafSize);
 		branches.add(root);
 	}
 
@@ -34,7 +35,7 @@ public class Tree {
 		return root.addFlower(flowerType);
 	}
 	
-	boolean addLeaf() {
+	public boolean addLeaf() {
 		return root.addLeaf();
 	}
 	
@@ -46,11 +47,11 @@ public class Tree {
 		flowerSize += 0.1;
 	}
 
-	void draw(PGraphics pg, float hue) {
-		root.draw(pg, hue, alpha);
+	void draw(PGraphics pg, HandyRenderer sketcher, float hue) {
+		root.draw(pg, sketcher, hue, alpha);
 	}
 	
-	void jitter() {
-		root.jitter();
+	public void jitter(int millis) {
+		root.jitter(millis);
 	}
 }

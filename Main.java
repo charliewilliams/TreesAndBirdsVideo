@@ -1,4 +1,5 @@
 import processing.core.*;
+import processing.opengl.PGraphics2D;
 import processing.sound.*;
 import Display.*;
 import Display.Birds.BirdManager;
@@ -37,9 +38,11 @@ public class Main extends PApplet {
 
 	int	millisOffset		= 500;
 //	int	debugOffsetMillis	= 0;
-//	int	debugOffsetMillis = melodyStart;
-	int	debugOffsetMillis = risingMel;
+	int	debugOffsetMillis = melodyStart;
+//	int	debugOffsetMillis = risingMel;
 	int	durationMillis;
+	
+	PGraphics2D grass;
 
 	public void settings() {
 
@@ -123,7 +126,7 @@ public class Main extends PApplet {
 			break;
 		}
 
-		TreeManager.instance().draw();
+		TreeManager.instance().updateAndDraw(millis);
 		BirdManager.instance().updateAndDraw(millis);
 
 		int seconds = millis / 1000;

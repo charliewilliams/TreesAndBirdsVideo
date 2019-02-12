@@ -59,7 +59,7 @@ public class TreeManager {
 	}
 
 	public void addChangeNote(Note n, boolean shouldBeLeaf) {
-		
+
 		if (shouldBeLeaf) {
 			treeStackFor(n).addLeaf();
 		} else {
@@ -67,13 +67,13 @@ public class TreeManager {
 		}
 	}
 
-	public void draw() {
+	public void updateAndDraw(int millis) {
 
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];
 			if (stack != null) {
-				stack.draw();
+				stack.updateAndDraw(millis);
 			}
 		}
 	}

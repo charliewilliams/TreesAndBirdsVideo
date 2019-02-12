@@ -1,11 +1,17 @@
 package Display.Trees;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
-import Display.Birds.Bird;
+import org.gicentre.handy.HandyPresets;
+import org.gicentre.handy.HandyRenderer;
+
+import Display.Birds.*;
 import Model.Note;
 import Util.Util;
-import processing.core.*;
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PVector;
 import processing.opengl.PGraphics2D;
 
 public class TreeStack {
@@ -18,6 +24,7 @@ public class TreeStack {
 	private PVector pos;
 	private float hue;
 	private Note n;
+	private HandyRenderer sketcher;
 
 	TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, PVector pos) {
 
@@ -28,12 +35,16 @@ public class TreeStack {
 		pg = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		// pg.pixelDensity = 2;
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		pg.smooth(4);
 //		pg.noStroke();
 
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 100, 20);
 			trees.add(new Tree(parent, n, baseIndex + i, alpha, Util.randomf(5, 15), Util.randomf(5, 15)));
 		}
+		
+		sketcher = HandyPresets.createWaterAndInk(parent); // new HandyRenderer(a);
+		sketcher.setRoughness(Util.randomf(0, 2));
 	}
 
 	static int calls = 0;
@@ -43,7 +54,7 @@ public class TreeStack {
 		Collections.shuffle(trees);
 		for (Tree t : trees) {
 			if (t.grow(note).size() > 0) {
-				break;
+				return;
 			}
 		}
 	}
@@ -68,14 +79,10 @@ public class TreeStack {
 		}
 	}
 
-	void jitter() {
-
-		for (Tree t : trees) {
-			t.jitter();
-		}
-	}
-
-	void draw() {
+	void updateAndDraw(int millis) {
+		
+		sketcher.setGraphics(pg);
+		sketcher.setSeed(0);
 
 		pg.beginDraw();
 
@@ -85,7 +92,8 @@ public class TreeStack {
 		pg.translate(pos.x, pos.y);
 
 		for (Tree t : trees) {
-			t.draw(pg, hue);
+			t.jitter(millis);
+			t.draw(pg, sketcher, hue);
 		}
 		
 		drawDebugLabel(pg);

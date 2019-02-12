@@ -9,6 +9,8 @@ import processing.core.PConstants;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
 
+import org.gicentre.handy.*;
+
 public class Bird {
 
 	public enum State {
@@ -65,14 +67,14 @@ public class Bird {
 		startLandingTimer(millis);
 	}
 
-	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg, int millis) {
+	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg, int millis, HandyRenderer sketcher) {
 
 		switch (state) {
 		case flying:
 			tickLandingTimer(millis);
 			break;
 		case landed:
-			render(pg);
+			render(pg, sketcher);
 			return;
 		case to_land:
 			tickToLandTimer(millis);
@@ -98,7 +100,7 @@ public class Bird {
 
 		flock(allBirds, myFlock);
 		move();
-		render(pg);
+		render(pg, sketcher);
 	}
 
 	private boolean	avoidWalls		= true;
@@ -197,7 +199,11 @@ public class Bird {
 			pos.y = stage.y;
 	}
 
-	void render(PGraphics2D ps) {
+	void render(PGraphics2D ps, HandyRenderer sketcher) {
+		
+		if (state == State.landed) {
+			sketcher.setSeed(0);
+		}
 
 		// Draw a triangle rotated in the direction of velocity
 		float theta = (float) (vel.heading() + Math.toRadians(90));
@@ -213,14 +219,14 @@ public class Bird {
 		ps.pushMatrix();
 		ps.translate(pos.x, pos.y);
 		ps.rotate(theta);
-		ps.beginShape(PConstants.TRIANGLES);
-		ps.vertex(0, -size * 2);
-		ps.vertex(-r * 2, size);
-		ps.vertex(r * 2, size);
-		ps.endShape();
+		sketcher.beginShape(PConstants.TRIANGLES);
+		sketcher.vertex(0, -size * 2);
+		sketcher.vertex(-r * 2, size);
+		sketcher.vertex(r * 2, size);
+		sketcher.endShape();
 		ps.popMatrix();
 
-		drawLandingPoint(ps);
+//		drawLandingPoint(ps);
 	}
 
 	void drawWalls(PGraphics2D ps) {
