@@ -13,21 +13,24 @@ import processing.core.PVector;
 
 public class Branch {
 
-	boolean						hasBird				= false, finished = false, isRoot = false;
-	PVector						origin, end;
-	Leaf						leaf;
-	Flower						flower;
-	float						flowerSize, leafSize;
-	private ArrayList<Branch>	children			= new ArrayList<Branch>();
-	private int					numberOfDescendants	= 0;
+	boolean hasBird = false, finished = false, isRoot = false;
+
+	PVector	origin, end;
+	Leaf	leaf;
+	Flower	flower;
+	float	flowerSize, leafSize;
+
+	private ArrayList<Branch> children = new ArrayList<Branch>();
 
 	private PApplet	parent;
 	float			diam, angle, length;
 	private int		depth;
 	private int		numberOfParents;
-	private int		maxChildren	= 2;
-	private float	circleAlpha	= 0, circleDiam = 0;
-	private float	maxAlpha	= 100;
+	private int		numberOfDescendants	= 0;
+	private int		maxChildren			= 2;
+	private float	circleAlpha			= 0, circleDiam = 0;
+	private float	maxAlpha			= 100;
+	private float	hue;
 
 	static private float	piOver2		= (float) (Math.PI / 2.0);
 	static private float	piOver5		= (float) (Math.PI / 5.0);
@@ -45,6 +48,7 @@ public class Branch {
 		numberOfParents = 0;
 		circleAlpha = maxAlpha;
 		circleDiam = 0;
+		hue = Util.randomf(100, 140);
 
 		this.length = length;
 		end = new PVector(0, -length);
@@ -59,13 +63,14 @@ public class Branch {
 
 	// Normal branch
 	Branch(PApplet parent, PVector origin, PVector end, int depth, float flowerSize, float leafSize,
-			int numberOfParents, PVector driftSpeed, PVector driftMag) {
+			int numberOfParents, PVector driftSpeed, PVector driftMag, float hue) {
 
 		this.parent = parent;
 		this.origin = origin;
 		this.end = end;
 		this.depth = depth;
 		this.numberOfParents = numberOfParents;
+		this.hue = hue;
 		length = PVector.dist(origin, end);
 		angle = PVector.angleBetween(end, origin);
 		circleAlpha = maxAlpha;
@@ -73,7 +78,7 @@ public class Branch {
 
 		this.flowerSize = flowerSize;
 		this.leafSize = leafSize;
-		
+
 		this.driftSpeed = driftSpeed;
 		this.driftMag = driftMag;
 	}
@@ -120,7 +125,8 @@ public class Branch {
 		dir.mult(Util.randomf(0.5f, 0.7f));
 		PVector newEnd = PVector.add(end, dir);
 
-		return new Branch(parent, end, newEnd, depth + 1, flowerSize, leafSize, ++numberOfParents, driftSpeed, driftMag);
+		return new Branch(parent, end, newEnd, depth + 1, flowerSize, leafSize, ++numberOfParents, driftSpeed,
+				driftMag, hue);
 	}
 
 	void draw(PGraphics pg, HandyRenderer sketcher, float hue, float alpha) {
@@ -180,7 +186,7 @@ public class Branch {
 
 		Float angle = 0f;
 
-		float maxAngle = PApplet.map(numberOfParents, 0, 5, piOver2, piOver5);
+		float maxAngle = isRoot ? piOver2 : PApplet.map(numberOfParents, 0, 5, piOver2, piOver5);
 
 		boolean found = false;
 		while (!found) {
@@ -194,7 +200,7 @@ public class Branch {
 			// but not too close to an existing angle
 			for (Float existing : existingAngles) {
 
-				float minAngleDelta = piOver15;
+				float minAngleDelta = isRoot ? piOver5 : piOver15;
 				if (Math.abs(existing - angle) < minAngleDelta) {
 					continue;
 				}
@@ -207,11 +213,11 @@ public class Branch {
 		return angle;
 	}
 
-	boolean addFlower(Flower.Type flowerType) {
+	boolean addFlower(Flower.FlowerType flowerType) {
 		return addFlower(flowerType, end);
 	}
 
-	boolean addFlower(Flower.Type flowerType, PVector pos) {
+	boolean addFlower(Flower.FlowerType flowerType, PVector pos) {
 
 		if (flower != null) {
 			return false;
@@ -227,23 +233,23 @@ public class Branch {
 		return true;
 	}
 
-	boolean addLeaf() {
-		return addLeaf(end);
+	boolean addLeaf(Leaf.LeafShape leafType, PGraphics pg) {
+		return addLeaf(leafType, pg, end);
 	}
 
-	boolean addLeaf(PVector pos) {
+	boolean addLeaf(Leaf.LeafShape leafType, PGraphics pg, PVector pos) {
 
 		if (leaf != null) {
 			return false;
 		}
 
 		for (Branch child : children) {
-			if (child.addLeaf()) {
+			if (child.addLeaf(leafType, pg)) {
 				return true;
 			}
 		}
 
-		leaf = new Leaf(pos, 0, 100);
+		leaf = new Leaf(leafType, pos, hue, pg);
 		return true;
 	}
 }

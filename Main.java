@@ -38,8 +38,9 @@ public class Main extends PApplet {
 
 	int	millisOffset		= 500;
 //	int	debugOffsetMillis	= 0;
-	int	debugOffsetMillis = melodyStart;
+//	int	debugOffsetMillis = melodyStart;
 //	int	debugOffsetMillis = risingMel;
+	int debugOffsetMillis = repeatedNotes;
 	int	durationMillis;
 	
 	PGraphics2D grass;
@@ -129,7 +130,6 @@ public class Main extends PApplet {
 
 		TreeManager.instance().updateAndDraw(millis);
 		BirdManager.instance().updateAndDraw(millis);
-//		SceneManager.instance().renderGrass();
 		
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;
@@ -148,6 +148,9 @@ public class Main extends PApplet {
 		}
 
 		fill(0);
+		if (section.length() == 0) {
+			exit();
+		}
 		text("section " + section.ordinal() + " (" + section + ") – " + (int) (section.length() / 1000) + "s long – "
 				+ (int) (section.pctDone(millis) * 100) + "% done", 40, height - 40);
 	}

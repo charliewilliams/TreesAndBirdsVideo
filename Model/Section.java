@@ -31,6 +31,10 @@ public enum Section {
 	public float length() {
 
 		if (l == 0) {
+			
+			if (this.ordinal() + 1 >= values.length) {
+				return 0;
+			}
 
 			int thisStartMillis = startPointsInMillis[this.ordinal()];
 			int thisEndMillis = startPointsInMillis[this.ordinal() + 1];

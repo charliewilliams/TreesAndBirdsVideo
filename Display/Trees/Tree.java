@@ -31,12 +31,12 @@ public class Tree {
 		return newChildren;
 	}
 	
-	boolean addFlower(Flower.Type flowerType) {
+	boolean addFlower(Flower.FlowerType flowerType) {
 		return root.addFlower(flowerType);
 	}
 	
-	public boolean addLeaf() {
-		return root.addLeaf();
+	public boolean addLeaf(Leaf.LeafShape leafType, PGraphics pg) {
+		return root.addLeaf(leafType, pg);
 	}
 	
 	void growLeaves() {
