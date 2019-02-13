@@ -157,13 +157,7 @@ public class Leaf {
 	}
 
 	void updateColor() {
-
-		int alpha = ((int)(alp * 2.55)) << 24;
-		int brightness = ((int) (bri * 2.55) << 16);
-		int saturation = (int) (sat * 2.55) << 8;
-		int hueAngle = ((int) (hue * 0.7083333333));
-		
-		shape.setFill(alpha | brightness | saturation | hueAngle);
+		shape.setFill(Util.colorFrom360(fallHue, sat, bri, alp));
 	}
 
 	void fallTick(PApplet parent) {

@@ -34,7 +34,7 @@ public class TreeStack {
 		flowerType = Flower.randomType();
 		leafType = Leaf.randomType();
 		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
-		
+
 		pg_trees = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_trees.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_trees.smooth(4);
@@ -42,11 +42,11 @@ public class TreeStack {
 		pg_leaves = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_leaves.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_leaves.smooth(4);
-		
+
 		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_glow.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_glow.smooth(8);
-		
+
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 100, 20);
 			trees.add(new Tree(parent, n, baseIndex + i, alpha, Util.randomf(5, 15), Util.randomf(5, 15)));
@@ -98,47 +98,67 @@ public class TreeStack {
 		return false;
 	}
 
+	private void preparePGraphics(PGraphics2D p) {
+
+		p.beginDraw();
+		p.clear();
+		p.pushMatrix();
+		p.translate(pos.x, pos.y);
+	}
+
+	private void finalizePGraphics(PGraphics2D p) {
+
+		p.popMatrix();
+		p.endDraw();
+	}
+
 	void updateRender(int millis) {
 
-		sketcher.setGraphics(pg_trees);
 		sketcher.setSeed(0);
 
-		PGraphics2D[] pgs = { pg_trees, pg_leaves, pg_glow };
-
-		for (PGraphics2D p : pgs) {
-
-			p.beginDraw();
-			p.clear();
-//			p.background(0, 0, 0, 0);
-			p.pushMatrix();
-			p.translate(pos.x, pos.y);
+		preparePGraphics(pg_trees);
+		{
+			for (Tree t : trees) {
+				t.jitter(millis);
+				t.renderTrees(pg_trees, sketcher, hue);
+			}
 		}
-
-		for (Tree t : trees) {
-			t.jitter(millis);
-			t.render(pg_trees, pg_leaves, pg_glow, sketcher, hue);
-		}
-
+		finalizePGraphics(pg_trees);
 		drawDebugLabel(pg_trees);
 
-		for (PGraphics2D p : pgs) {
-
-			p.popMatrix();
-			p.updatePixels();
-			p.endDraw();
+		preparePGraphics(pg_leaves);
+		{
+			for (Tree t : trees) {
+				t.renderLeaves(pg_leaves, hue);
+			}
 		}
+		finalizePGraphics(pg_leaves);
+
+		preparePGraphics(pg_glow);
+		{
+			for (Tree t : trees) {
+				t.renderGlow(pg_trees, pg_leaves, pg_glow, hue);
+			}
+		}
+		finalizePGraphics(pg_glow);
 	}
-	
+
 	void drawBack() {
 		parent.blendMode(PConstants.BLEND);
 		parent.image(pg_trees, 0, 0);
+		
+//				pg_trees.save("tmp/pg-trees-" + n.pitchClass + "-" + parent.frameCount + ".png");
 	}
-	
+
 	void drawFront() {
 		parent.blendMode(PConstants.NORMAL);
 		parent.image(pg_leaves, 0, 0);
 		parent.blendMode(PConstants.ADD);
 		parent.image(pg_glow, 0, 0);
+
+		
+//				pg_leaves.save("tmp/pg-leaves-" + n.pitchClass + "-" + parent.frameCount + ".png");
+//				pg_glow.save("tmp/pg-glow-" + n.pitchClass + "-" + parent.frameCount + ".png");
 	}
 
 	private void drawDebugLabel(PGraphics2D pg) {

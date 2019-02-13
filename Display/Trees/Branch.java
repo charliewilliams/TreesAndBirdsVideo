@@ -9,7 +9,6 @@ import Display.Glow;
 import Model.Note;
 import Util.Util;
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
@@ -33,7 +32,7 @@ public class Branch {
 	private int		maxChildren			= 2;
 	private float	circleAlpha			= 0, circleDiam = 0;
 	private float	maxAlpha			= 100;
-	private float	glowAmount			= 100;
+	private float	glowAmount			= 255;
 	private float	hue;
 
 	static private float	piOver2		= (float) (Math.PI / 2.0);
@@ -42,6 +41,8 @@ public class Branch {
 
 	private PVector	driftSpeed;
 	private PVector	driftMag;
+
+	private long seed = (long) Util.random(0, 10000000);
 
 	// Root
 	Branch(PApplet parent, float length, float flowerSize, float leafSize) {
@@ -83,8 +84,8 @@ public class Branch {
 		this.flowerSize = flowerSize;
 		this.leafSize = leafSize;
 
-		this.driftSpeed = driftSpeed;
-		this.driftMag = driftMag;
+		this.driftSpeed = driftSpeed.copy().mult(0.9f);
+		this.driftMag = driftMag.copy().mult(1.1f);
 	}
 
 	ArrayList<Branch> grow(Note n) {
@@ -133,17 +134,21 @@ public class Branch {
 				hue);
 	}
 
-	void render(PGraphics pg, PGraphics pg_front, PGraphics2D pg_glow, HandyRenderer sketcher, float hue, float alpha) {
+	//	t.renderTrees(pg_trees, sketcher, hue);
+	//	t.renderLeaves(pg_leaves, hue);
+	//	t.renderGlow(pg_trees, pg_leaves, pg_glow, hue);
+	// pg.blendMode(PConstants.NORMAL);
 
-//		pg.blendMode(PConstants.NORMAL);
-		
+	public void renderTrees(PGraphics pg_trees, HandyRenderer sketcher, float hue, float alpha) {
+		sketcher.setSeed(seed);
+
 		// Background circle
 		if (circleAlpha > 0) {
 
-			pg.stroke(hue, 100, 90, circleAlpha * 0.8f);
-			pg.strokeWeight(0.5f);
-			pg.fill(hue, 20, 100, circleAlpha * 0.2f);
-			pg.ellipse(end.x, end.y, circleDiam, circleDiam);
+			pg_trees.stroke(hue, 100, 90, circleAlpha * 0.8f);
+			pg_trees.strokeWeight(0.5f);
+			pg_trees.fill(hue, 20, 100, circleAlpha * 0.2f);
+			pg_trees.ellipse(end.x, end.y, circleDiam, circleDiam);
 
 			circleAlpha *= 0.99;
 
@@ -154,34 +159,48 @@ public class Branch {
 			}
 		}
 
-		// Draw the basic line for our branch
-		pg.strokeWeight(PApplet.map(numberOfDescendants, 100, 0, 10, 0.5f));
-		pg.stroke(hue, 100, 50, alpha);
-		pg.fill(hue, 100, 50, alpha);
+		pg_trees.strokeWeight(PApplet.map(numberOfDescendants, 100, 0, 10, 0.5f));
+
+		// sketcher takes BGRA (!)
+		// so let's just give it a gray value
+//		sketcher.setStrokeColour((int) glowAmount);
+
+		//		int color = Util.colorFrom360(0, 100, 100, alpha); // red
+		//		float red = parent.red(color);
+		//		float gre = parent.green(color);
+		//		float blu = parent.blue(color);
+		//		float alp = parent.alpha(color);
+		//		int bgra = Util.bgraFrom255(red, gre, blu, alp);
+		//		sketcher.setStrokeColour(bgra);
 
 		sketcher.line(origin.x, origin.y, end.x, end.y);
-//		pg.line(origin.x, origin.y, end.x, end.y);
-		
-//		if (glowAmount > 0) {
-//			
-//			float mult = 1;
-//			float radius = 1;
-//			
-//			Glow.drawGlow(pg, pg_glow, mult, radius);
-//			
-//			glowAmount *= 0.95f;
-//		}
+		//		pg_trees.line(origin.x, origin.y, end.x, end.y);
 
 		for (Branch child : children) {
-			child.render(pg, pg_front, pg_glow, sketcher, hue, alpha * 0.9f);
+			child.renderTrees(pg_trees, sketcher, hue, alpha * 0.9f);
 		}
+	}
+
+	public void renderLeaves(PGraphics pg_leaves, float hue, float alpha) {
 
 		if (leaf != null) {
-			leaf.draw(parent, pg_front, leafSize);
+			leaf.draw(parent, pg_leaves, leafSize);
 		}
 
 		if (flower != null) {
-			flower.draw(pg_front, flowerSize);
+			flower.draw(pg_leaves, flowerSize);
+		}
+	}
+
+	public void renderGlow(PGraphics pg_trees, PGraphics pg_leaves, PGraphics2D pg_glow, float hue, float alpha) {
+
+		if (glowAmount > 0.01) {
+
+			float mult = Util.logMapf(glowAmount, 255, 0, 10, 0);
+			float radius = Util.logMapf(glowAmount, 255, 0, 1, 0);
+			Glow.drawGlow(pg_trees, pg_glow, mult, radius);
+
+			glowAmount *= 0.999f;
 		}
 	}
 
