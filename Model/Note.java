@@ -11,7 +11,7 @@ public class Note {
 	private String name;
 	public String pitchClass;
 	public float velocity; // normalized 0-1
-	float duration; // seconds
+	public float duration; // seconds
 //	private float freq;
 	public int channel;
 	

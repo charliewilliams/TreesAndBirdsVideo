@@ -110,11 +110,10 @@ public class NoteManager {
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
-				// TODO bass notes glow trees?
 				TreeManager.instance().addNote(note);
 				break;
 			case highMel:
-				//				 TreeManager.instance().dropLeaf(note);
+				TreeManager.instance().dropLeaf(note);
 			case outro:
 			case end:
 				break;
@@ -140,11 +139,10 @@ public class NoteManager {
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
-				// TODO bass notes glow trees?
 				TreeManager.instance().addNote(note);
 				break;
 			case highMel:
-
+				Stars.addStar(note);
 			case outro:
 			case end:
 				TreeManager.instance().dropLeaf(note);
@@ -182,12 +180,12 @@ public class NoteManager {
 			case repeatedNotes:
 				TreeManager.instance().addLeafOrFlower(note, true);
 				break;
-				
-			case bigReturn:				
+
+			case bigReturn:
 			case highMel:
 				TreeManager.instance().glowRoot(note);
 				break;
-				
+
 			case outro:
 			case end:
 				TreeManager.instance().dropLeaf(note);

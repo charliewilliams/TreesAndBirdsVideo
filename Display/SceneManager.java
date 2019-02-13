@@ -13,7 +13,6 @@ public class SceneManager {
 
 	private static SceneManager	m;
 	private PApplet				parent;
-	int[]						backgroundColors	= new int[10];
 	PImage						bg;
 	private PGraphics			ground_pg;
 	private PGraphics2D			sky_pg, grass_pg;
@@ -42,21 +41,10 @@ public class SceneManager {
 		ground_pg = parent.createGraphics(w, h);
 		grass_pg = (PGraphics2D) parent.createGraphics(w, h, PConstants.P2D);
 
-		int startColor = parent.color(39, 5, 100); // paper beige
-		int sunset1 = parent.color(43, 91, 100); // sunset 1 (yellow)
-		int sunset2 = parent.color(14, 94, 90); // sunset 2 (orange)
-		int nightBlue = parent.color(204, 100, 25); // night blue
-		int black = parent.color(0, 0, 0);
-
-		backgroundColors[Section.start.ordinal()] = startColor;
-		backgroundColors[Section.melodyStart.ordinal()] = startColor;
-		backgroundColors[Section.risingMel.ordinal()] = startColor;
-		backgroundColors[Section.repeatedNotes.ordinal()] = sunset1;
-		backgroundColors[Section.bigReturn.ordinal()] = nightBlue;
-		backgroundColors[Section.highMel.ordinal()] = nightBlue;
-		backgroundColors[Section.outro.ordinal()] = nightBlue;
-		backgroundColors[Section.end.ordinal()] = black;
-		backgroundColors[Section.end.ordinal() + 1] = black;
+//		int startColor = parent.color(39, 5, 100); // paper beige
+//		int sunset1 = parent.color(43, 91, 100); // sunset 1 (yellow)
+//		int sunset2 = parent.color(14, 94, 90); // sunset 2 (orange)
+//		int nightBlue = parent.color(204, 100, 25); // night blue
 
 		groundColor = parent.color(37, 42, 100);
 		skyBackgroundColor = parent.color(223, 40, 46);
@@ -122,13 +110,13 @@ public class SceneManager {
 
 	void generateSky(PGraphics pg, int millis, int idx) {
 
-		int color = backgroundColors[idx];
-
 		pg.beginDraw();
 
 		pg.background(skyBackgroundColor);
 
 		float horizonY = 2 * h / 3;
+		
+		int color = parent.color(39, 5, 100); // paper beige
 
 		for (int y = 0; y < h; y += 2) {
 
@@ -141,7 +129,6 @@ public class SceneManager {
 				float n = parent.noise((x + xOff) / 200.0f, (y + yOff) / 50.0f);
 
 				pg.fill(color, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
-				//				pg.fill(darkColor, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
 				pg.ellipse(x, y, skyNodeSize, skyNodeSize);
 			}
 

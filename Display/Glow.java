@@ -9,15 +9,15 @@ import processing.opengl.PGraphics2D;
 
 public class Glow {
 
-	static DwPixelFlow	context;
-	static DwFilter		filter;
-	static PGraphics2D	pg_render, pg_luminance, pg_bloom;
+	private static DwPixelFlow	context;
+	private static DwFilter		filter;
+	private static PGraphics2D	pg_render, pg_luminance, pg_bloom;
 
 	public static void setupGlow(PApplet parent) {
 
 		context = new DwPixelFlow(parent);
-		//		context.print();
-		//		context.printGL();
+//				context.print();
+//				context.printGL();
 
 		filter = new DwFilter(context);
 

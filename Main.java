@@ -10,7 +10,7 @@ public class Main extends PApplet {
 
 	boolean	renderVideo				= false;
 	boolean	renderGlow				= false;
-	boolean	playMusic				= false;
+	boolean	playMusic				= true;
 	int		_frameRate				= 30;
 	int		prerollMillis			= renderVideo ? 10000 : 0;
 	int		moveAudioEarlierMillis	= 4800;
@@ -41,12 +41,10 @@ public class Main extends PApplet {
 	//	int	debugOffsetMillis	= 0;
 	//		int debugOffsetMillis = melodyStart;
 	//	int	debugOffsetMillis = risingMel;
-		int debugOffsetMillis = repeatedNotes;
+//		int debugOffsetMillis = repeatedNotes;
 //	int debugOffsetMillis = bigReturn;
-	//	int debugOffsetMillis = highMel;
+		int debugOffsetMillis = highMel;
 	int durationMillis;
-
-	PGraphics2D grass;
 
 	public void settings() {
 
@@ -71,7 +69,7 @@ public class Main extends PApplet {
 		new TreeManager(this);
 		TreeManager.instance().renderGlow = renderGlow;
 		new BirdManager(this);
-		sceneManager.createGrass();
+		Stars.setupGlow(this);
 
 		noteManager = new NoteManager(this, "song.json");
 
@@ -144,6 +142,7 @@ public class Main extends PApplet {
 		TreeManager.instance().drawTrees();
 		BirdManager.instance().updateAndDraw(millis);
 		TreeManager.instance().drawOverlay();
+		Stars.renderStars(millis, this);
 
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;

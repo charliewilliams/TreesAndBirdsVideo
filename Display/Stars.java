@@ -1,0 +1,89 @@
+package Display;
+
+import java.util.ArrayList;
+
+import com.thomasdiewald.pixelflow.java.DwPixelFlow;
+import com.thomasdiewald.pixelflow.java.imageprocessing.filter.DwFilter;
+
+import Model.Note;
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PVector;
+import processing.opengl.PGraphics2D;
+
+public class Stars {
+
+	private static PGraphics2D		pg_stars;
+	private static ArrayList<Star>	stars	= new ArrayList<Star>();
+
+	private static DwPixelFlow	context;
+	private static DwFilter		filter;
+	private static PGraphics2D	pg_render, pg_luminance, pg_bloom;
+	private static PVector		stage;
+
+	public static void addStar(Note n) {
+
+		float x = PApplet.map(n.pitch, 0, 127, 0, stage.x);
+		float y = PApplet.map(n.velocity, 0, 1, stage.y * 0.67f, 0);
+		PVector pos = new PVector(x, y);
+		float size = PApplet.map(n.velocity + n.duration, 0, 5, 0.5f, 5);
+		stars.add(new Star(pos, size));
+//		PApplet.println("New star", pos, size);
+	}
+
+	public static void renderStars(int millis, PApplet parent) {
+
+		pg_stars.beginDraw();
+		pg_stars.clear();
+		for (Star s : stars) {
+			s.draw(pg_stars);
+		}
+
+//		renderGlow(pg_stars);
+		pg_stars.endDraw();
+
+		parent.blendMode(PConstants.ADD);
+		parent.image(pg_stars, 0, 0);
+	}
+
+	public static void setupGlow(PApplet parent) {
+
+		stage = new PVector(parent.width, parent.height);
+		context = new DwPixelFlow(parent);
+				context.print();
+				context.printGL();
+
+		filter = new DwFilter(context);
+
+		pg_stars = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_stars.colorMode(PConstants.HSB, 360, 100, 100, 100);
+//		pg_stars.smooth(8);
+
+		pg_render = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_render.smooth(8);
+
+		pg_luminance = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_luminance.smooth(8);
+
+		pg_bloom = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_bloom.smooth(8);
+	}
+
+	private static void renderGlow(PGraphics2D dest) {
+
+		// luminance pass
+		filter.luminance_threshold.param.threshold = 0f; // when 0, all colors are used
+		filter.luminance_threshold.param.exponent = 5;
+		//		filter.luminance_threshold.apply(pg_render, pg_luminance);
+		filter.luminance_threshold.apply(dest, pg_luminance);
+
+		// bloom pass
+		// if the original image is used as source, the previous luminance pass 
+		// can just be skipped
+		//		filter.bloom.setBlurLayers(10);
+		filter.bloom.param.mult = 4; // 1 to 10
+		filter.bloom.param.radius = 1f; // 0 to 1
+		//		filter.bloom.apply(pg_luminance, pg_bloom, pg_render);
+		filter.bloom.apply(pg_luminance, pg_bloom, dest);
+	}
+}
