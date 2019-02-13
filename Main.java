@@ -8,12 +8,13 @@ import Model.*;
 
 public class Main extends PApplet {
 
-	static boolean	renderVideo				= false;
-	static boolean	renderGlow				= true;
-	static int		_frameRate				= 30;
-	static int		prerollMillis			= renderVideo ? 10000 : 0;
-	static int		moveAudioEarlierMillis	= 4800;
-	int				totalFrames;
+	boolean	renderVideo				= false;
+//	boolean	renderGlow				= true;
+	boolean	renderGlow				= false;
+	int		_frameRate				= 30;
+	int		prerollMillis			= renderVideo ? 10000 : 0;
+	int		moveAudioEarlierMillis	= 4800;
+	int		totalFrames;
 
 	public static void main(String[] args) {
 
@@ -36,15 +37,15 @@ public class Main extends PApplet {
 
 	Section section = Section.preroll;
 
-	int	millisOffset		= 500;
-//	int	debugOffsetMillis	= 0;
-	int	debugOffsetMillis = melodyStart;
-//	int	debugOffsetMillis = risingMel;
-//	int debugOffsetMillis = repeatedNotes;
-//	int debugOffsetMillis = bigReturn;
-//	int debugOffsetMillis = highMel;
-	int	durationMillis;
-	
+	int millisOffset = 500;
+	//	int	debugOffsetMillis	= 0;
+	int debugOffsetMillis = melodyStart;
+	//	int	debugOffsetMillis = risingMel;
+	//	int debugOffsetMillis = repeatedNotes;
+	//	int debugOffsetMillis = bigReturn;
+	//	int debugOffsetMillis = highMel;
+	int durationMillis;
+
 	PGraphics2D grass;
 
 	public void settings() {
@@ -68,6 +69,7 @@ public class Main extends PApplet {
 		Glow.setupGlow(this);
 		sceneManager = new SceneManager(this);
 		new TreeManager(this);
+		TreeManager.instance().renderGlow = renderGlow;
 		new BirdManager(this);
 		sceneManager.createGrass();
 
@@ -75,8 +77,8 @@ public class Main extends PApplet {
 
 		file = new SoundFile(this, "mix.mp3");
 		durationMillis = (int) (file.duration() * 1000);
-//		file.jump((debugOffsetMillis + moveAudioEarlierMillis) / 1000.0f);
-//		file.play();
+		//		file.jump((debugOffsetMillis + moveAudioEarlierMillis) / 1000.0f);
+		//		file.play();
 
 		if (renderVideo) {
 			float offsetSecs = (prerollMillis * 2 + moveAudioEarlierMillis) / 1000;
@@ -135,7 +137,7 @@ public class Main extends PApplet {
 		TreeManager.instance().drawTrees();
 		BirdManager.instance().updateAndDraw(millis);
 		TreeManager.instance().drawOverlay();
-		
+
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;
 		int displaySeconds = minutes > 0 ? seconds % 60 : seconds;

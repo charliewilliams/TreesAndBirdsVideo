@@ -15,6 +15,7 @@ public class TreeManager {
 	private int idx = 0;
 
 	private PApplet parent;
+	public boolean renderGlow;
 
 	private TreeStack[] pitchClassTrees = new TreeStack[12];
 
@@ -27,7 +28,7 @@ public class TreeManager {
 
 			int numChildren = 1; //(int) Util.random(3, 8);
 
-			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, idx, treePositionForNote(n));
+			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, idx, treePositionForNote(n), renderGlow);
 
 			idx += numChildren;
 		}
@@ -90,6 +91,10 @@ public class TreeManager {
 			}
 		}
 	}
+	
+	public void glowRoot(Note n) {
+		treeStackFor(n).glowRoot();
+	}
 
 	public void updateRender(int millis) {
 
@@ -119,7 +124,8 @@ public class TreeManager {
 
 			TreeStack stack = pitchClassTrees[i];
 			if (stack != null) {
-				stack.drawFront();
+				stack.drawLeaves();
+				stack.drawGlow();
 			}
 		}
 	}

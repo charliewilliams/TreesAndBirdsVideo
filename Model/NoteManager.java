@@ -114,7 +114,7 @@ public class NoteManager {
 				TreeManager.instance().addNote(note);
 				break;
 			case highMel:
-//				 TreeManager.instance().dropLeaf(note);
+				//				 TreeManager.instance().dropLeaf(note);
 			case outro:
 			case end:
 				break;
@@ -172,7 +172,28 @@ public class NoteManager {
 			break;
 
 		case TreeChangeBass:
-			TreeManager.instance().addLeafOrFlower(note, true);
+
+			// Special per-section behaviour
+			switch (section) {
+			case preroll:
+			case start:
+			case melodyStart:
+			case risingMel:
+			case repeatedNotes:
+				TreeManager.instance().addLeafOrFlower(note, true);
+				break;
+				
+			case bigReturn:
+				// TODO bass notes glow trees?
+				TreeManager.instance().glowRoot(note);
+				break;
+				
+			case highMel:
+			case outro:
+			case end:
+				TreeManager.instance().dropLeaf(note);
+				break;
+			}
 			break;
 		case TreeChangeMelody:
 			TreeManager.instance().addLeafOrFlower(note, false);

@@ -102,6 +102,15 @@ public class Bird {
 		move();
 		render(pg, sketcher);
 	}
+	
+	void flyAway() {
+		
+		landingSite = null;
+		state = State.flying;
+		
+		// upward momentum
+		acc = new PVector(Util.randomf(-1, 1), Util.randomf(-5, -1));
+	}
 
 	private boolean	avoidWalls		= true;
 	static float	wallAvoidWeight	= 4;

@@ -81,6 +81,7 @@ public class SceneManager {
 		float pg1Alpha = Util.logMapf(pct, 0, 1, 100, 0);
 		float pg2Alpha = Util.logMapf(pct, 0, 1, 0, 100);
 
+		parent.blendMode(PConstants.REPLACE);
 		parent.image(bg, 0, 0, w, h);
 
 		sky_pg1.tint(255, pg1Alpha);

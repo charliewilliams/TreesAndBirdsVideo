@@ -6,7 +6,8 @@ import java.util.Collections;
 import org.gicentre.handy.HandyPresets;
 import org.gicentre.handy.HandyRenderer;
 
-import Display.Birds.*;
+import Display.Glow;
+import Display.Birds.Bird;
 import Model.Note;
 import Util.Util;
 import processing.core.PApplet;
@@ -21,19 +22,21 @@ public class TreeStack {
 	private ArrayList<Tree>	trees	= new ArrayList<Tree>();
 	public PGraphics2D		pg_trees, pg_leaves, pg_glow;
 	private PApplet			parent;
+	private boolean			renderGlow;
 	private PVector			pos;
-	private float			hue;
+	//	private float			hue;
 	private Note			n;
 	private HandyRenderer	sketcher;
 
-	TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, PVector pos) {
+	TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, PVector pos, boolean renderGlow) {
 
 		this.parent = parent;
+		this.renderGlow = renderGlow;
 		this.pos = pos;
 		this.n = n;
 		flowerType = Flower.randomType();
 		leafType = Leaf.randomType();
-		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
+		//		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
 
 		pg_trees = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_trees.colorMode(PConstants.HSB, 360, 100, 100, 100);
@@ -104,6 +107,7 @@ public class TreeStack {
 		p.clear();
 		p.pushMatrix();
 		p.translate(pos.x, pos.y);
+
 	}
 
 	private void finalizePGraphics(PGraphics2D p) {
@@ -118,10 +122,14 @@ public class TreeStack {
 
 		preparePGraphics(pg_trees);
 		{
+			pg_glow.pushMatrix();
+			pg_glow.translate(pos.x, pos.y);
+
 			for (Tree t : trees) {
 				t.jitter(millis);
-				t.renderTrees(pg_trees, sketcher, hue);
+				t.renderTrees(pg_trees, pg_glow, sketcher);
 			}
+			pg_glow.popMatrix();
 		}
 		finalizePGraphics(pg_trees);
 		drawDebugLabel(pg_trees);
@@ -129,15 +137,18 @@ public class TreeStack {
 		preparePGraphics(pg_leaves);
 		{
 			for (Tree t : trees) {
-				t.renderLeaves(pg_leaves, hue);
+				t.renderLeaves(pg_leaves);
 			}
 		}
 		finalizePGraphics(pg_leaves);
 
+		if (!renderGlow) {
+			return;
+		}
 		preparePGraphics(pg_glow);
 		{
 			for (Tree t : trees) {
-				t.renderGlow(pg_trees, pg_leaves, pg_glow, hue);
+				t.renderGlow(pg_glow);
 			}
 		}
 		finalizePGraphics(pg_glow);
@@ -146,19 +157,37 @@ public class TreeStack {
 	void drawBack() {
 		parent.blendMode(PConstants.BLEND);
 		parent.image(pg_trees, 0, 0);
-		
-//				pg_trees.save("tmp/pg-trees-" + n.pitchClass + "-" + parent.frameCount + ".png");
+
+		//				pg_trees.save("tmp/pg-trees-" + n.pitchClass + "-" + parent.frameCount + ".png");
 	}
 
-	void drawFront() {
-		parent.blendMode(PConstants.NORMAL);
+	void drawLeaves() {
+		parent.blendMode(PConstants.BLEND);
 		parent.image(pg_leaves, 0, 0);
+
+		//				pg_leaves.save("tmp/pg-leaves-" + n.pitchClass + "-" + parent.frameCount + ".png");			
+	}
+
+	void drawGlow() {
+		
+		if (!renderGlow) {
+			return;
+		}
+
+		Glow.render(pg_glow);
+		
+//		pg_glow.tint(12);
+
 		parent.blendMode(PConstants.ADD);
 		parent.image(pg_glow, 0, 0);
 
-		
-//				pg_leaves.save("tmp/pg-leaves-" + n.pitchClass + "-" + parent.frameCount + ".png");
-//				pg_glow.save("tmp/pg-glow-" + n.pitchClass + "-" + parent.frameCount + ".png");
+		//		pg_glow.save("tmp/pg-glow-" + n.pitchClass + "-" + parent.frameCount + ".png");
+	}
+
+	void glowRoot() {
+		for (Tree t : trees) {
+			t.root.glow();
+		}
 	}
 
 	private void drawDebugLabel(PGraphics2D pg) {

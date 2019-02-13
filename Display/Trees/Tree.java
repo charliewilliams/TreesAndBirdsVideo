@@ -55,16 +55,16 @@ public class Tree {
 		flowerSize += 0.1;
 	}
 
-	void renderTrees(PGraphics pg_trees, HandyRenderer sketcher, float hue) {
-		root.renderTrees(pg_trees, sketcher, hue, alpha);
+	void renderTrees(PGraphics2D pg_trees, PGraphics2D pg_glow, HandyRenderer sketcher) {
+		root.renderTrees(pg_trees, pg_glow, sketcher);
 	}
 	
-	void renderLeaves(PGraphics pg_leaves, float hue) {
-		root.renderLeaves(pg_leaves, hue, alpha);
+	void renderLeaves(PGraphics pg_leaves) {
+		root.renderLeaves(pg_leaves);
 	}
 	
-	void renderGlow(PGraphics pg_trees, PGraphics pg_leaves, PGraphics2D pg_glow, float hue) {
-		root.renderGlow(pg_trees, pg_leaves, pg_glow, hue, alpha);
+	void renderGlow(PGraphics2D pg_glow) {
+		root.renderGlow(pg_glow);
 	}
 	
 	public void jitter(int millis) {

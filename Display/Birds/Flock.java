@@ -74,9 +74,7 @@ public class Flock {
 	void flyAway() {
 
 		for (Bird b : birds) {
-
-			b.landingSite = null;
-			b.state = State.flying;
+			b.flyAway();
 		}
 	}
 }

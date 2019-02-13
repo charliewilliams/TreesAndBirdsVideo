@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import org.gicentre.handy.HandyRenderer;
 
-import Display.Glow;
 import Model.Note;
 import Util.Util;
 import processing.core.PApplet;
@@ -139,7 +138,7 @@ public class Branch {
 	//	t.renderGlow(pg_trees, pg_leaves, pg_glow, hue);
 	// pg.blendMode(PConstants.NORMAL);
 
-	public void renderTrees(PGraphics pg_trees, HandyRenderer sketcher, float hue, float alpha) {
+	public void renderTrees(PGraphics2D pg_trees, PGraphics2D pg_glow, HandyRenderer sketcher) {
 		sketcher.setSeed(seed);
 
 		// Background circle
@@ -163,7 +162,9 @@ public class Branch {
 
 		// sketcher takes BGRA (!)
 		// so let's just give it a gray value
-//		sketcher.setStrokeColour((int) glowAmount);
+		sketcher.setStrokeColour((int) glowAmount);
+		
+		glowAmount *= 0.9f;
 
 		//		int color = Util.colorFrom360(0, 100, 100, alpha); // red
 		//		float red = parent.red(color);
@@ -177,11 +178,11 @@ public class Branch {
 		//		pg_trees.line(origin.x, origin.y, end.x, end.y);
 
 		for (Branch child : children) {
-			child.renderTrees(pg_trees, sketcher, hue, alpha * 0.9f);
+			child.renderTrees(pg_trees, pg_glow, sketcher);
 		}
 	}
 
-	public void renderLeaves(PGraphics pg_leaves, float hue, float alpha) {
+	public void renderLeaves(PGraphics pg_leaves) {
 
 		if (leaf != null) {
 			leaf.draw(parent, pg_leaves, leafSize);
@@ -190,18 +191,33 @@ public class Branch {
 		if (flower != null) {
 			flower.draw(pg_leaves, flowerSize);
 		}
+
+		for (Branch child : children) {
+			child.renderLeaves(pg_leaves);
+		}
 	}
 
-	public void renderGlow(PGraphics pg_trees, PGraphics pg_leaves, PGraphics2D pg_glow, float hue, float alpha) {
-
-		if (glowAmount > 0.01) {
-
-			float mult = Util.logMapf(glowAmount, 255, 0, 10, 0);
-			float radius = Util.logMapf(glowAmount, 255, 0, 1, 0);
-			Glow.drawGlow(pg_trees, pg_glow, mult, radius);
-
-			glowAmount *= 0.999f;
+	public void renderGlow(PGraphics2D pg_glow) {
+		
+		for (Branch child : children) {
+			child.renderGlow(pg_glow);
 		}
+
+		if (glowAmount < 0.01) {
+			return;
+		}
+
+		float weight = Util.logMapf(glowAmount, 255, 0, 10, 0.0f);
+
+		pg_glow.beginDraw();
+		pg_glow.strokeWeight(weight);
+		pg_glow.stroke(255);
+		pg_glow.line(origin.x, origin.y, end.x, end.y);
+		pg_glow.endDraw();
+	}
+
+	public void glow() {
+		glowAmount = 255;
 	}
 
 	public void jitter(int millis) {
