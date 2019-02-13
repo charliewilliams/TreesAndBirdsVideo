@@ -22,6 +22,11 @@ public class Bird {
 	static private float	maxSpeed			= 3;		// 4; //maximum magnitude for the velocity vector
 	static private float	maxSteerForce		= 0.03f;	// 0.1f; //maximum magnitude of the steering vector
 
+	private float	cohesionMultiplier	= 3;
+	private float	alignmentMultiplier	= 1;
+	private float	separationMultiplier = 5;
+	private boolean avoidBirds = true;
+
 	private PVector pos; // pos, velocity, and acceleration in a vector datatype
 
 	public PVector pos() {
@@ -52,7 +57,7 @@ public class Bird {
 
 		this.n = n;
 		this.stage = stage;
-		bottomWallY = stage.y * 0.666667f;
+		bottomWallY = stage.y;
 		pos = initialPos;
 		vel = velocityForInitialPosition(initialPos, stage);
 		acc = new PVector(0, 0);
@@ -67,7 +72,10 @@ public class Bird {
 		startLandingTimer(millis);
 	}
 
-	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg, int millis, HandyRenderer sketcher) {
+	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg, int millis,
+			HandyRenderer sketcher) {
+		
+		updateFlap();
 
 		switch (state) {
 		case flying:
@@ -81,11 +89,7 @@ public class Bird {
 			break;
 		}
 
-		updateFlap();
-
 		checkAvoidWalls();
-
-		// TODO add Avoid for other trees
 
 		if (landingSite != null) {
 
@@ -102,30 +106,52 @@ public class Bird {
 		move();
 		render(pg, sketcher);
 	}
-	
-	void flyAway() {
+
+	void debugForceLand() {
+
+		if (landingSite != null) {
+			pos = landingSite;
+		}
+	}
+
+	void flyAway(PVector stage, int millis) {
 		
-		landingSite = null;
+		if (state != State.landed) {
+			return;
+		}
+
+		// New landing site, offstage
+		landingSite = new PVector(Util.coinToss() ? -40 : stage.x + 40, Util.randomf(stage.y / 2, -stage.y / 2));
+//		state = State.to_land;
 		state = State.flying;
-		
+		startLandingTimer(millis);
+		cohesionMultiplier = 0.1f;
+		alignmentMultiplier = 0f;
+		avoidWalls = false;
+//		avoidBirds = false;
+
 		// upward momentum
-		acc = new PVector(Util.randomf(-1, 1), Util.randomf(-5, -1));
+		pos.x += Util.randomf(-10, 10);
+		pos.y += Util.randomf(-10, 0);
+		acc = new PVector(Util.randomf(-20, 20), 0);
 	}
 
 	private boolean	avoidWalls		= true;
 	static float	wallAvoidWeight	= 4;
 
 	void checkAvoidWalls() {
+		
+		PVector avoidGround = avoid(new PVector(pos.x, bottomWallY), true);
+		acc.add(PVector.mult(avoidGround, wallAvoidWeight));
 
 		if (!avoidWalls) {
 			return;
 		}
-		PVector avoidGround = avoid(new PVector(pos.x, bottomWallY), true);
+		
 		PVector avoidCeiling = avoid(new PVector(pos.x, 0), true);
 		PVector avoidLeftWall = avoid(new PVector(0, pos.y), true);
 		PVector avoidRightWall = avoid(new PVector(stage.x, pos.y), true);
 
-		acc.add(PVector.mult(avoidGround, wallAvoidWeight));
 		acc.add(PVector.mult(avoidLeftWall, wallAvoidWeight));
 		acc.add(PVector.mult(avoidCeiling, wallAvoidWeight));
 		acc.add(PVector.mult(avoidRightWall, wallAvoidWeight));
@@ -134,8 +160,8 @@ public class Bird {
 	double flapSpeed;
 
 	void updateFlap() {
-		
-		if (state == State.landed) {
+
+		if (state == State.landed && Util.random(0, 100) < 95) {
 			return;
 		}
 
@@ -156,7 +182,7 @@ public class Bird {
 		int millisSinceLastTick = millis - lastTickMillis;
 		lastTickMillis = millis;
 		landingTimerMillis -= millisSinceLastTick;
-		if (landingTimerMillis <= 0) {
+		if (landingTimerMillis <= 0 && landingSite == null) {
 			state = State.to_land;
 			landingSite = TreeManager.instance().treeStackFor(n).acquireLandingSite(this);
 		}
@@ -178,9 +204,9 @@ public class Bird {
 		PVector coh = cohesion(myFlock);
 		PVector sep = separation(allBirds);
 
-		acc.add(PVector.mult(ali, 1));
-		acc.add(PVector.mult(coh, 3));
-		acc.add(PVector.mult(sep, 5));
+		acc.add(PVector.mult(ali, alignmentMultiplier));
+		acc.add(PVector.mult(coh, cohesionMultiplier));
+		acc.add(PVector.mult(sep, separationMultiplier));
 	}
 
 	void scatter() {
@@ -193,23 +219,11 @@ public class Bird {
 		vel.add(acc); // add acceleration to velocity
 		vel.limit(maxSpeed); // make sure the velocity vector magnitude does not exceed maxSpeed
 		pos.add(vel); // add velocity to position
-		acc.mult(0); // reset acceleration
-	}
-
-	void checkBounds() {
-
-		if (pos.x > stage.x)
-			pos.x = 0;
-		if (pos.x < 0)
-			pos.x = stage.x;
-		if (pos.y > stage.y)
-			pos.y = 0;
-		if (pos.y < 0)
-			pos.y = stage.y;
+		acc.mult(0.1f); // reset acceleration
 	}
 
 	void render(PGraphics2D ps, HandyRenderer sketcher) {
-		
+
 		if (state == State.landed) {
 			sketcher.setSeed(0);
 		}
@@ -235,7 +249,7 @@ public class Bird {
 		sketcher.endShape();
 		ps.popMatrix();
 
-//		drawLandingPoint(ps);
+				drawLandingPoint(ps);
 	}
 
 	void drawWalls(PGraphics2D ps) {
@@ -297,6 +311,10 @@ public class Bird {
 
 	// avoid. If weight == true avoidance vector is larger the closer the boid is to the target
 	PVector avoid(PVector target, boolean weight) {
+		
+		if (!avoidBirds) {
+			return new PVector();
+		}
 
 		PVector steer = new PVector(); // creates vector for steering
 		PVector direction = PVector.sub(pos, target);

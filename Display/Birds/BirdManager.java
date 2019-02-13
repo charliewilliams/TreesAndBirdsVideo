@@ -1,4 +1,5 @@
 package Display.Birds;
+
 import processing.core.*;
 import processing.opengl.*;
 import java.util.*;
@@ -9,15 +10,15 @@ import Util.Util;
 
 public class BirdManager {
 
-	private static BirdManager m;
-	private PApplet parent;
-	private Random r = new Random(0);
-	private Flock[] flocks = new Flock[12];
-	ArrayList<Bird> allBirds = new ArrayList<Bird>();
-	private PGraphics2D pg;
-	private PVector stage;
-	private static PVector offScreenArea = new PVector(100, 50);
-	
+	private static BirdManager	m;
+	private PApplet				parent;
+	private Random				r				= new Random(0);
+	private Flock[]				flocks			= new Flock[12];
+	ArrayList<Bird>				allBirds		= new ArrayList<Bird>();
+	private PGraphics2D			pg;
+	private PVector				stage;
+	private static PVector		offScreenArea	= new PVector(100, 50);
+
 	public static void main(String[] args) {
 
 		PApplet.main("BirdManager");
@@ -31,13 +32,13 @@ public class BirdManager {
 		}
 		m = this;
 		this.parent = parent;
-		
+
 		// Make the stage include the offscreen areas
 		stage = new PVector(parent.width + offScreenArea.x * 2, parent.height + offScreenArea.y);
-//		stage = new PVector(parent.width, parent.height);
+		//		stage = new PVector(parent.width, parent.height);
 
-		pg = (PGraphics2D) parent.createGraphics((int)stage.x, (int)stage.y, PConstants.P2D);
-//		pg.pixelDensity = 2;
+		pg = (PGraphics2D) parent.createGraphics((int) stage.x, (int) stage.y, PConstants.P2D);
+		//		pg.pixelDensity = 2;
 		pg.noStroke();
 		pg.rectMode(PConstants.CENTER);
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
@@ -61,10 +62,25 @@ public class BirdManager {
 		float posX = fromRight ? stage.x - offScreenArea.x : offScreenArea.x;
 		float posY = r.nextFloat() * stage.y * 0.3333f;
 		posX += Util.randomf(-5f, 5f);
-//		posY += Util.randomf(-50f, 50f);
+		//		posY += Util.randomf(-50f, 50f);
 		PVector pos = new PVector(posX, posY);
 
 		allBirds.add(f.addBird(stage, pos, millis));
+	}
+
+	public void buildDebugBirds() {
+
+		for (int i = 0; i < 128; i++) {
+
+			Note n = new Note(i % 12);
+			addNote(n, true, 0);
+
+			landAllBirds();
+
+			for (Bird b : allBirds) {
+				b.debugForceLand();
+			}
+		}
 	}
 
 	public void updateAndDraw(int millis) {
@@ -72,7 +88,7 @@ public class BirdManager {
 		pg.beginDraw();
 		pg.background(0, 0, 0, 0);
 
-		for (Flock f: flocks) {
+		for (Flock f : flocks) {
 			if (f != null) {
 				f.update(pg, allBirds, millis);
 			}
@@ -81,26 +97,26 @@ public class BirdManager {
 		pg.endDraw();
 
 		parent.blendMode(PConstants.BLEND);
-//		parent.blendMode(PConstants.DILATE);
-		
+		//		parent.blendMode(PConstants.DILATE);
+
 		parent.image(pg, -offScreenArea.x, -offScreenArea.y, stage.x, stage.y); // real version
-//		parent.image(pg, 0, 0, parent.width, parent.height); // put the offstage area onscreen for debugging
+		//		parent.image(pg, 0, 0, parent.width, parent.height); // put the offstage area onscreen for debugging
 	}
-	
+
 	public void landAllBirds() {
-		
-		for (Flock f: flocks) {
+
+		for (Flock f : flocks) {
 			if (f != null) {
 				f.land();
 			}
 		}
 	}
-	
-	public void flyAwayAllBirds() {
-		
-		for (Flock f: flocks) {
+
+	public void flyAwayAllBirds(int millis) {
+
+		for (Flock f : flocks) {
 			if (f != null) {
-				f.flyAway();
+				f.flyAway(stage, millis);
 			}
 		}
 	}

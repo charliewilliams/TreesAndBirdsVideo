@@ -22,7 +22,7 @@ public class SceneManager {
 	int							lightColor, darkColor;
 	float						backgroundXOffset	= 0;
 
-	public SceneManager(PApplet parent) {
+	public SceneManager(PApplet parent, int debugOffsetMillis) {
 
 		if (m != null) {
 			// SHOUT
@@ -62,8 +62,9 @@ public class SceneManager {
 		lightColor = parent.color(37, 42, 100);
 		darkColor = parent.color(223, 40, 46);
 
-		generateSky(sky_pg1, 0, 0);
-		generateSky(sky_pg2, 0, 1);
+		int idx = Section.forMillis(debugOffsetMillis).ordinal();
+		generateSky(sky_pg1, debugOffsetMillis, idx);
+		generateSky(sky_pg2, debugOffsetMillis, idx + 1);
 		generateGround(ground_pg);
 	}
 
@@ -83,7 +84,7 @@ public class SceneManager {
 
 		parent.blendMode(PConstants.REPLACE);
 		parent.image(bg, 0, 0, w, h);
-
+		
 		sky_pg1.tint(255, pg1Alpha);
 		sky_pg2.tint(255, pg2Alpha);
 
@@ -92,6 +93,8 @@ public class SceneManager {
 		sky_pg.image(sky_pg1, 0, 0);
 		sky_pg.image(sky_pg2, 0, 0);
 		sky_pg.endDraw();
+		
+//		sky_pg.save("tmp/sky_pg-combined" + millis + ".jpg");
 
 		parent.blendMode(PConstants.MULTIPLY);
 		parent.image(sky_pg, backgroundXOffset, 0);
@@ -117,9 +120,11 @@ public class SceneManager {
 
 	void generateSky(PGraphics pg, int millis, int idx) {
 
+		int color = backgroundColors[idx];
+		
 		pg.beginDraw();
 
-		pg.background(backgroundColors[idx]);
+		pg.background(darkColor);
 
 		float horizonY = 2 * h / 3;
 
@@ -133,7 +138,8 @@ public class SceneManager {
 				float yOff = millis / 1000.0f;
 				float n = parent.noise((x + xOff) / 200.0f, (y + yOff) / 50.0f);
 
-				pg.fill(darkColor, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
+				pg.fill(color, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
+//				pg.fill(darkColor, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
 				pg.ellipse(x, y, skyNodeSize, skyNodeSize);
 			}
 
@@ -144,6 +150,11 @@ public class SceneManager {
 			pg.stroke(lightColor, alpha);
 			pg.line(0, y, w * 2, y);
 		}
+		
+		pg.endDraw();
+		
+		Section section = Section.forMillis(millis);
+		pg.save("tmp/sky-sec-" + idx + "-" + section + ".jpg");
 	}
 
 	void generateGround(PGraphics pg) {

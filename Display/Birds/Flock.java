@@ -20,8 +20,6 @@ public class Flock {
 	int baseHue;
 	float baseSize;
 	double flapSpeed;
-	// TODO more flock-specific stuff about tweaking speed, behavior, appearance
-	// private class array of sizes or whatever
 	private HandyRenderer sketcher;
 
 	ArrayList<Bird> birds = new ArrayList<Bird>();
@@ -71,10 +69,10 @@ public class Flock {
 		}
 	}
 
-	void flyAway() {
+	void flyAway(PVector stage, int millis) {
 
 		for (Bird b : birds) {
-			b.flyAway();
+			b.flyAway(stage, millis);
 		}
 	}
 }

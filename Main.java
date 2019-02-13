@@ -9,8 +9,8 @@ import Model.*;
 public class Main extends PApplet {
 
 	boolean	renderVideo				= false;
-//	boolean	renderGlow				= true;
 	boolean	renderGlow				= false;
+	boolean	playMusic				= false;
 	int		_frameRate				= 30;
 	int		prerollMillis			= renderVideo ? 10000 : 0;
 	int		moveAudioEarlierMillis	= 4800;
@@ -29,7 +29,7 @@ public class Main extends PApplet {
 	int	musicStart		= 10000;
 	int	melodyStart		= 38000;
 	int	risingMel		= 104000;
-	int	repeatedNotes	= 180000;
+	int	repeatedNotes	= 170000;
 	int	bigReturn		= 251000;
 	int	highMel			= 290000;
 	int	outro			= 310000;
@@ -39,10 +39,10 @@ public class Main extends PApplet {
 
 	int millisOffset = 500;
 	//	int	debugOffsetMillis	= 0;
-	int debugOffsetMillis = melodyStart;
+	//		int debugOffsetMillis = melodyStart;
 	//	int	debugOffsetMillis = risingMel;
-	//	int debugOffsetMillis = repeatedNotes;
-	//	int debugOffsetMillis = bigReturn;
+		int debugOffsetMillis = repeatedNotes;
+//	int debugOffsetMillis = bigReturn;
 	//	int debugOffsetMillis = highMel;
 	int durationMillis;
 
@@ -67,7 +67,7 @@ public class Main extends PApplet {
 		noStroke();
 
 		Glow.setupGlow(this);
-		sceneManager = new SceneManager(this);
+		sceneManager = new SceneManager(this, debugOffsetMillis);
 		new TreeManager(this);
 		TreeManager.instance().renderGlow = renderGlow;
 		new BirdManager(this);
@@ -77,13 +77,20 @@ public class Main extends PApplet {
 
 		file = new SoundFile(this, "mix.mp3");
 		durationMillis = (int) (file.duration() * 1000);
-		//		file.jump((debugOffsetMillis + moveAudioEarlierMillis) / 1000.0f);
-		//		file.play();
+
+		if (playMusic) {
+			file.jump((debugOffsetMillis + moveAudioEarlierMillis) / 1000.0f);
+			file.play();
+		}
 
 		if (renderVideo) {
 			float offsetSecs = (prerollMillis * 2 + moveAudioEarlierMillis) / 1000;
 			totalFrames = (int) ((file.duration() + offsetSecs) * _frameRate);
 			println("Rendering", totalFrames, "frames.");
+		}
+
+		if (debugOffsetMillis >= risingMel) {
+			BirdManager.instance().buildDebugBirds();
 		}
 
 		millisOffset += super.millis();
@@ -123,7 +130,7 @@ public class Main extends PApplet {
 		case repeatedNotes:
 			break;
 		case bigReturn:
-			BirdManager.instance().flyAwayAllBirds();
+			BirdManager.instance().flyAwayAllBirds(millis);
 			break;
 		case highMel:
 			break;

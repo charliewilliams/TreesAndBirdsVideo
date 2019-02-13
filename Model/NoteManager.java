@@ -183,12 +183,11 @@ public class NoteManager {
 				TreeManager.instance().addLeafOrFlower(note, true);
 				break;
 				
-			case bigReturn:
-				// TODO bass notes glow trees?
+			case bigReturn:				
+			case highMel:
 				TreeManager.instance().glowRoot(note);
 				break;
 				
-			case highMel:
 			case outro:
 			case end:
 				TreeManager.instance().dropLeaf(note);
