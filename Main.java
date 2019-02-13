@@ -37,11 +37,11 @@ public class Main extends PApplet {
 	Section section = Section.preroll;
 
 	int	millisOffset		= 500;
-//	int	debugOffsetMillis	= 0;
+	int	debugOffsetMillis	= 0;
 //	int	debugOffsetMillis = melodyStart;
 //	int	debugOffsetMillis = risingMel;
 //	int debugOffsetMillis = repeatedNotes;
-	int debugOffsetMillis = bigReturn;
+//	int debugOffsetMillis = bigReturn;
 //	int debugOffsetMillis = highMel;
 	int	durationMillis;
 	
@@ -65,6 +65,7 @@ public class Main extends PApplet {
 		background(0, 0, 51);
 		noStroke();
 
+		Glow.setupGlow(this);
 		sceneManager = new SceneManager(this);
 		new TreeManager(this);
 		new BirdManager(this);

@@ -19,7 +19,7 @@ public class TreeStack {
 	Flower.FlowerType		flowerType;
 	Leaf.LeafShape			leafType;
 	private ArrayList<Tree>	trees	= new ArrayList<Tree>();
-	public PGraphics2D		pg, pg_front;
+	public PGraphics2D		pg, pg_front, pg_glow;
 	private PApplet			parent;
 	private PVector			pos;
 	private float			hue;
@@ -41,7 +41,11 @@ public class TreeStack {
 		pg_front = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_front.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_front.smooth(4);
-
+		
+		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_glow.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		pg_glow.smooth(8);
+		
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 100, 20);
 			trees.add(new Tree(parent, n, baseIndex + i, alpha, Util.randomf(5, 15), Util.randomf(5, 15)));
@@ -99,7 +103,7 @@ public class TreeStack {
 		sketcher.setGraphics(pg);
 		sketcher.setSeed(0);
 
-		PGraphics2D[] pgs = { pg, pg_front };
+		PGraphics2D[] pgs = { pg, pg_front, pg_glow };
 
 		for (PGraphics2D p : pgs) {
 
@@ -111,7 +115,7 @@ public class TreeStack {
 
 		for (Tree t : trees) {
 			t.jitter(millis);
-			t.draw(pg, pg_front, sketcher, hue);
+			t.draw(pg, pg_front, pg_glow, sketcher, hue);
 		}
 
 		drawDebugLabel(pg);

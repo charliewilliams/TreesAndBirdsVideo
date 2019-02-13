@@ -5,11 +5,13 @@ import java.util.Collections;
 
 import org.gicentre.handy.HandyRenderer;
 
+import Display.Glow;
 import Model.Note;
 import Util.Util;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
+import processing.opengl.PGraphics2D;
 
 public class Branch {
 
@@ -30,6 +32,7 @@ public class Branch {
 	private int		maxChildren			= 2;
 	private float	circleAlpha			= 0, circleDiam = 0;
 	private float	maxAlpha			= 100;
+	private float	glowAmount			= 100;
 	private float	hue;
 
 	static private float	piOver2		= (float) (Math.PI / 2.0);
@@ -125,11 +128,11 @@ public class Branch {
 		dir.mult(Util.randomf(0.5f, 0.7f));
 		PVector newEnd = PVector.add(end, dir);
 
-		return new Branch(parent, end, newEnd, depth + 1, flowerSize, leafSize, ++numberOfParents, driftSpeed,
-				driftMag, hue);
+		return new Branch(parent, end, newEnd, depth + 1, flowerSize, leafSize, ++numberOfParents, driftSpeed, driftMag,
+				hue);
 	}
 
-	void draw(PGraphics pg, PGraphics pg_front, HandyRenderer sketcher, float hue, float alpha) {
+	void draw(PGraphics pg, PGraphics pg_front, PGraphics2D pg_glow, HandyRenderer sketcher, float hue, float alpha) {
 
 		// Background circle
 		if (circleAlpha > 0) {
@@ -154,9 +157,19 @@ public class Branch {
 		pg.fill(hue, 100, 50, alpha);
 
 		sketcher.line(origin.x, origin.y, end.x, end.y);
+		
+		if (glowAmount > 0) {
+			
+//			float mult = 1;
+//			float radius = 1;
+			
+//			Glow.drawGlowOnto(pg_glow, mult, radius);
+			
+			glowAmount *= 0.95f;
+		}
 
 		for (Branch child : children) {
-			child.draw(pg, pg_front, sketcher, hue, alpha * 0.9f);
+			child.draw(pg, pg_front, pg_glow, sketcher, hue, alpha * 0.9f);
 		}
 
 		if (leaf != null) {
@@ -253,21 +266,21 @@ public class Branch {
 		leaf = new Leaf(leafType, pos, hue, pg);
 		return true;
 	}
-	
+
 	boolean dropLeaf() {
-		
+
 		if (leaf != null && !leaf.isFalling) {
 			leaf.isFalling = true;
 			return true;
 		}
-		
+
 		Collections.shuffle(children);
 		for (Branch child : children) {
 			if (child.dropLeaf()) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 }
