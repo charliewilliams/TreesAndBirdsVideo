@@ -9,6 +9,7 @@ import Display.Glow;
 import Model.Note;
 import Util.Util;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
@@ -132,8 +133,10 @@ public class Branch {
 				hue);
 	}
 
-	void draw(PGraphics pg, PGraphics pg_front, PGraphics2D pg_glow, HandyRenderer sketcher, float hue, float alpha) {
+	void render(PGraphics pg, PGraphics pg_front, PGraphics2D pg_glow, HandyRenderer sketcher, float hue, float alpha) {
 
+//		pg.blendMode(PConstants.NORMAL);
+		
 		// Background circle
 		if (circleAlpha > 0) {
 
@@ -157,19 +160,20 @@ public class Branch {
 		pg.fill(hue, 100, 50, alpha);
 
 		sketcher.line(origin.x, origin.y, end.x, end.y);
+//		pg.line(origin.x, origin.y, end.x, end.y);
 		
-		if (glowAmount > 0) {
-			
+//		if (glowAmount > 0) {
+//			
 //			float mult = 1;
 //			float radius = 1;
-			
-//			Glow.drawGlowOnto(pg_glow, mult, radius);
-			
-			glowAmount *= 0.95f;
-		}
+//			
+//			Glow.drawGlow(pg, pg_glow, mult, radius);
+//			
+//			glowAmount *= 0.95f;
+//		}
 
 		for (Branch child : children) {
-			child.draw(pg, pg_front, pg_glow, sketcher, hue, alpha * 0.9f);
+			child.render(pg, pg_front, pg_glow, sketcher, hue, alpha * 0.9f);
 		}
 
 		if (leaf != null) {

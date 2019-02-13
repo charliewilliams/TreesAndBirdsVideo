@@ -37,8 +37,8 @@ public class Main extends PApplet {
 	Section section = Section.preroll;
 
 	int	millisOffset		= 500;
-	int	debugOffsetMillis	= 0;
-//	int	debugOffsetMillis = melodyStart;
+//	int	debugOffsetMillis	= 0;
+	int	debugOffsetMillis = melodyStart;
 //	int	debugOffsetMillis = risingMel;
 //	int debugOffsetMillis = repeatedNotes;
 //	int debugOffsetMillis = bigReturn;

@@ -55,8 +55,8 @@ public class Tree {
 		flowerSize += 0.1;
 	}
 
-	void draw(PGraphics pg, PGraphics pg_front, PGraphics2D pg_glow, HandyRenderer sketcher, float hue) {
-		root.draw(pg, pg_front, pg_glow, sketcher, hue, alpha);
+	void render(PGraphics pg, PGraphics pg_front, PGraphics2D pg_glow, HandyRenderer sketcher, float hue) {
+		root.render(pg, pg_front, pg_glow, sketcher, hue, alpha);
 	}
 	
 	public void jitter(int millis) {

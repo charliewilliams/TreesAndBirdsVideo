@@ -5,6 +5,7 @@ import com.thomasdiewald.pixelflow.java.imageprocessing.filter.DwFilter;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.opengl.PGraphics2D;
 
 public class Glow {
@@ -31,26 +32,27 @@ public class Glow {
 		pg_bloom.smooth(8);
 	}
 
-	public static void drawGlowOnto(PGraphics2D host, float mult, float radius) {
+	public static void drawGlow(PGraphics source, PGraphics2D dest, float mult, float radius) {
 
-		pg_render.beginDraw();
-		pg_render.clear();	
-		pg_render.endDraw();
-		
-	    // luminance pass
-	    filter.luminance_threshold.param.threshold = 0.0f; // when 0, all colors are used
-	    filter.luminance_threshold.param.exponent  = 5;
-	    filter.luminance_threshold.apply(host, pg_luminance);
-
-	    // bloom pass
-	    // if the original image is used as source, the previous luminance pass 
-	    // can just be skipped
-	    //      filter.bloom.setBlurLayers(10);
-	    filter.bloom.param.mult   = mult; // 1 to 10
-	    filter.bloom.param.radius = radius; // 0 to 1
-	    filter.bloom.apply(pg_luminance, pg_bloom, pg_render);
-	    
-//	    host.blendMode(PConstants.ADD);
-	    host.image(pg_render, 0, 0);
+//		pg_render.beginDraw();
+//		pg_render.clear();
+//		pg_render.image(source, 0, 0);	
+//		pg_render.endDraw();
+//		
+//	    // luminance pass
+//	    filter.luminance_threshold.param.threshold = 0.0f; // when 0, all colors are used
+//	    filter.luminance_threshold.param.exponent  = 5;
+//	    filter.luminance_threshold.apply(pg_render, pg_luminance);
+//
+//	    // bloom pass
+//	    // if the original image is used as source, the previous luminance pass 
+//	    // can just be skipped
+//	    //      filter.bloom.setBlurLayers(10);
+//	    filter.bloom.param.mult   = mult; // 1 to 10
+//	    filter.bloom.param.radius = radius; // 0 to 1
+//	    filter.bloom.apply(pg_luminance, pg_bloom, pg_render);
+//	    
+//	    dest.blendMode(PConstants.ADD);
+//	    dest.image(pg_render, 0, 0);
 	}
 }

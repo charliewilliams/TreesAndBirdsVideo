@@ -19,7 +19,7 @@ public class TreeStack {
 	Flower.FlowerType		flowerType;
 	Leaf.LeafShape			leafType;
 	private ArrayList<Tree>	trees	= new ArrayList<Tree>();
-	public PGraphics2D		pg, pg_front, pg_glow;
+	public PGraphics2D		pg_trees, pg_leaves, pg_glow;
 	private PApplet			parent;
 	private PVector			pos;
 	private float			hue;
@@ -34,13 +34,14 @@ public class TreeStack {
 		flowerType = Flower.randomType();
 		leafType = Leaf.randomType();
 		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
-		pg = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
-		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
-		pg.smooth(4);
+		
+		pg_trees = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_trees.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		pg_trees.smooth(4);
 
-		pg_front = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
-		pg_front.colorMode(PConstants.HSB, 360, 100, 100, 100);
-		pg_front.smooth(4);
+		pg_leaves = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_leaves.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		pg_leaves.smooth(4);
 		
 		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_glow.colorMode(PConstants.HSB, 360, 100, 100, 100);
@@ -54,8 +55,6 @@ public class TreeStack {
 		sketcher = HandyPresets.createWaterAndInk(parent); // new HandyRenderer(a);
 		sketcher.setRoughness(Util.randomf(0, 2));
 	}
-
-	static int calls = 0;
 
 	void grow(Note note) {
 
@@ -81,7 +80,7 @@ public class TreeStack {
 
 		Collections.shuffle(trees);
 		for (Tree t : trees) {
-			if (t.addLeaf(leafType, pg)) {
+			if (t.addLeaf(leafType, pg_trees)) {
 				return;
 			}
 		}
@@ -100,41 +99,45 @@ public class TreeStack {
 
 	void updateRender(int millis) {
 
-		sketcher.setGraphics(pg);
+		sketcher.setGraphics(pg_trees);
 		sketcher.setSeed(0);
 
-		PGraphics2D[] pgs = { pg, pg_front, pg_glow };
+		PGraphics2D[] pgs = { pg_trees, pg_leaves, pg_glow };
 
 		for (PGraphics2D p : pgs) {
 
 			p.beginDraw();
-			p.background(0, 0, 0, 0);
+			p.clear();
+//			p.background(0, 0, 0, 0);
 			p.pushMatrix();
 			p.translate(pos.x, pos.y);
 		}
 
 		for (Tree t : trees) {
 			t.jitter(millis);
-			t.draw(pg, pg_front, pg_glow, sketcher, hue);
+			t.render(pg_trees, pg_leaves, pg_glow, sketcher, hue);
 		}
 
-		drawDebugLabel(pg);
+		drawDebugLabel(pg_trees);
 
 		for (PGraphics2D p : pgs) {
 
 			p.popMatrix();
+			p.updatePixels();
 			p.endDraw();
 		}
 	}
 	
 	void drawBack() {
 		parent.blendMode(PConstants.BLEND);
-		parent.image(pg, 0, 0);
+		parent.image(pg_trees, 0, 0);
 	}
 	
 	void drawFront() {
 		parent.blendMode(PConstants.NORMAL);
-		parent.image(pg_front, 0, 0);
+		parent.image(pg_leaves, 0, 0);
+		parent.blendMode(PConstants.ADD);
+		parent.image(pg_glow, 0, 0);
 	}
 
 	private void drawDebugLabel(PGraphics2D pg) {
