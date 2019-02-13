@@ -75,8 +75,8 @@ public class Main extends PApplet {
 
 		file = new SoundFile(this, "mix.mp3");
 		durationMillis = (int) (file.duration() * 1000);
-		file.jump((debugOffsetMillis + moveAudioEarlierMillis) / 1000.0f);
-		file.play();
+//		file.jump((debugOffsetMillis + moveAudioEarlierMillis) / 1000.0f);
+//		file.play();
 
 		if (renderVideo) {
 			float offsetSecs = (prerollMillis * 2 + moveAudioEarlierMillis) / 1000;
