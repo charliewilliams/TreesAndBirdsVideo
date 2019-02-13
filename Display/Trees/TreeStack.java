@@ -53,7 +53,8 @@ public class TreeStack {
 		}
 
 		sketcher = HandyPresets.createWaterAndInk(parent); // new HandyRenderer(a);
-		sketcher.setRoughness(Util.randomf(0, 2));
+		sketcher.setRoughness(Util.randomf(0, 1.5f));
+		sketcher.setGraphics(pg_trees);
 	}
 
 	void grow(Note note) {

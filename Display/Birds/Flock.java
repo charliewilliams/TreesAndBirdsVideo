@@ -35,7 +35,7 @@ public class Flock {
 		baseSize = Util.randomf(2, 10);
 		flapSpeed = PApplet.map(baseSize, 2f, 10f, 0.5f, 0.01f);// Util.random(0.05, 0.5);
 		sketcher = HandyPresets.createWaterAndInk(a); // new HandyRenderer(a);
-		sketcher.setRoughness(Util.randomf(0, 2));
+		sketcher.setRoughness(Util.randomf(0, 1.5f));
 		sketcher.setStrokeWeight(Util.randomf(0.15f, 0.5f));
 	}
 
