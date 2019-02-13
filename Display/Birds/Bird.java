@@ -22,10 +22,10 @@ public class Bird {
 	static private float	maxSpeed			= 3;		// 4; //maximum magnitude for the velocity vector
 	static private float	maxSteerForce		= 0.03f;	// 0.1f; //maximum magnitude of the steering vector
 
-	private float	cohesionMultiplier	= 3;
-	private float	alignmentMultiplier	= 1;
-	private float	separationMultiplier = 5;
-	private boolean avoidBirds = true;
+	private float	cohesionMultiplier		= 3;
+	private float	alignmentMultiplier		= 1;
+	private float	separationMultiplier	= 5;
+	private boolean	avoidBirds				= true;
 
 	private PVector pos; // pos, velocity, and acceleration in a vector datatype
 
@@ -74,7 +74,7 @@ public class Bird {
 
 	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg, int millis,
 			HandyRenderer sketcher) {
-		
+
 		updateFlap();
 
 		switch (state) {
@@ -115,20 +115,20 @@ public class Bird {
 	}
 
 	void flyAway(PVector stage, int millis) {
-		
+
 		if (state != State.landed) {
 			return;
 		}
 
 		// New landing site, offstage
 		landingSite = new PVector(Util.coinToss() ? -40 : stage.x + 40, Util.randomf(stage.y / 2, -stage.y / 2));
-//		state = State.to_land;
+		//		state = State.to_land;
 		state = State.flying;
 		startLandingTimer(millis);
 		cohesionMultiplier = 0.1f;
 		alignmentMultiplier = 0f;
 		avoidWalls = false;
-//		avoidBirds = false;
+		//		avoidBirds = false;
 
 		// upward momentum
 		pos.x += Util.randomf(-10, 10);
@@ -140,14 +140,14 @@ public class Bird {
 	static float	wallAvoidWeight	= 4;
 
 	void checkAvoidWalls() {
-		
+
 		PVector avoidGround = avoid(new PVector(pos.x, bottomWallY), true);
 		acc.add(PVector.mult(avoidGround, wallAvoidWeight));
 
 		if (!avoidWalls) {
 			return;
 		}
-		
+
 		PVector avoidCeiling = avoid(new PVector(pos.x, 0), true);
 		PVector avoidLeftWall = avoid(new PVector(0, pos.y), true);
 		PVector avoidRightWall = avoid(new PVector(stage.x, pos.y), true);
@@ -249,7 +249,7 @@ public class Bird {
 		sketcher.endShape();
 		ps.popMatrix();
 
-				drawLandingPoint(ps);
+		// drawLandingPoint(ps);
 	}
 
 	void drawWalls(PGraphics2D ps) {
@@ -311,7 +311,7 @@ public class Bird {
 
 	// avoid. If weight == true avoidance vector is larger the closer the boid is to the target
 	PVector avoid(PVector target, boolean weight) {
-		
+
 		if (!avoidBirds) {
 			return new PVector();
 		}

@@ -19,7 +19,7 @@ public class SceneManager {
 	private PGraphics2D			sky_pg, grass_pg;
 	float						cameraZ				= 600;
 	int							w, h;
-	int							lightColor, darkColor;
+	int							groundColor, skyBackgroundColor;
 	float						backgroundXOffset	= 0;
 
 	public SceneManager(PApplet parent, int debugOffsetMillis) {
@@ -46,21 +46,24 @@ public class SceneManager {
 		ground_pg = parent.createGraphics(w, h);
 		grass_pg = (PGraphics2D) parent.createGraphics(w, h, PConstants.P2D);
 
-		// preroll, start, melodyStart, risingMel, repeatedNotes, bigReturn, highMel, outro, end;
-		backgroundColors[Section.preroll.ordinal()]       = parent.color(39, 5, 100); // paper beige
-		backgroundColors[Section.start.ordinal()]         = parent.color(39, 5, 100); // paper beige
-		backgroundColors[Section.melodyStart.ordinal()]   = parent.color(39, 5, 100); // paper beige
-		backgroundColors[Section.risingMel.ordinal()]     = parent.color(204, 100, 80); // night blue
-		backgroundColors[Section.repeatedNotes.ordinal()] = parent.color(306, 100, 25); // maroon
-		backgroundColors[Section.bigReturn.ordinal()]     = parent.color(39, 5, 100); // paper beige
-		backgroundColors[Section.highMel.ordinal()]       = parent.color(204, 100, 25); // night blue
-		backgroundColors[Section.outro.ordinal()]         = parent.color(204, 100, 25); // night blue
-		backgroundColors[Section.end.ordinal()]           = parent.color(0, 0, 0);
-		backgroundColors[Section.end.ordinal() + 1]       = parent.color(0, 0, 0);
-		//		int bgColor = color(255, 178, 187);
+		int startColor = parent.color(39, 5, 100); // paper beige
+		int sunset1 = parent.color(43, 91, 100); // sunset 1 (yellow)
+		int sunset2 = parent.color(14, 94, 90); // sunset 2 (orange)
+		int nightBlue = parent.color(204, 100, 25); // night blue
+		int black = parent.color(0, 0, 0);
+		
+		backgroundColors[Section.start.ordinal()] = startColor;
+		backgroundColors[Section.melodyStart.ordinal()] = startColor;
+		backgroundColors[Section.risingMel.ordinal()] = startColor;
+		backgroundColors[Section.repeatedNotes.ordinal()] = sunset1;
+		backgroundColors[Section.bigReturn.ordinal()] = nightBlue;
+		backgroundColors[Section.highMel.ordinal()] = nightBlue;
+		backgroundColors[Section.outro.ordinal()] = nightBlue;
+		backgroundColors[Section.end.ordinal()] = black;
+		backgroundColors[Section.end.ordinal() + 1] = black;
 
-		lightColor = parent.color(37, 42, 100);
-		darkColor = parent.color(223, 40, 46);
+		groundColor = parent.color(37, 42, 100);
+		skyBackgroundColor = parent.color(223, 40, 46);
 
 		int idx = Section.forMillis(debugOffsetMillis).ordinal();
 		generateSky(sky_pg1, debugOffsetMillis, idx);
@@ -79,25 +82,51 @@ public class SceneManager {
 
 		Section section = Section.forMillis(millis);
 		float pct = section.pctDone(millis);
-		float pg1Alpha = Util.logMapf(pct, 0, 1, 100, 0);
-		float pg2Alpha = Util.logMapf(pct, 0, 1, 0, 100);
-
+		float alpha = Util.logMapf(pct, 0, 1, 0, 100);
+//		PApplet.println(alpha);
+		
+		// Background paper
 		parent.blendMode(PConstants.REPLACE);
 		parent.image(bg, 0, 0, w, h);
 		
-		sky_pg1.tint(255, pg1Alpha);
-		sky_pg2.tint(255, pg2Alpha);
+		// Colour tint
+		parent.blendMode(PConstants.BLEND);
+		parent.fill(204, 100, 25, alpha);
+		parent.rect(0, 0, w, h);
+
+		sky_pg2.beginDraw();
+//		sky_pg2.tint(0, 0, 100, alpha);
+		
+		sky_pg2.loadPixels();
+		
+		for (int i = 0; i < sky_pg2.pixelCount; i++) {
+			
+			int val = sky_pg2.pixels[i];
+			sky_pg2.pixels[i] = Util.setAlpha(val, alpha);
+		}
+		
+//		for (int y = 0; y < sky_pg2.height; y++) {
+//			for (int x = 0; x < sky_pg2.width; x++) {
+//				
+//			}
+//		}
+		sky_pg2.updatePixels();
+		sky_pg2.endDraw();
 
 		sky_pg.beginDraw();
-		sky_pg.blendMode(PConstants.BLEND);
+		sky_pg.blendMode(PConstants.REPLACE);
 		sky_pg.image(sky_pg1, 0, 0);
+		sky_pg.blendMode(PConstants.BLEND);
+//		sky_pg.blendMode(PConstants.MULTIPLY);
 		sky_pg.image(sky_pg2, 0, 0);
 		sky_pg.endDraw();
-		
-//		sky_pg.save("tmp/sky_pg-combined" + millis + ".jpg");
+
+		//		sky_pg.save("tmp/sky_pg-combined" + millis + ".jpg");
 
 		parent.blendMode(PConstants.MULTIPLY);
 		parent.image(sky_pg, backgroundXOffset, 0);
+//		parent.blendMode(PConstants.BLEND);
+//		parent.image(sky_pg2, backgroundXOffset, 0);
 
 		if (backgroundXOffset < -w) {
 
@@ -121,10 +150,10 @@ public class SceneManager {
 	void generateSky(PGraphics pg, int millis, int idx) {
 
 		int color = backgroundColors[idx];
-		
+
 		pg.beginDraw();
 
-		pg.background(darkColor);
+		pg.background(skyBackgroundColor);
 
 		float horizonY = 2 * h / 3;
 
@@ -139,7 +168,7 @@ public class SceneManager {
 				float n = parent.noise((x + xOff) / 200.0f, (y + yOff) / 50.0f);
 
 				pg.fill(color, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
-//				pg.fill(darkColor, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
+				//				pg.fill(darkColor, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
 				pg.ellipse(x, y, skyNodeSize, skyNodeSize);
 			}
 
@@ -147,12 +176,12 @@ public class SceneManager {
 			pg.strokeWeight(3);
 			// Map the alpha so it fades in from 0 at 2/3 of the way down to 1.0 at all-the-way-down
 			float alpha = PApplet.map(y, horizonY, h, 0, 255);
-			pg.stroke(lightColor, alpha);
+			pg.stroke(groundColor, alpha);
 			pg.line(0, y, w * 2, y);
 		}
-		
+
 		pg.endDraw();
-		
+
 		Section section = Section.forMillis(millis);
 		pg.save("tmp/sky-sec-" + idx + "-" + section + ".jpg");
 	}

@@ -37,6 +37,13 @@ public class Util {
 		return Math.exp(start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1)));
 	}
 	
+	public static int setAlpha(int color, float alp) {
+		
+		color &= 0x00FFFFFF;
+		int alpha = ((int)(alp * 2.55)) << 24;
+		return alpha | color;
+	}
+	
 	public static int colorFrom360(float hue, float sat, float bri, float alp) {
 		
 		// Convenience function to convert from 360° hue + 100% sat/bri/alpha
