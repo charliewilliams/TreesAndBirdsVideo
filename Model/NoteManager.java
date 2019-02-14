@@ -114,7 +114,7 @@ public class NoteManager {
 				break;
 			case highMel:
 				TreeManager.instance().dropLeaf(note);
-				Stars.addStar(note);
+//				Stars.addStar(note);
 				break;
 			case outro:
 			case end:

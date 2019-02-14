@@ -22,44 +22,72 @@ public class Stars {
 	private static DwFilter		filter;
 	private static PGraphics2D	pg_render, pg_luminance, pg_bloom;
 	private static PVector		stage;
-//	private static float		rotation	= -(float)Math.PI / 4;
+	//	private static float		rotation	= -(float)Math.PI / 4;
 
-	static float lowestPitch = 36;
-	static float highestPitch = 75;
-	
+	static float	lowestPitch		= 24;
+	static float	highestPitch	= 87;
+
 	public static void addStar(Note n) {
+		
+		boolean xPitch = false;
+		float horizon = stage.y * 0.64f;
+		float x, y;
+		float xNoise = 150;
+		float yNoise = 50;
+		boolean isBass = n.pitch < 48;
 
+		if (xPitch) {
+		// x = pitch; y = velocity
 		float nominalPitch = n.pitch;
 		if (n.pitch - lowestPitch < 20) {
 			nominalPitch += 24;
 		}
-		float x = PApplet.map(nominalPitch, highestPitch - 12, highestPitch, 0, stage.x) + Util.randomf(-150, 150);
 		
-		float horizon = stage.y * 0.64f;
-		float y = PApplet.map(n.velocity, 0.2f, 0.6f, horizon, 0) + Util.randomf(-50, 50);
-		
+		x = PApplet.map(nominalPitch, highestPitch - 12, highestPitch, 0, stage.x) + Util.randomf(-xNoise, xNoise);
+		y = PApplet.map(n.velocity, 0.1f, 0.6f, horizon, 0) + Util.randomf(-yNoise, yNoise);
+
 		if (y > horizon) {
 			y %= horizon;
 		}
+		//
+		// x = velocity; y = pitch
+		} else {
+			
+			if (isBass) {
+				
+				float xSpacing = stage.x / 7;
+				x = PApplet.map(n.pitch % 12, 0, 5, xSpacing, stage.x - xSpacing) + Util.randomf(-xNoise, xNoise);
+				y = PApplet.map((int)(n.pitch / 12), 0, 6, horizon, horizon / 2) + Util.randomf(-yNoise, yNoise);
+				
+			} else {
+				
+				int offset = 7;
+				float xSpacing = stage.x / 14;
+				x = PApplet.map((n.pitch + offset) % 12, 0, 11, xSpacing, stage.x - xSpacing) + Util.randomf(-xNoise, xNoise);
+				y = PApplet.map((int)((n.pitch + offset) / 12), 4, 8.5f, horizon, 0) + Util.randomf(-yNoise, yNoise);
+			}
+		}
+		
+		//
 		PVector pos = new PVector(x, y);
 		float size = PApplet.map(n.velocity + n.duration, 0, 5, 0.25f, 1.5f);
-		stars.add(new Star(pos, size));
+		stars.add(new Star(pos, size, isBass));
 		//		PApplet.println("New star", pos, size);
 	}
 
 	public static void renderStars(int millis, PApplet parent) {
 
-//		rotation -= 0.0001;
+		//		rotation -= 0.0001;
 
 		pg_stars.beginDraw();
 		pg_stars.clear();
-//		pg_stars.translate(0, stage.y);
-//		pg_stars.rotate(rotation);
+		//		pg_stars.translate(0, stage.y);
+		//		pg_stars.rotate(rotation);
 		for (Star s : stars) {
 			s.draw(pg_stars);
 		}
 
-				renderGlow(pg_stars);
+		renderGlow(pg_stars);
 		pg_stars.endDraw();
 
 		//		pg_stars.save("tmp/stars-" + millis + ".jpg");
@@ -75,7 +103,7 @@ public class Stars {
 		int removedCount = 0;
 		int starsToRemovePerTick = 10;
 		while (removedCount < starsToRemovePerTick) {
-			
+
 			if (stars.isEmpty()) {
 				return;
 			}
@@ -89,8 +117,8 @@ public class Stars {
 
 		stage = new PVector(parent.width, parent.height);
 		context = new DwPixelFlow(parent);
-		context.print();
-		context.printGL();
+//		context.print();
+//		context.printGL();
 
 		filter = new DwFilter(context);
 

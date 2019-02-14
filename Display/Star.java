@@ -12,6 +12,7 @@ public class Star {
 	private float	t				= Util.randomf(0, 1);
 	private float	twinkleSpeed	= Util.randomf(0.01f, 0.06f);
 	private float	maxSize			= 1.5f;
+	private boolean isBass;
 
 	private enum StarState {
 		appearing, steady, disappearing
@@ -19,21 +20,31 @@ public class Star {
 
 	private StarState state = StarState.appearing;
 
-	Star(PVector pos, float size) {
+	Star(PVector pos, float size, boolean isBass) {
 
+		this.isBass = isBass;
+		if (isBass) {
+			maxSize = 5;
+		}
+		size *=3;
+		
 		size = Math.min(size, maxSize);
 		this.pos = pos;
 		this.nominalSize = size;
-		this.currentSize = 7;
+		this.currentSize = isBass ? 10 : 7;
 	}
 
 	public void draw(PGraphics2D pg) {
+		
+		if (currentSize == 0) {
+			return;
+		}
 
 		switch (state) {
 
 		case appearing:
 			if (currentSize > nominalSize) {
-				currentSize *= 0.99f;
+				currentSize *= isBass ? 0.97f : 0.95f;
 			} else {
 				state = StarState.steady;
 			}
@@ -45,8 +56,10 @@ public class Star {
 			break;
 
 		case disappearing:
-			if (currentSize > 0) {
+			if (currentSize > 0.01f) {
 				currentSize *= 0.99f;
+			} else {
+				currentSize = 0;
 			}
 			break;
 		}
@@ -54,7 +67,12 @@ public class Star {
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
 		pg.noStroke();
-		pg.fill(255);
+		
+		if (isBass) {
+			pg.fill(200, 100, 100, 100);
+		} else {			
+			pg.fill(255, 100);
+		}
 		pg.ellipse(0, 0, currentSize, currentSize);
 		pg.popMatrix();
 	}

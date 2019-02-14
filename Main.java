@@ -32,7 +32,7 @@ public class Main extends PApplet {
 	int	repeatedNotes	= 170000;
 	int	bigReturn		= 251000;
 	int	highMel			= 290000;
-	int	outro			= 310000;
+	int	outro			= 360000;
 	int	end				= 350000;
 
 	Section section = Section.preroll;
@@ -41,16 +41,16 @@ public class Main extends PApplet {
 	//	int	debugOffsetMillis	= 0;
 	//		int debugOffsetMillis = melodyStart;
 	//	int	debugOffsetMillis = risingMel;
-//		int debugOffsetMillis = repeatedNotes;
-//	int debugOffsetMillis = bigReturn;
-		int debugOffsetMillis = highMel;
-	int durationMillis;
+	//		int debugOffsetMillis = repeatedNotes;
+//		int debugOffsetMillis = bigReturn;
+//	int	debugOffsetMillis	= highMel;
+	int	debugOffsetMillis	= outro;
+	int	durationMillis;
 
 	public void settings() {
 
 		size(1692, 720, P2D); // P2D, P3D, FX2D
 		// size(2538, 1080, P2D);
-
 	}
 
 	public void setup() {
@@ -158,13 +158,13 @@ public class Main extends PApplet {
 			if (frameCount > totalFrames) {
 				exit();
 			}
+		} else if (section.length() <= 1) {
+			exit();
 		}
 
 		fill(0);
-		if (section.length() == 0) {
-			exit();
-		}
-		text("section " + section.ordinal() + " (" + section + ") – " + (int) (section.length() / 1000) + "s long – "
+
+		text("frame " + frameCount + " / " + millis + "ms / section " + section.ordinal() + " (" + section + ") – " + (int) (section.length() / 1000) + "s long – "
 				+ (int) (section.pctDone(millis) * 100) + "% done", 40, height - 40);
 	}
 
