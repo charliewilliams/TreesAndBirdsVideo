@@ -48,14 +48,14 @@ public class Bird {
 	private int	landingTimerMillis;
 	private int	toLandTimerMillis;
 
-	Note n;
+	Note note;
 
 	static private int	birdCount	= 0;
 	private int			birdSerialNumber;
 
 	public Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_, int millis) {
 
-		this.n = n;
+		this.note = n;
 		this.stage = stage;
 		bottomWallY = stage.y;
 		pos = initialPos;
@@ -182,9 +182,10 @@ public class Bird {
 		int millisSinceLastTick = millis - lastTickMillis;
 		lastTickMillis = millis;
 		landingTimerMillis -= millisSinceLastTick;
+		
 		if (landingTimerMillis <= 0 && landingSite == null) {
 			state = State.to_land;
-			landingSite = TreeManager.instance().treeStackFor(n).acquireLandingSite(this);
+			landingSite = TreeManager.instance().acquireLandingSite(this, note);
 		}
 	}
 
@@ -288,7 +289,7 @@ public class Bird {
 
 		// landing site pitch class label
 		ps.fill(0);
-		ps.text(n.pitchClass, landingSite.x, landingSite.y);
+		ps.text(note.pitchClass, landingSite.x, landingSite.y);
 	}
 
 	// steering. If arrival==true, the boid slows to meet the target. Credit to Craig Reynolds

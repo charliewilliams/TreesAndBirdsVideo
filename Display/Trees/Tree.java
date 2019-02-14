@@ -10,25 +10,27 @@ import processing.opengl.PGraphics2D;
 
 public class Tree {
 	
-	int idx;
 	float alpha;
 	float leafSize = 10, flowerSize = 10;
 	Branch root;
 	ArrayList<Branch> branches = new ArrayList<Branch>();
+	PApplet parent;
 
-	Tree(PApplet parent, Note n, int idx, float alpha, float flowerSize, float leafSize) {
+	Tree(PApplet parent, Note n, float alpha, float flowerSize, float leafSize) {
 
-		this.idx = idx; // Global idx for physics
+		this.parent = parent;
 		this.alpha = alpha; // gives fake depth
 		this.flowerSize = flowerSize;
 		this.leafSize = leafSize;
-		
-		// Branch(PApplet parent, PVector origin, float bSize, float theta, float depth, float noiseOffset, boolean isEnd)
-		root = new Branch(parent, 80, flowerSize, leafSize, alpha);
-		branches.add(root);
 	}
 
 	ArrayList<Branch> grow(Note n) {
+		
+		if (root == null) {
+			root = new Branch(parent, 80, flowerSize, leafSize, alpha);
+			branches.add(root);
+			return new ArrayList<Branch>();
+		}
 		
 		ArrayList<Branch> newChildren = root.grow(n);
 		branches.addAll(newChildren);
@@ -36,14 +38,20 @@ public class Tree {
 	}
 	
 	boolean addFlower(Flower.FlowerType flowerType) {
+		
+		if (root == null) { return false; }
 		return root.addFlower(flowerType);
 	}
 	
 	public boolean addLeaf(Leaf.LeafShape leafType, PGraphics pg) {
+		
+		if (root == null) { return false; }
 		return root.addLeaf(leafType, pg);
 	}
 	
 	public boolean dropLeaf() {
+		
+		if (root == null) { return false; }
 		return root.dropLeaf();
 	}
 	
@@ -56,18 +64,26 @@ public class Tree {
 	}
 
 	void renderTrees(PGraphics2D pg_trees, PGraphics2D pg_glow, HandyRenderer sketcher) {
+		
+		if (root == null) { return; }
 		root.renderBranch(pg_trees, pg_glow, sketcher);
 	}
 	
 	void renderLeaves(PGraphics pg_leaves) {
+		
+		if (root == null) { return; }
 		root.renderLeaves(pg_leaves);
 	}
 	
 	void renderGlow(PGraphics2D pg_glow) {
+		
+		if (root == null) { return; }
 		root.renderGlow(pg_glow);
 	}
 	
 	public void jitter(int millis) {
+		
+		if (root == null) { return; }
 		root.jitter(millis);
 	}
 }

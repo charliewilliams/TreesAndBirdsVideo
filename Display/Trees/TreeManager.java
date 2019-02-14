@@ -1,8 +1,10 @@
 package Display.Trees;
 
-import Model.*;
-import Util.*;
-import processing.core.*;
+import Display.Birds.Bird;
+import Model.Note;
+import Util.Util;
+import processing.core.PApplet;
+import processing.core.PVector;
 
 public class TreeManager {
 
@@ -12,10 +14,8 @@ public class TreeManager {
 		return m;
 	}
 
-	private int idx = 0;
-
-	private PApplet parent;
-	public boolean renderGlow;
+	private PApplet	parent;
+	public boolean	renderGlow;
 
 	private TreeStack[] pitchClassTrees = new TreeStack[12];
 
@@ -27,10 +27,7 @@ public class TreeManager {
 		if (pitchClassTreeStack == null) {
 
 			int numChildren = 2; //(int) Util.random(3, 8);
-
-			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, idx, treePositionForNote(n), renderGlow);
-
-			idx += numChildren;
+			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, treePositionForNote(n), renderGlow);
 		}
 
 		return pitchClassTrees[i];
@@ -77,23 +74,23 @@ public class TreeManager {
 			treeStackFor(n).addFlower();
 		}
 	}
-	
+
 	public void dropLeaf(Note n) {
-		
+
 		int tries = 0;
 		int maxTries = 50;
-		
-		while (true) {			
+
+		while (true) {
 			if (treeStackFor(n).dropLeaf(n)) {
 				return;
 			}
-			n = new Note((int)Util.random(0, 12));
+			n = new Note((int) Util.random(0, 12));
 			if (tries++ > maxTries) {
 				return;
 			}
 		}
 	}
-	
+
 	public void glowRoot(Note n) {
 		treeStackFor(n).glowRoot();
 	}
@@ -108,7 +105,7 @@ public class TreeManager {
 			}
 		}
 	}
-	
+
 	public void drawTrees() {
 
 		for (int i = 0; i < pitchClassTrees.length; i++) {
@@ -119,7 +116,7 @@ public class TreeManager {
 			}
 		}
 	}
-	
+
 	public void drawOverlay() {
 
 		for (int i = 0; i < pitchClassTrees.length; i++) {
@@ -130,5 +127,9 @@ public class TreeManager {
 				stack.drawGlow();
 			}
 		}
+	}
+
+	public PVector acquireLandingSite(Bird b, Note n) {
+		return treeStackFor(n).acquireLandingSite(b);		
 	}
 }

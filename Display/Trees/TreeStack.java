@@ -28,7 +28,7 @@ public class TreeStack {
 	private Note			n;
 	private HandyRenderer	sketcher;
 
-	TreeStack(int numChildren, PApplet parent, Note n, int baseIndex, PVector pos, boolean renderGlow) {
+	TreeStack(int numChildren, PApplet parent, Note n, PVector pos, boolean renderGlow) {
 
 		this.parent = parent;
 		this.renderGlow = renderGlow;
@@ -52,7 +52,7 @@ public class TreeStack {
 
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 255, 50);
-			trees.add(new Tree(parent, n, baseIndex + i, alpha, Util.randomf(5, 15), Util.randomf(5, 15)));
+			trees.add(new Tree(parent, n, alpha, Util.randomf(5, 15), Util.randomf(5, 15)));
 		}
 
 		sketcher = HandyPresets.createWaterAndInk(parent); // new HandyRenderer(a);
@@ -62,10 +62,14 @@ public class TreeStack {
 
 	void grow(Note note) {
 
-		Collections.shuffle(trees);
-		for (Tree t : trees) {
-			if (t.grow(note).size() > 0) {
-				return;
+		int iterations = note.isRare() ? 10 : 1;
+		for (int i = 0; i < iterations; i++) {
+			Collections.shuffle(trees);
+			for (Tree t : trees) {
+
+				if (t.grow(note).size() > 0) {
+					return;
+				}
 			}
 		}
 	}
@@ -131,8 +135,8 @@ public class TreeStack {
 			}
 			pg_glow.popMatrix();
 		}
-		finalizePGraphics(pg_trees);
 		drawDebugLabel(pg_trees);
+		finalizePGraphics(pg_trees);
 
 		preparePGraphics(pg_leaves);
 		{
@@ -169,14 +173,14 @@ public class TreeStack {
 	}
 
 	void drawGlow() {
-		
+
 		if (!renderGlow) {
 			return;
 		}
 
 		Glow.render(pg_glow);
-		
-//		pg_glow.tint(12);
+
+		//		pg_glow.tint(12);
 
 		parent.blendMode(PConstants.ADD);
 		parent.image(pg_glow, 0, 0);
@@ -227,7 +231,10 @@ public class TreeStack {
 		PVector fallback = pos.copy();
 		fallback.x += 100;
 		fallback.y += 50;
+		
+		float xNoise = 80;
+		float yNoise = 50;
 
-		return fallback;
+		return fallback.add(new PVector(Util.randomf(-xNoise, xNoise), Util.randomf(0, yNoise)));
 	}
 }

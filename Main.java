@@ -15,7 +15,7 @@ public class Main extends PApplet {
 
 	boolean	renderVideo				= false;
 	boolean	renderGlow				= false;
-	boolean	playMusic				= false;
+	boolean	playMusic				= true;
 	int		_frameRate				= 30;
 	int		prerollMillis			= renderVideo ? 10000 : 0;
 	int		moveAudioEarlierMillis	= 4800;
