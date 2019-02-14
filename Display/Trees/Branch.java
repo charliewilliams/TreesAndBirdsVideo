@@ -40,14 +40,17 @@ public class Branch {
 
 	private PVector	driftSpeed;
 	private PVector	driftMag;
+	
+	private float alpha;
 
 	private long seed = (long) Util.random(0, 10000000);
 
 	// Root
-	Branch(PApplet parent, float length, float flowerSize, float leafSize) {
+	Branch(PApplet parent, float length, float flowerSize, float leafSize, float alpha) {
 
 		this.parent = parent;
 		this.origin = new PVector();
+		this.alpha = alpha;
 		isRoot = true;
 		numberOfParents = 0;
 		circleAlpha = maxAlpha;
@@ -67,12 +70,13 @@ public class Branch {
 
 	// Normal branch
 	Branch(PApplet parent, PVector origin, PVector end, int depth, float flowerSize, float leafSize,
-			int numberOfParents, PVector driftSpeed, PVector driftMag, float hue) {
+			int numberOfParents, PVector driftSpeed, PVector driftMag, float hue, float alpha) {
 
 		this.parent = parent;
 		this.origin = origin;
 		this.end = end;
 		this.depth = depth;
+		this.alpha = alpha;
 		this.numberOfParents = numberOfParents;
 		this.hue = hue;
 		length = PVector.dist(origin, end);
@@ -130,7 +134,7 @@ public class Branch {
 		PVector newEnd = PVector.add(end, dir);
 
 		return new Branch(parent, end, newEnd, depth + 1, flowerSize, leafSize, ++numberOfParents, driftSpeed, driftMag,
-				hue);
+				hue, alpha * 0.95f);
 	}
 
 	//	t.renderTrees(pg_trees, sketcher, hue);
@@ -138,7 +142,7 @@ public class Branch {
 	//	t.renderGlow(pg_trees, pg_leaves, pg_glow, hue);
 	// pg.blendMode(PConstants.NORMAL);
 
-	public void renderTrees(PGraphics2D pg_trees, PGraphics2D pg_glow, HandyRenderer sketcher) {
+	public void renderBranch(PGraphics2D pg_trees, PGraphics2D pg_glow, HandyRenderer sketcher) {
 		sketcher.setSeed(seed);
 
 		// Background circle
@@ -162,7 +166,8 @@ public class Branch {
 
 		// sketcher takes BGRA (!)
 		// so let's just give it a gray value
-		sketcher.setStrokeColour((int) glowAmount);
+		int glowPlusAlpha = Util.setAlpha((int) glowAmount, alpha);
+		sketcher.setStrokeColour(glowPlusAlpha);
 		
 		glowAmount *= 0.9f;
 
@@ -178,7 +183,7 @@ public class Branch {
 		//		pg_trees.line(origin.x, origin.y, end.x, end.y);
 
 		for (Branch child : children) {
-			child.renderTrees(pg_trees, pg_glow, sketcher);
+			child.renderBranch(pg_trees, pg_glow, sketcher);
 		}
 	}
 

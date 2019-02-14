@@ -15,7 +15,7 @@ public class Main extends PApplet {
 
 	boolean	renderVideo				= false;
 	boolean	renderGlow				= false;
-	boolean	playMusic				= true;
+	boolean	playMusic				= false;
 	int		_frameRate				= 30;
 	int		prerollMillis			= renderVideo ? 10000 : 0;
 	int		moveAudioEarlierMillis	= 4800;
@@ -46,8 +46,8 @@ public class Main extends PApplet {
 
 	int millisOffset = 500;
 	//	int	debugOffsetMillis	= 0;
-			int debugOffsetMillis = melodyStart;
-	//	int	debugOffsetMillis = risingMel;
+//			int debugOffsetMillis = melodyStart;
+		int	debugOffsetMillis = risingMel;
 	//		int debugOffsetMillis = repeatedNotes;
 //		int debugOffsetMillis = bigReturn;
 //	int	debugOffsetMillis	= highMel;
@@ -79,7 +79,7 @@ public class Main extends PApplet {
 		new TreeManager(this);
 		TreeManager.instance().renderGlow = renderGlow;
 		new BirdManager(this);
-//		Stars.setupGlow(this, filter);
+		Stars.setupGlow(this, filter);
 
 		noteManager = new NoteManager(this, "song.json");
 

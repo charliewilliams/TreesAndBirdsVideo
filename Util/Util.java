@@ -40,7 +40,8 @@ public class Util {
 	public static int setAlpha(int color, float alp) {
 		
 		color &= 0x00FFFFFF;
-		int alpha = ((int)(alp * 2.55)) << 24;
+//		int alpha = ((int)(alp * 2.55)) << 24;
+		int alpha = ((int)alp) << 24;
 		return alpha | color;
 	}
 	

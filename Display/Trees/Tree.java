@@ -24,7 +24,7 @@ public class Tree {
 		this.leafSize = leafSize;
 		
 		// Branch(PApplet parent, PVector origin, float bSize, float theta, float depth, float noiseOffset, boolean isEnd)
-		root = new Branch(parent, 80, flowerSize, leafSize);
+		root = new Branch(parent, 80, flowerSize, leafSize, alpha);
 		branches.add(root);
 	}
 
@@ -56,7 +56,7 @@ public class Tree {
 	}
 
 	void renderTrees(PGraphics2D pg_trees, PGraphics2D pg_glow, HandyRenderer sketcher) {
-		root.renderTrees(pg_trees, pg_glow, sketcher);
+		root.renderBranch(pg_trees, pg_glow, sketcher);
 	}
 	
 	void renderLeaves(PGraphics pg_leaves) {

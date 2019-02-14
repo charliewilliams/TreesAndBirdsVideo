@@ -26,7 +26,7 @@ public class TreeManager {
 
 		if (pitchClassTreeStack == null) {
 
-			int numChildren = 1; //(int) Util.random(3, 8);
+			int numChildren = 2; //(int) Util.random(3, 8);
 
 			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, idx, treePositionForNote(n), renderGlow);
 
@@ -71,7 +71,9 @@ public class TreeManager {
 
 		if (shouldBeLeaf) {
 			treeStackFor(n).addLeaf();
+			treeStackFor(n).addLeaf();
 		} else {
+			treeStackFor(n).addFlower();
 			treeStackFor(n).addFlower();
 		}
 	}

@@ -3,7 +3,6 @@ package Display;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.thomasdiewald.pixelflow.java.DwPixelFlow;
 import com.thomasdiewald.pixelflow.java.imageprocessing.filter.DwFilter;
 
 import Model.Note;
@@ -18,7 +17,6 @@ public class Stars {
 	private static PGraphics2D		pg_stars;
 	private static ArrayList<Star>	stars	= new ArrayList<Star>();
 
-	private static DwPixelFlow	context;
 	private static DwFilter		filter;
 	private static PGraphics2D	pg_render, pg_luminance, pg_bloom;
 	private static PVector		stage;
@@ -90,7 +88,7 @@ public class Stars {
 			s.draw(pg_stars);
 		}
 
-//		renderGlow(pg_stars);
+		renderGlow(pg_stars);
 		pg_stars.endDraw();
 
 		//		pg_stars.save("tmp/stars-" + millis + ".jpg");

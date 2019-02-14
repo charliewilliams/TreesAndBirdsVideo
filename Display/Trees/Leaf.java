@@ -16,9 +16,11 @@ public class Leaf {
 	float	angle;
 	float	hue, sat, bri, alp;
 	float	fallHue;
-	boolean	isFalling	= false;
 	float	groundY;
 	float	fallSpeed;
+	boolean	isFalling		= false;
+	float	nominalScale	= 1;
+	float	currentScale	= 0;
 
 	enum LeafShape {
 		circle, square, star, crescent;
@@ -124,10 +126,12 @@ public class Leaf {
 
 	void draw(PApplet parent, PGraphics pg, float size) {
 
+		if (currentScale < nominalScale) {
+			currentScale += 0.005;
+		}
 		if (isFalling) {
 			fallTick(parent);
-		} 
-		else {
+		} else {
 			turnColorTick();
 		}
 
@@ -143,6 +147,7 @@ public class Leaf {
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
 		pg.rotate(angle);
+		pg.scale(currentScale);
 		pg.shape(shape);
 		pg.popMatrix();
 	}

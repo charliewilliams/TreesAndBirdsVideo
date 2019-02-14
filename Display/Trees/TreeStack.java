@@ -51,7 +51,7 @@ public class TreeStack {
 		pg_glow.smooth(8);
 
 		for (int i = 0; i < numChildren; i++) {
-			float alpha = PApplet.map(i, 0, numChildren, 100, 20);
+			float alpha = PApplet.map(i, 0, numChildren, 255, 50);
 			trees.add(new Tree(parent, n, baseIndex + i, alpha, Util.randomf(5, 15), Util.randomf(5, 15)));
 		}
 
