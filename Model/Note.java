@@ -1,9 +1,4 @@
 package Model;
-//import static java.lang.Math.pow;
-
-import java.util.Arrays;
-
-import processing.core.PApplet;
 
 public class Note {
 

@@ -13,16 +13,17 @@ import processing.sound.SoundFile;
 
 public class Main extends PApplet {
 
-	boolean	renderVideo				= false;
-	boolean	renderGlow				= false;
-	boolean	playMusic				= true;
-	int		_frameRate				= 30;
-	int		prerollMillis			= renderVideo ? 10000 : 0;
-	int		moveAudioEarlierMillis	= 4800;
-	int		totalFrames;
-	DwPixelFlow context;
-	DwFilter filter;
-	
+	boolean		renderVideo				= false;
+	boolean		renderGlow				= false;
+	boolean		playMusic				= true;
+	boolean		isStarRender			= false;
+	int			_frameRate				= 30;
+	int			prerollMillis			= renderVideo ? 10000 : 0;
+	int			moveAudioEarlierMillis	= 4800;
+	int			totalFrames;
+	DwPixelFlow	context;
+	DwFilter	filter;
+
 	public static void main(String[] args) {
 
 		PApplet.main("Main");
@@ -46,13 +47,13 @@ public class Main extends PApplet {
 
 	int millisOffset = 500;
 	//	int	debugOffsetMillis	= 0;
-//			int debugOffsetMillis = melodyStart;
-		int	debugOffsetMillis = risingMel;
-	//		int debugOffsetMillis = repeatedNotes;
-//		int debugOffsetMillis = bigReturn;
-//	int	debugOffsetMillis	= highMel;
-//	int	debugOffsetMillis	= outro;
-	int	durationMillis;
+	//			int debugOffsetMillis = melodyStart;
+	//	int debugOffsetMillis = risingMel;
+	//			int debugOffsetMillis = repeatedNotes;
+	int debugOffsetMillis = bigReturn;
+	//	int	debugOffsetMillis	= highMel;
+	//	int	debugOffsetMillis	= outro;
+	int durationMillis;
 
 	public void settings() {
 
@@ -73,15 +74,18 @@ public class Main extends PApplet {
 
 		context = new DwPixelFlow(this);
 		filter = new DwFilter(context);
-		
+
 		Glow.setupGlow(this, filter);
 		sceneManager = new SceneManager(this, debugOffsetMillis);
 		new TreeManager(this);
 		TreeManager.instance().renderGlow = renderGlow;
 		new BirdManager(this);
-		Stars.setupGlow(this, filter);
 
-		noteManager = new NoteManager(this, "song.json");
+		if (isStarRender) {
+			Stars.setupGlow(this, filter);
+		}
+
+		noteManager = new NoteManager(this, "song.json", isStarRender);
 
 		file = new SoundFile(this, "mix.mp3");
 		durationMillis = (int) (file.duration() * 1000);
@@ -119,6 +123,11 @@ public class Main extends PApplet {
 		int millis = _millis();
 
 		checkSection(millis);
+		
+		if (isStarRender) {
+			Stars.renderStars(millis, this);
+			return;
+		}
 
 		// Draw the background
 		sceneManager.update(millis);
@@ -153,7 +162,6 @@ public class Main extends PApplet {
 		TreeManager.instance().drawTrees();
 		BirdManager.instance().updateAndDraw(millis);
 		TreeManager.instance().drawOverlay();
-		Stars.renderStars(millis, this);
 
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;
@@ -175,8 +183,9 @@ public class Main extends PApplet {
 
 		fill(0);
 
-		text("frame " + frameCount + " / " + millis + "ms / section " + section.ordinal() + " (" + section + ") – " + (int) (section.length() / 1000) + "s long – "
-				+ (int) (section.pctDone(millis) * 100) + "% done", 40, height - 40);
+		text("frame " + frameCount + " / " + millis + "ms / section " + section.ordinal() + " (" + section + ") – "
+				+ (int) (section.length() / 1000) + "s long – " + (int) (section.pctDone(millis) * 100) + "% done", 40,
+				height - 40);
 	}
 
 	void checkSection(int millis) {

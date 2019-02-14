@@ -21,10 +21,12 @@ public class NoteManager {
 	private int		barIndex				= beatIndex - 1;
 	boolean			isSustaining			= false;
 	private int		readAheadAmountMillis	= 0;
+	private boolean	isStarRender;
 
-	public NoteManager(PApplet parent, String fileName) {
+	public NoteManager(PApplet parent, String fileName, boolean isStarRender) {
 
 		this.parent = parent;
+		this.isStarRender = isStarRender;
 		jsonReader = new JSONReader(parent, fileName);
 	}
 
@@ -104,9 +106,11 @@ public class NoteManager {
 				TreeManager.instance().addNote(note);
 				break;
 			case risingMel:
+				TreeManager.instance().addNote(note);
 				TreeManager.instance().addLeafOrFlower(note, true);
 				break;
 			case repeatedNotes:
+				TreeManager.instance().addNote(note);
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
@@ -114,11 +118,13 @@ public class NoteManager {
 				break;
 			case highMel:
 				TreeManager.instance().dropLeaf(note);
-//				Stars.addStar(note);
+				//				Stars.addStar(note);
 				break;
 			case outro:
 			case end:
-				Stars.goOutTick();
+				if (isStarRender) {
+					Stars.goOutTick();
+				}
 				break;
 			}
 
@@ -135,17 +141,21 @@ public class NoteManager {
 				BirdManager.instance().addNote(note, fromRight, millis);
 				break;
 			case risingMel:
+				TreeManager.instance().addNote(note);
 				TreeManager.instance().addLeafOrFlower(note, true);
 				break;
 			case repeatedNotes:
 				birdCount = 0;
+				TreeManager.instance().addNote(note);
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
 				TreeManager.instance().addNote(note);
 				break;
 			case highMel:
-				Stars.addStar(note);
+				if (isStarRender) {
+					Stars.addStar(note);
+				}
 			case outro:
 			case end:
 				TreeManager.instance().dropLeaf(note);
@@ -181,11 +191,13 @@ public class NoteManager {
 			case melodyStart:
 			case risingMel:
 			case repeatedNotes:
+				TreeManager.instance().addNote(note);
 				TreeManager.instance().addLeafOrFlower(note, true);
 				break;
 
 			case bigReturn:
 			case highMel:
+				TreeManager.instance().addNote(note);
 				TreeManager.instance().glowRoot(note);
 				break;
 
@@ -196,6 +208,7 @@ public class NoteManager {
 			}
 			break;
 		case TreeChangeMelody:
+			TreeManager.instance().addNote(note);
 			TreeManager.instance().addLeafOrFlower(note, false);
 			break;
 
