@@ -9,17 +9,12 @@ import processing.opengl.PGraphics2D;
 
 public class Glow {
 
-	private static DwPixelFlow	context;
 	private static DwFilter		filter;
 	private static PGraphics2D	pg_render, pg_luminance, pg_bloom;
 
-	public static void setupGlow(PApplet parent) {
-
-		context = new DwPixelFlow(parent);
-//				context.print();
-//				context.printGL();
-
-		filter = new DwFilter(context);
+	public static void setupGlow(PApplet parent, DwFilter _filter) {
+		
+		filter = _filter;
 
 		pg_render = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_render.smooth(8);
@@ -43,8 +38,8 @@ public class Glow {
 		// if the original image is used as source, the previous luminance pass 
 		// can just be skipped
 //		filter.bloom.setBlurLayers(10);
-		filter.bloom.param.mult = 4; // 1 to 10
-		filter.bloom.param.radius = 1f; // 0 to 1
+		filter.bloom.param.mult = 8; // 1 to 10
+		filter.bloom.param.radius = 2f; // 0 to 1
 //		filter.bloom.apply(pg_luminance, pg_bloom, pg_render);
 		filter.bloom.apply(pg_luminance, pg_bloom, dest);
 

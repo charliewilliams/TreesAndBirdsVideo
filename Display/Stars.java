@@ -77,6 +77,9 @@ public class Stars {
 
 	public static void renderStars(int millis, PApplet parent) {
 
+		if (stars.isEmpty()) {
+			return;
+		}
 		//		rotation -= 0.0001;
 
 		pg_stars.beginDraw();
@@ -87,7 +90,7 @@ public class Stars {
 			s.draw(pg_stars);
 		}
 
-		renderGlow(pg_stars);
+//		renderGlow(pg_stars);
 		pg_stars.endDraw();
 
 		//		pg_stars.save("tmp/stars-" + millis + ".jpg");
@@ -98,11 +101,14 @@ public class Stars {
 
 	public static void goOutTick() {
 
-		Collections.shuffle(stars);
-
 		int removedCount = 0;
 		int starsToRemovePerTick = 10;
-		while (removedCount < starsToRemovePerTick) {
+		int attempts = 0;
+		int maxAttempts = 1024;
+		while (removedCount < starsToRemovePerTick && attempts < maxAttempts) {
+			
+			Collections.shuffle(stars);
+			attempts++;
 
 			if (stars.isEmpty()) {
 				return;
@@ -113,14 +119,10 @@ public class Stars {
 		}
 	}
 
-	public static void setupGlow(PApplet parent) {
+	public static void setupGlow(PApplet parent, DwFilter _filter) {
 
 		stage = new PVector(parent.width, parent.height);
-		context = new DwPixelFlow(parent);
-//		context.print();
-//		context.printGL();
-
-		filter = new DwFilter(context);
+		filter = _filter;
 
 		pg_stars = (PGraphics2D) parent.createGraphics(parent.width, parent.height * 2, PConstants.P2D);
 		pg_stars.colorMode(PConstants.HSB, 360, 100, 100, 100);

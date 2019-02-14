@@ -1,10 +1,15 @@
-import processing.core.*;
-import processing.opengl.PGraphics2D;
-import processing.sound.*;
-import Display.*;
+import com.thomasdiewald.pixelflow.java.DwPixelFlow;
+import com.thomasdiewald.pixelflow.java.imageprocessing.filter.DwFilter;
+
+import Display.Glow;
+import Display.SceneManager;
+import Display.Stars;
 import Display.Birds.BirdManager;
 import Display.Trees.TreeManager;
-import Model.*;
+import Model.NoteManager;
+import Model.Section;
+import processing.core.PApplet;
+import processing.sound.SoundFile;
 
 public class Main extends PApplet {
 
@@ -15,7 +20,9 @@ public class Main extends PApplet {
 	int		prerollMillis			= renderVideo ? 10000 : 0;
 	int		moveAudioEarlierMillis	= 4800;
 	int		totalFrames;
-
+	DwPixelFlow context;
+	DwFilter filter;
+	
 	public static void main(String[] args) {
 
 		PApplet.main("Main");
@@ -32,19 +39,19 @@ public class Main extends PApplet {
 	int	repeatedNotes	= 170000;
 	int	bigReturn		= 251000;
 	int	highMel			= 290000;
-	int	outro			= 360000;
-	int	end				= 350000;
+	int	outro			= 365000;
+	int	end				= 392000;
 
 	Section section = Section.preroll;
 
 	int millisOffset = 500;
 	//	int	debugOffsetMillis	= 0;
-	//		int debugOffsetMillis = melodyStart;
+			int debugOffsetMillis = melodyStart;
 	//	int	debugOffsetMillis = risingMel;
 	//		int debugOffsetMillis = repeatedNotes;
 //		int debugOffsetMillis = bigReturn;
 //	int	debugOffsetMillis	= highMel;
-	int	debugOffsetMillis	= outro;
+//	int	debugOffsetMillis	= outro;
 	int	durationMillis;
 
 	public void settings() {
@@ -64,12 +71,15 @@ public class Main extends PApplet {
 		background(0, 0, 51);
 		noStroke();
 
-		Glow.setupGlow(this);
+		context = new DwPixelFlow(this);
+		filter = new DwFilter(context);
+		
+		Glow.setupGlow(this, filter);
 		sceneManager = new SceneManager(this, debugOffsetMillis);
 		new TreeManager(this);
 		TreeManager.instance().renderGlow = renderGlow;
 		new BirdManager(this);
-		Stars.setupGlow(this);
+//		Stars.setupGlow(this, filter);
 
 		noteManager = new NoteManager(this, "song.json");
 
@@ -131,6 +141,7 @@ public class Main extends PApplet {
 			BirdManager.instance().flyAwayAllBirds(millis);
 			break;
 		case highMel:
+			BirdManager.instance().cleanUpOffscreenBirds();
 			break;
 		case outro:
 		case end:

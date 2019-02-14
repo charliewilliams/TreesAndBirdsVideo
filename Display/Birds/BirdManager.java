@@ -120,4 +120,13 @@ public class BirdManager {
 			}
 		}
 	}
+	
+	public void cleanUpOffscreenBirds() {
+		
+		for (Flock f : flocks) {
+			if (f != null) {
+				f.cleanUpOffscreenBirds(stage);
+			}
+		}
+	}
 }

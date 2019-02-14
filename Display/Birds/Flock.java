@@ -2,6 +2,9 @@ package Display.Birds;
 
 import java.util.ArrayList;
 
+import org.gicentre.handy.HandyPresets;
+import org.gicentre.handy.HandyRenderer;
+
 import Display.Birds.Bird.State;
 import Display.Trees.TreeStack;
 import Model.Note;
@@ -10,17 +13,14 @@ import processing.core.PApplet;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
 
-import org.gicentre.handy.*;
-
 public class Flock {
 
-	private Note note;
-	private TreeStack treeStack;
-	private 
-	int baseHue;
-	float baseSize;
-	double flapSpeed;
-	private HandyRenderer sketcher;
+	private Note			note;
+	private TreeStack		treeStack;
+	private int				baseHue;
+	float					baseSize;
+	double					flapSpeed;
+	private HandyRenderer	sketcher;
 
 	ArrayList<Bird> birds = new ArrayList<Bird>();
 
@@ -61,7 +61,7 @@ public class Flock {
 			if (b.landingSite != null) {
 				continue;
 			}
-			
+
 			b.landingSite = treeStack.acquireLandingSite(b);
 			if (b.landingSite != null) {
 				b.state = State.to_land;
@@ -74,5 +74,20 @@ public class Flock {
 		for (Bird b : birds) {
 			b.flyAway(stage, millis);
 		}
+	}
+
+	void cleanUpOffscreenBirds(PVector stage) {
+
+		float pad = 5;
+		ArrayList<Bird> toRemove = new ArrayList<Bird>();
+		
+		for (Bird b : birds) {
+
+			if (b.pos().x < -pad || b.pos().x > stage.x + pad || b.pos().y < -pad) {
+				toRemove.add(b);
+			}
+		}
+		
+		birds.removeAll(toRemove);
 	}
 }
