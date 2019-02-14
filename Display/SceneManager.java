@@ -71,19 +71,26 @@ public class SceneManager {
 		parent.blendMode(PConstants.BLEND);
 		Section section = Section.forMillis(millis);
 		
+		float maxAlpha = 60;
+		
 		if (section == Section.bigReturn) {
 			
 			float pct = section.pctDone(millis);
-			float alpha = Util.logMapf(pct, 0, 1, 0, 60);
+			float alpha = Util.logMapf(pct, 0, 1, 0, maxAlpha);
 			parent.fill(204, 100, 25, alpha);
 			parent.rect(w / 2, h / 2, w, h);
 			
 		} else if (section == Section.highMel) {
 			
-			float pct = section.pctDone(millis);
-			float alpha = Util.logMapf(pct, 0, 1, 60, 0);
-			parent.fill(204, 100, 25, alpha);
+			parent.fill(204, 100, 25, maxAlpha);
 			parent.rect(w / 2, h / 2, w, h);
+			
+		} else if (section == Section.outro) {
+			
+			float pct = section.pctDone(millis);
+			float alpha = Util.logMapf(pct, 0, 1, maxAlpha, 0);
+			parent.fill(204, 100, 25, alpha);
+			parent.rect(w / 2, h / 2, w, h);			
 		}
 
 		// Multiply the clouds in

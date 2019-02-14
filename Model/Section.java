@@ -1,7 +1,7 @@
 package Model;
 
 public enum Section {
-	preroll, start, melodyStart, risingMel, repeatedNotes, bigReturn, highMel, outro, end;
+	preroll, start, melodyStart, risingMel, repeatedNotes, bigReturn, highMel, outro, end, fileEnd;
 
 	private static final Section[] values = Section.values();
 	private static int[] startPointsInMillis = {
@@ -13,7 +13,8 @@ public enum Section {
 			255250, // big melody
 			292000, // high melody
 			374500, // recap
-			412000 // file end
+			412000, // file end
+			412001 //
 	};
 
 	public static Section forMillis(int millis) {
