@@ -151,7 +151,7 @@ public class TreeStack {
 			}
 			pg_glow.popMatrix();
 		}
-		drawDebugLabel(pg_trees);
+//		drawDebugLabel(pg_trees);
 		finalizePGraphics(pg_trees);
 
 		preparePGraphics(pg_leaves);
