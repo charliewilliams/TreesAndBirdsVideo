@@ -1,11 +1,11 @@
 package Model;
 
-import Display.*;
+import Display.ChannelMapping;
+import Display.Stars;
 import Display.Birds.BirdManager;
 import Display.Trees.TreeManager;
 import Util.Util;
-import processing.core.*;
-import processing.opengl.PGraphics2D;
+import processing.core.PApplet;
 
 public class NoteManager {
 

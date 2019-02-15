@@ -12,6 +12,7 @@ public class Snowflake {
 	PShape	shape;
 	float	alpha		= 100;
 	float	fallSpeed	= Util.randomf(0.5f, 1);
+	float	angle		= (float) Util.random(-Math.PI, Math.PI);
 
 	Snowflake(PGraphics2D pg) {
 
@@ -43,6 +44,7 @@ public class Snowflake {
 
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
+		pg.rotate(angle);
 		pg.fill(200, alpha);
 		pg.noStroke();
 		pg.shape(shape);
@@ -52,11 +54,12 @@ public class Snowflake {
 	void tick(PApplet parent) {
 
 		if (alpha > 0) {
-			alpha *= 0.99;
+			alpha *= 0.9;
 		}
 
 		pos.y += fallSpeed;
 		pos.x += (parent.noise(pos.y) - 0.5) * 7 + 1;
+		angle += parent.noise(pos.y) / 20;
 		fallSpeed *= 1.01;
 	}
 }
