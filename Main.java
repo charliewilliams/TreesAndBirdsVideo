@@ -14,9 +14,9 @@ import processing.sound.SoundFile;
 
 public class Main extends PApplet {
 
-	boolean		renderVideo				= false;
-	boolean		renderGlow				= false;
-	boolean		playMusic				= true;
+	boolean		renderVideo				= true;
+	boolean		renderGlow				= true;
+	boolean		playMusic				= false;
 	boolean		isStarRender			= false;
 	int			_frameRate				= 30;
 	int			prerollMillis			= renderVideo ? 10000 : 0;
@@ -46,20 +46,20 @@ public class Main extends PApplet {
 
 	Section section = Section.preroll;
 
-	int millisOffset = 500;
-	//	int	debugOffsetMillis	= 0;
-	//			int debugOffsetMillis = melodyStart;
+	int	millisOffset		= 500;
+	int	debugOffsetMillis	= 0;
+	//	int debugOffsetMillis = melodyStart;
 	//	int debugOffsetMillis = risingMel;
-				int debugOffsetMillis = repeatedNotes;
-//	int debugOffsetMillis = bigReturn;
+	//	int debugOffsetMillis = repeatedNotes;
+	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
 	//	int	debugOffsetMillis	= outro;
 	int durationMillis;
 
 	public void settings() {
 
-		size(1692, 720, P2D); // P2D, P3D, FX2D
-		// size(2538, 1080, P2D);
+		size(1692, 720, P2D);
+//		 size(2538, 1080, P2D);
 	}
 
 	public void setup() {
@@ -125,7 +125,7 @@ public class Main extends PApplet {
 		int millis = _millis();
 
 		checkSection(millis);
-		
+
 		if (isStarRender) {
 			Stars.renderStars(millis, this);
 			return;
@@ -166,7 +166,7 @@ public class Main extends PApplet {
 		TreeManager.instance().drawTrees();
 		BirdManager.instance().updateAndDraw(millis);
 		TreeManager.instance().drawOverlay();
-		
+
 		Snow.render();
 
 		int seconds = millis / 1000;
@@ -178,7 +178,7 @@ public class Main extends PApplet {
 		surface.setTitle(txt_fps);
 
 		if (renderVideo) {
-			saveFrame("temp/#####.png");
+			saveFrame("video-export/#####.png");
 
 			if (frameCount > totalFrames) {
 				exit();
