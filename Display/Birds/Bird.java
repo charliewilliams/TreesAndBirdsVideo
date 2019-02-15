@@ -17,13 +17,13 @@ public class Bird {
 		flying, to_land, landed
 	}
 
-	static private float	neighborhoodRadius	= 100;		// radius in which it looks for fellow boids
+	static private float	neighborhoodRadius	= 75;		// radius in which it looks for fellow boids
 	static private float	desiredseparation	= 25.0f;
 	static private float	maxSpeed			= 3;		// 4; //maximum magnitude for the velocity vector
 	static private float	maxSteerForce		= 0.03f;	// 0.1f; //maximum magnitude of the steering vector
 
 	private float	cohesionMultiplier		= 3;
-	private float	alignmentMultiplier		= 1;
+	private float	alignmentMultiplier		= 4;
 	private float	separationMultiplier	= 5;
 	private boolean	avoidBirds				= true;
 
@@ -161,7 +161,7 @@ public class Bird {
 
 	void updateFlap() {
 
-		if (state == State.landed && Util.random(0, 100) < 95) {
+		if (state == State.landed && Util.random(0, 100) < 90) {
 			return;
 		}
 
