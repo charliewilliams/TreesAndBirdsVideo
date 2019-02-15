@@ -45,7 +45,6 @@ public class Snowflake {
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
 		pg.rotate(angle);
-		pg.fill(200, alpha);
 		pg.noStroke();
 		pg.shape(shape);
 		pg.popMatrix();
@@ -54,7 +53,8 @@ public class Snowflake {
 	void tick(PApplet parent) {
 
 		if (alpha > 0) {
-			alpha *= 0.9;
+			alpha *= 0.995;
+			shape.setFill(Util.setAlpha(0xFFFFFF, alpha));
 		}
 
 		pos.y += fallSpeed;
