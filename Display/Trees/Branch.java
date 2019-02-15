@@ -286,6 +286,9 @@ public class Branch {
 			}
 		}
 
+		if (isRoot) {
+			return false;
+		}
 		flower = new Flower(flowerType, pos);
 		return true;
 	}
@@ -307,6 +310,9 @@ public class Branch {
 			}
 		}
 
+		if (isRoot) {
+			return false;
+		}
 		leaf = new Leaf(leafType, pos, hue, pg);
 		return true;
 	}

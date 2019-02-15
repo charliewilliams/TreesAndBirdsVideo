@@ -1,25 +1,44 @@
 package Display.Trees;
-import processing.core.*;
 
+import java.util.ArrayList;
 import java.util.Random;
 
-import Util.*;
+import Util.Util;
+import processing.core.PGraphics;
+import processing.core.PVector;
 
 public class Flower {
 
-	FlowerType flowerType;
-	PVector pos;
-	PShape shape;
+	FlowerType	flowerType;
+	PVector		pos;
+	float		satBri	= Util.randomf(155, 255);
+	float		alpha	= Util.randomf(32, 192);
+	float		weight	= Util.randomf(4, 10);
 
 	public enum FlowerType {
-		Sakura, White;
+		Sakura, White, Yellow, Purple;
 	}
-	
+
+	public static ArrayList<FlowerType>	usedTypes	= new ArrayList<FlowerType>();
+	private static Random				rnd			= new Random();
+	private static FlowerType			types[]		= FlowerType.values();
+
 	public static FlowerType randomType() {
 		
-		final Random rnd = new Random(); 
-		FlowerType types[] = FlowerType.values();
-		return types[rnd.nextInt(types.length)];
+		if (usedTypes.size() == types.length) {
+			usedTypes.removeAll(usedTypes);
+		}
+
+		while (true) {
+			int idx = rnd.nextInt(types.length);
+			FlowerType type = types[idx];
+			
+			if (usedTypes.contains(types)) {
+				continue;
+			}
+			usedTypes.add(type);
+			return type;
+		}
 	}
 
 	Flower(FlowerType flowerType, PVector pos) {
@@ -29,21 +48,39 @@ public class Flower {
 
 	void draw(PGraphics pg, float size) {
 
+		pg.noStroke();
+
 		switch (flowerType) {
-		
+
 		case Sakura:
-			
-			float w = Util.randomf(155, 255);
-			pg.stroke(255, w, w, Util.randomf(32, 192));
-			pg.strokeWeight(Util.randomf(0, 8));
-			pg.point(pos.x + Util.randomf(-2, 2), pos.y + Util.randomf(-2, 2));
+			pg.fill(255, satBri, satBri, alpha);
+			pg.ellipse(pos.x, pos.y, weight, weight);
+
+			pg.fill(255, alpha * 0.67f);
+			pg.ellipse(pos.x, pos.y, weight / 2, weight / 2);
 			break;
-			
+
 		case White:
-			
-			pg.fill(255);
-			pg.ellipse(pos.x, pos.y, 5, 5);
-		default:
+			pg.fill(255, alpha);
+			pg.ellipse(pos.x, pos.y, weight, weight);
+
+			pg.fill(255, alpha * 0.67f);
+			pg.ellipse(pos.x, pos.y, weight / 2, weight / 2);
+			break;
+
+		case Yellow:
+			pg.fill(207, 179, 55, alpha);
+			pg.ellipse(pos.x, pos.y, weight, weight);
+
+			pg.fill(207, 179, 55, alpha * 0.67f);
+			pg.ellipse(pos.x, pos.y, weight / 2, weight / 2);
+
+		case Purple:
+			pg.fill(216, 100, 238, alpha);
+			pg.ellipse(pos.x, pos.y, weight, weight);
+
+			pg.fill(216, 100, 238, alpha * 0.67f);
+			pg.ellipse(pos.x, pos.y, weight / 2, weight / 2);
 			break;
 		}
 

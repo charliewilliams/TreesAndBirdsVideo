@@ -64,8 +64,9 @@ public class TreeStack {
 
 		int iterations = note.isRare() ? 10 : 1;
 		for (int i = 0; i < iterations; i++) {
-			Collections.shuffle(trees);
-			for (Tree t : trees) {
+			ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
+			Collections.shuffle(ts);
+			for (Tree t : ts) {
 
 				if (t.grow(note).size() > 0) {
 					return;
@@ -76,8 +77,9 @@ public class TreeStack {
 
 	void addFlower() {
 
-		Collections.shuffle(trees);
-		for (Tree t : trees) {
+		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
+		Collections.shuffle(ts);
+		for (Tree t : ts) {
 			if (t.addFlower(flowerType)) {
 				return;
 			}
@@ -86,8 +88,9 @@ public class TreeStack {
 
 	void addLeaf() {
 
-		Collections.shuffle(trees);
-		for (Tree t : trees) {
+		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
+		Collections.shuffle(ts);
+		for (Tree t : ts) {
 			if (t.addLeaf(leafType, pg_trees)) {
 				return;
 			}
@@ -96,8 +99,9 @@ public class TreeStack {
 
 	public boolean dropLeaf(Note n) {
 
-		Collections.shuffle(trees);
-		for (Tree t : trees) {
+		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
+		Collections.shuffle(ts);
+		for (Tree t : ts) {
 			if (t.dropLeaf()) {
 				return true;
 			}
@@ -203,11 +207,13 @@ public class TreeStack {
 
 	public PVector acquireLandingSite(Bird b) {
 
-		Collections.shuffle(trees);
-		for (Tree t : trees) {
+		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
+		Collections.shuffle(ts);
+		for (Tree t : ts) {
 
-			Collections.shuffle(t.branches);
-			for (Branch br : t.branches) {
+			ArrayList<Branch> bs = (ArrayList<Branch>) t.branches.clone();
+			Collections.shuffle(bs);
+			for (Branch br : bs) {
 
 				if (br.hasBird == false) {
 

@@ -1,5 +1,6 @@
 package Display.Trees;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import Util.Util;
@@ -25,12 +26,27 @@ public class Leaf {
 	enum LeafShape {
 		circle, square, star, crescent;
 	}
+	
+	public static ArrayList<LeafShape>	usedTypes	= new ArrayList<LeafShape>();
+	private static Random				rnd			= new Random();
+	private static LeafShape			types[]		= LeafShape.values();
 
 	public static LeafShape randomType() {
+		
+		if (usedTypes.size() == types.length) {
+			usedTypes.removeAll(usedTypes);
+		}
 
-		final Random rnd = new Random();
-		LeafShape types[] = LeafShape.values();
-		return types[rnd.nextInt(types.length)];
+		while (true) {
+			int idx = rnd.nextInt(types.length);
+			LeafShape type = types[idx];
+			
+			if (usedTypes.contains(types)) {
+				continue;
+			}
+			usedTypes.add(type);
+			return type;
+		}
 	}
 
 	void createShape(PGraphics pg, LeafShape ls) {
@@ -44,7 +60,7 @@ public class Leaf {
 
 		switch (ls) {
 		case circle:
-			float diam = 8;
+			float diam = 6;
 			for (int i = 0; i <= 360; i += 4) {
 				float x = (float) (diam * Math.sin(Math.toRadians(i)));
 				float y = (float) (diam / 2 * Math.cos(Math.toRadians(i)));
@@ -53,7 +69,7 @@ public class Leaf {
 			break;
 
 		case square:
-			float side = 7;
+			float side = 9;
 			shape.vertex(0, 0);
 			shape.vertex(0, side);
 			shape.vertex(side, side);
