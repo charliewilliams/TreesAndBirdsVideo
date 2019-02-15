@@ -5,6 +5,7 @@ import Display.Birds.BirdManager;
 import Display.Trees.TreeManager;
 import Util.Util;
 import processing.core.*;
+import processing.opengl.PGraphics2D;
 
 public class NoteManager {
 
@@ -115,6 +116,7 @@ public class NoteManager {
 				break;
 			case bigReturn:
 				TreeManager.instance().addNote(note);
+				TreeManager.instance().dropFlower(note);
 				break;
 			case highMel:
 				TreeManager.instance().dropLeaf(note);

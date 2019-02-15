@@ -96,8 +96,9 @@ public class Branch {
 		ArrayList<Branch> newChildren = new ArrayList<Branch>();
 
 		if (finished) {
-			Collections.shuffle(children);
-			for (Branch b : children) {
+			ArrayList<Branch> cs = (ArrayList<Branch>)children.clone();
+			Collections.shuffle(cs);
+			for (Branch b : cs) {
 
 				newChildren = b.grow(n);
 				if (newChildren.size() > 0) {
@@ -112,7 +113,7 @@ public class Branch {
 
 		newChildren.add(makeChild());
 
-		// 10% chance of 2nd child
+		// 10% chance of 2nd child on this pass
 		if (Util.random(0, 1) < 0.1) {
 			newChildren.add(makeChild());
 		}
@@ -194,7 +195,7 @@ public class Branch {
 		}
 
 		if (flower != null) {
-			flower.draw(pg_leaves, flowerSize);
+			flower.draw(parent, pg_leaves, flowerSize);
 		}
 
 		for (Branch child : children) {
@@ -279,8 +280,9 @@ public class Branch {
 			return false;
 		}
 
-		Collections.shuffle(children);
-		for (Branch child : children) {
+		ArrayList<Branch> cs = (ArrayList<Branch>)children.clone();
+		Collections.shuffle(cs);
+		for (Branch child : cs) {
 			if (child.addFlower(flowerType)) {
 				return true;
 			}
@@ -303,8 +305,9 @@ public class Branch {
 			return false;
 		}
 
-		Collections.shuffle(children);
-		for (Branch child : children) {
+		ArrayList<Branch> cs = (ArrayList<Branch>)children.clone();
+		Collections.shuffle(cs);
+		for (Branch child : cs) {
 			if (child.addLeaf(leafType, pg)) {
 				return true;
 			}
@@ -319,16 +322,35 @@ public class Branch {
 
 	boolean dropLeaf() {
 
+		ArrayList<Branch> cs = (ArrayList<Branch>)children.clone();
+		Collections.shuffle(cs);
+		for (Branch child : cs) {
+			if (child.dropLeaf()) {
+				return true;
+			}
+		}
+		
 		if (leaf != null && !leaf.isFalling) {
 			leaf.isFalling = true;
 			return true;
 		}
 
-		Collections.shuffle(children);
-		for (Branch child : children) {
-			if (child.dropLeaf()) {
+		return false;
+	}
+	
+	public boolean dropFlower() {
+
+		ArrayList<Branch> cs = (ArrayList<Branch>)children.clone();
+		Collections.shuffle(cs);
+		for (Branch child : cs) {
+			if (child.dropFlower()) {
 				return true;
 			}
+		}
+		
+		if (flower != null && !flower.isFalling) {
+			flower.isFalling = true;
+			return true;
 		}
 
 		return false;

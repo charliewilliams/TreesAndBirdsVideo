@@ -55,6 +55,12 @@ public class Tree {
 		return root.dropLeaf();
 	}
 	
+	public boolean dropFlower() {
+		
+		if (root == null) { return false; }
+		return root.dropFlower();
+	}
+	
 	void growLeaves() {
 		leafSize += 0.1;
 	}

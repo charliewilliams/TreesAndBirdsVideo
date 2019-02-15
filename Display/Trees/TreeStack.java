@@ -44,7 +44,7 @@ public class TreeStack {
 
 		pg_leaves = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_leaves.colorMode(PConstants.HSB, 360, 100, 100, 100);
-		pg_leaves.smooth(4);
+		pg_leaves.smooth(8);
 
 		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_glow.colorMode(PConstants.HSB, 360, 100, 100, 100);
@@ -97,12 +97,24 @@ public class TreeStack {
 		}
 	}
 
-	public boolean dropLeaf(Note n) {
+	public boolean dropLeaf() {
 
 		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
 		Collections.shuffle(ts);
 		for (Tree t : ts) {
 			if (t.dropLeaf()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean dropFlower() {
+
+		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
+		Collections.shuffle(ts);
+		for (Tree t : ts) {
+			if (t.dropFlower()) {
 				return true;
 			}
 		}

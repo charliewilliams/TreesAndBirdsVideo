@@ -5,6 +5,7 @@ import Display.Glow;
 import Display.SceneManager;
 import Display.Stars;
 import Display.Birds.BirdManager;
+import Display.Trees.Snow;
 import Display.Trees.TreeManager;
 import Model.NoteManager;
 import Model.Section;
@@ -49,8 +50,8 @@ public class Main extends PApplet {
 	//	int	debugOffsetMillis	= 0;
 	//			int debugOffsetMillis = melodyStart;
 	//	int debugOffsetMillis = risingMel;
-	//			int debugOffsetMillis = repeatedNotes;
-	int debugOffsetMillis = bigReturn;
+				int debugOffsetMillis = repeatedNotes;
+//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
 	//	int	debugOffsetMillis	= outro;
 	int durationMillis;
@@ -80,6 +81,7 @@ public class Main extends PApplet {
 		new TreeManager(this);
 		TreeManager.instance().renderGlow = renderGlow;
 		new BirdManager(this);
+		Snow.setupSnow(this);
 
 		if (isStarRender) {
 			Stars.setupGlow(this, filter);
@@ -145,8 +147,10 @@ public class Main extends PApplet {
 			BirdManager.instance().landAllBirds();
 			break;
 		case repeatedNotes:
+			Snow.addSnowTick();
 			break;
 		case bigReturn:
+			Snow.addSnowTick();
 			BirdManager.instance().flyAwayAllBirds(millis);
 			break;
 		case highMel:
@@ -162,6 +166,8 @@ public class Main extends PApplet {
 		TreeManager.instance().drawTrees();
 		BirdManager.instance().updateAndDraw(millis);
 		TreeManager.instance().drawOverlay();
+		
+		Snow.render();
 
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;

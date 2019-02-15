@@ -81,7 +81,23 @@ public class TreeManager {
 		int maxTries = 50;
 
 		while (true) {
-			if (treeStackFor(n).dropLeaf(n)) {
+			if (treeStackFor(n).dropLeaf()) {
+				return;
+			}
+			n = new Note((int) Util.random(0, 12));
+			if (tries++ > maxTries) {
+				return;
+			}
+		}
+	}
+	
+	public void dropFlower(Note n) {
+
+		int tries = 0;
+		int maxTries = 50;
+
+		while (true) {
+			if (treeStackFor(n).dropFlower()) {
 				return;
 			}
 			n = new Note((int) Util.random(0, 12));
