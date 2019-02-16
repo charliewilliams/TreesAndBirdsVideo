@@ -243,11 +243,16 @@ public class Bird {
 		ps.pushMatrix();
 		ps.translate(pos.x, pos.y);
 		ps.rotate(theta);
-		sketcher.beginShape(PConstants.TRIANGLES);
+//		sketcher.beginShape(PConstants.TRIANGLES);
+		sketcher.beginShape(PConstants.POLYGON);
+//		sketcher.beginShape();
+		
 		sketcher.vertex(0, -size * 2);
 		sketcher.vertex(-r * 2, size);
+		sketcher.vertex(0, -size * 1.1f);
 		sketcher.vertex(r * 2, size);
-		sketcher.endShape();
+		
+		sketcher.endShape(PConstants.CLOSE);
 		ps.popMatrix();
 
 		// drawLandingPoint(ps);

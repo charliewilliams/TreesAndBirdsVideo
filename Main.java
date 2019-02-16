@@ -14,9 +14,9 @@ import processing.sound.SoundFile;
 
 public class Main extends PApplet {
 
-	boolean		renderVideo				= true;
-	boolean		renderGlow				= true;
-	boolean		playMusic				= false;
+	boolean		renderVideo				= false;
+	boolean		renderGlow				= false;
+	boolean		playMusic				= true;
 	boolean		isStarRender			= false;
 	int			_frameRate				= 30;
 	int			prerollMillis			= renderVideo ? 10000 : 0;
@@ -47,8 +47,8 @@ public class Main extends PApplet {
 	Section section = Section.preroll;
 
 	int	millisOffset		= 500;
-	int	debugOffsetMillis	= 0;
-	//	int debugOffsetMillis = melodyStart;
+//	int	debugOffsetMillis	= 0;
+		int debugOffsetMillis = melodyStart;
 	//	int debugOffsetMillis = risingMel;
 	//	int debugOffsetMillis = repeatedNotes;
 	//	int debugOffsetMillis = bigReturn;

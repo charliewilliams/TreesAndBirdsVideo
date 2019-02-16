@@ -108,7 +108,7 @@ public class TreeStack {
 		}
 		return false;
 	}
-	
+
 	public boolean dropFlower() {
 
 		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
@@ -151,7 +151,7 @@ public class TreeStack {
 			}
 			pg_glow.popMatrix();
 		}
-//		drawDebugLabel(pg_trees);
+		//		drawDebugLabel(pg_trees);
 		finalizePGraphics(pg_trees);
 
 		preparePGraphics(pg_leaves);
@@ -210,7 +210,7 @@ public class TreeStack {
 		}
 	}
 
-	private void drawDebugLabel(PGraphics2D pg) {
+	void drawDebugLabel(PGraphics2D pg) {
 
 		pg.fill(0);
 		pg.textSize(24);
@@ -249,7 +249,7 @@ public class TreeStack {
 		PVector fallback = pos.copy();
 		fallback.x += 100;
 		fallback.y += 50;
-		
+
 		float xNoise = 80;
 		float yNoise = 50;
 
