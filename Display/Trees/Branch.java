@@ -143,7 +143,7 @@ public class Branch {
 	//	t.renderGlow(pg_trees, pg_leaves, pg_glow, hue);
 	// pg.blendMode(PConstants.NORMAL);
 
-	public void renderBranch(PGraphics2D pg_trees, PGraphics2D pg_glow, HandyRenderer sketcher) {
+	public void renderBranch(PGraphics2D pg_trees, HandyRenderer sketcher) {
 		sketcher.setSeed(seed);
 
 		// Background circle
@@ -184,7 +184,7 @@ public class Branch {
 		//		pg_trees.line(origin.x, origin.y, end.x, end.y);
 
 		for (Branch child : children) {
-			child.renderBranch(pg_trees, pg_glow, sketcher);
+			child.renderBranch(pg_trees, sketcher);
 		}
 	}
 
@@ -203,23 +203,30 @@ public class Branch {
 		}
 	}
 
-	public void renderGlow(PGraphics2D pg_glow) {
+	public float renderGlow(PGraphics2D pg_glow) {
+		
+		float maxGlow = glowAmount;
 		
 		for (Branch child : children) {
-			child.renderGlow(pg_glow);
+			float thisGlow = child.renderGlow(pg_glow);
+			if (thisGlow > maxGlow) {
+				maxGlow = thisGlow;
+			}
 		}
 
-		if (glowAmount < 0.01) {
-			return;
+		if (glowAmount < 0.01 && !isRoot) {
+			return maxGlow;
 		}
 
-		float weight = Util.logMapf(glowAmount, 255, 0, 10, 0.0f);
+		float myGlow = isRoot ? maxGlow : glowAmount;
+		float weight = Util.logMapf(myGlow, 255, 0, 10, 0.0f);
 
-		pg_glow.beginDraw();
 		pg_glow.strokeWeight(weight);
 		pg_glow.stroke(255);
+		pg_glow.fill(255);
 		pg_glow.line(origin.x, origin.y, end.x, end.y);
-		pg_glow.endDraw();
+		
+		return maxGlow;
 	}
 
 	public void glow() {

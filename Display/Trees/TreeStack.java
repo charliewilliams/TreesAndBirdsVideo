@@ -47,7 +47,7 @@ public class TreeStack {
 		pg_leaves.smooth(8);
 
 		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
-		pg_glow.colorMode(PConstants.HSB, 360, 100, 100, 100);
+//		pg_glow.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_glow.smooth(8);
 
 		for (int i = 0; i < numChildren; i++) {
@@ -142,14 +142,10 @@ public class TreeStack {
 
 		preparePGraphics(pg_trees);
 		{
-			pg_glow.pushMatrix();
-			pg_glow.translate(pos.x, pos.y);
-
 			for (Tree t : trees) {
 				t.jitter(millis);
-				t.renderTrees(pg_trees, pg_glow, sketcher);
+				t.renderTrees(pg_trees, sketcher);
 			}
-			pg_glow.popMatrix();
 		}
 		//		drawDebugLabel(pg_trees);
 		finalizePGraphics(pg_trees);

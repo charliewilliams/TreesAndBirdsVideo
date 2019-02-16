@@ -15,7 +15,7 @@ import processing.sound.SoundFile;
 public class Main extends PApplet {
 
 	boolean		renderVideo				= false;
-	boolean		renderGlow				= false;
+	boolean		renderGlow				= true;
 	boolean		playMusic				= true;
 	boolean		isStarRender			= false;
 	int			_frameRate				= 30;
@@ -48,12 +48,12 @@ public class Main extends PApplet {
 
 	int	millisOffset		= 500;
 //	int	debugOffsetMillis	= 0;
-//		int debugOffsetMillis = melodyStart;
+		int debugOffsetMillis = melodyStart;
 	//	int debugOffsetMillis = risingMel;
 	//	int debugOffsetMillis = repeatedNotes;
 	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
-		int	debugOffsetMillis	= outro;
+//		int	debugOffsetMillis	= outro;
 	int durationMillis;
 
 	public void settings() {
@@ -140,6 +140,8 @@ public class Main extends PApplet {
 		// Special per-section behaviour
 		switch (section) {
 		case preroll:
+			Snow.addSnowTick();
+			break;
 		case start:
 		case melodyStart:
 			break;
@@ -147,10 +149,9 @@ public class Main extends PApplet {
 			BirdManager.instance().landAllBirds();
 			break;
 		case repeatedNotes:
-			Snow.addSnowTick();
+			
 			break;
 		case bigReturn:
-			Snow.addSnowTick();
 			BirdManager.instance().flyAwayAllBirds(millis);
 			break;
 		case highMel:
@@ -158,6 +159,7 @@ public class Main extends PApplet {
 			break;
 		case outro:
 		case end:
+			Snow.addSnowTick();
 			BirdManager.instance().landAllBirds();
 			break;
 		}

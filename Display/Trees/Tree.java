@@ -69,10 +69,10 @@ public class Tree {
 		flowerSize += 0.1;
 	}
 
-	void renderTrees(PGraphics2D pg_trees, PGraphics2D pg_glow, HandyRenderer sketcher) {
+	void renderTrees(PGraphics2D pg_trees, HandyRenderer sketcher) {
 		
 		if (root == null) { return; }
-		root.renderBranch(pg_trees, pg_glow, sketcher);
+		root.renderBranch(pg_trees, sketcher);
 	}
 	
 	void renderLeaves(PGraphics pg_leaves) {
