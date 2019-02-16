@@ -155,12 +155,15 @@ public class NoteManager {
 				TreeManager.instance().addNote(note);
 				break;
 			case highMel:
+				birdCount = -1;
 				if (isStarRender) {
 					Stars.addStar(note);
 				}
+				break;
 			case outro:
 			case end:
 				TreeManager.instance().dropLeaf(note);
+				BirdManager.instance().addNote(note, fromRight, millis);
 				break;
 			}
 

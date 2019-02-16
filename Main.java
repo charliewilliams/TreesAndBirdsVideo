@@ -48,12 +48,12 @@ public class Main extends PApplet {
 
 	int	millisOffset		= 500;
 //	int	debugOffsetMillis	= 0;
-		int debugOffsetMillis = melodyStart;
+//		int debugOffsetMillis = melodyStart;
 	//	int debugOffsetMillis = risingMel;
 	//	int debugOffsetMillis = repeatedNotes;
 	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
-	//	int	debugOffsetMillis	= outro;
+		int	debugOffsetMillis	= outro;
 	int durationMillis;
 
 	public void settings() {
@@ -103,7 +103,7 @@ public class Main extends PApplet {
 			println("Rendering", totalFrames, "frames.");
 		}
 
-		if (debugOffsetMillis >= risingMel) {
+		if (debugOffsetMillis >= risingMel && debugOffsetMillis < outro) {
 			BirdManager.instance().buildDebugBirds();
 		}
 
