@@ -12,6 +12,7 @@ import Model.Note;
 import Util.Util;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PFont;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
 
@@ -19,24 +20,30 @@ public class TreeStack {
 
 	Flower.FlowerType		flowerType;
 	Leaf.LeafShape			leafType;
-	private ArrayList<Tree>	trees	= new ArrayList<Tree>();
-	public PGraphics2D		pg_trees, pg_leaves, pg_glow;
+	private ArrayList<Tree>	trees						= new ArrayList<Tree>();
+	public PGraphics2D		pg_trees, pg_leaves, pg_glow, pg_labels;
 	private PApplet			parent;
 	private boolean			renderGlow;
 	private PVector			pos;
-	//	private float			hue;
-	private Note			n;
+	private Note			note;
 	private HandyRenderer	sketcher;
-	private long			seed		= (long) Util.random(0, 10000000);
-	private long			seedStride	= (long) Util.random(0, 10000000);
+	private long			seed						= (long) Util.random(0, 10000000);
+	private long			seedStride					= (long) Util.random(0, 10000000);
+	private float			debugLabelAlpha				= 0;
+	private float			debugLabelDurationMillis	= 0;
+	private float			debugLabelTextSize			= 24;
+	private PFont			debugLabelFont;
+	private float			labelXOffset				= 0;
 
-	TreeStack(int numChildren, PApplet parent, Note n, PVector pos, boolean renderGlow, long seed, long seedStride) {
+	TreeStack(int numChildren, PApplet parent, PFont font, Note n, PVector pos, boolean renderGlow, long seed,
+			long seedStride) {
 
 		this.parent = parent;
 		this.renderGlow = renderGlow;
 		this.pos = pos;
-		this.n = n;
-		
+		this.note = n;
+		this.debugLabelFont = font;
+
 		if (seed > 0) {
 			this.seed = seed;
 		}
@@ -48,7 +55,6 @@ public class TreeStack {
 		//		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
 
 		pg_trees = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
-//		pg_trees.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_trees.smooth(4);
 
 		pg_leaves = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
@@ -56,8 +62,11 @@ public class TreeStack {
 		pg_leaves.smooth(8);
 
 		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
-		//		pg_glow.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_glow.smooth(8);
+
+		pg_labels = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_labels.smooth(8);
+		pg_labels.textFont(debugLabelFont, debugLabelTextSize);
 
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 255, 50);
@@ -68,10 +77,16 @@ public class TreeStack {
 		sketcher.setRoughness(Util.randomf(0, 1.5f));
 		sketcher.setGraphics(pg_trees);
 		
+		labelXOffset = Util.coinToss() ? 15 : -15;
+
 		PApplet.println(n.pitchClass + ": " + this.seed + "+" + this.seedStride);
 	}
 
-	void grow(Note note) {
+	void grow(Note note, int millis) {
+
+		debugLabelAlpha = 255;
+		debugLabelDurationMillis = (note.velocity + note.duration) * 1000;
+		debugLabelTriggerMillis = millis;
 
 		int iterations = note.isRare() ? 10 : 1;
 		for (int i = 0; i < iterations; i++) {
@@ -88,6 +103,7 @@ public class TreeStack {
 
 	void addFlower() {
 
+		debugLabelAlpha = 255;
 		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
 		Collections.shuffle(ts);
 		for (Tree t : ts) {
@@ -99,6 +115,7 @@ public class TreeStack {
 
 	void addLeaf() {
 
+		debugLabelAlpha = 255;
 		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
 		Collections.shuffle(ts);
 		for (Tree t : ts) {
@@ -131,9 +148,9 @@ public class TreeStack {
 		}
 		return false;
 	}
-	
+
 	public void turnLeafColorTick(int millis) {
-		
+
 		for (Tree t : trees) {
 			t.turnLeafColorTick(millis);
 		}
@@ -165,7 +182,6 @@ public class TreeStack {
 				t.renderTrees(pg_trees, sketcher);
 			}
 		}
-		drawDebugLabel(pg_trees);
 		finalizePGraphics(pg_trees);
 
 		preparePGraphics(pg_leaves);
@@ -224,13 +240,32 @@ public class TreeStack {
 		}
 	}
 
-	void drawDebugLabel(PGraphics2D pg) {
+	private int debugLabelTriggerMillis;
 
-		pg.fill(0);
-		pg.textSize(24);
-		pg.text(n.pitchClass, -20, 20);
-		pg.textSize(10);
-		pg.text(seed + "+" + seedStride, -20, 40);
+	void drawDebugLabel(int millis) {
+
+		if (debugLabelAlpha < 1) {
+			debugLabelDurationMillis = 0;
+			debugLabelTriggerMillis = 0;
+			return;
+		}
+
+		pg_labels.beginDraw();
+		pg_labels.clear();
+		pg_labels.fill(75, debugLabelAlpha);
+		pg_labels.textAlign(PConstants.CENTER);
+		pg_labels.text(note.pitchClass, pos.x + labelXOffset, pos.y); //parent.height - 30);
+		pg_labels.endDraw();
+
+		float millisRemaining = (debugLabelTriggerMillis + debugLabelDurationMillis) - millis;
+		if (millisRemaining >= 0 && debugLabelDurationMillis > 0) {
+			debugLabelAlpha = 255 * millisRemaining / debugLabelDurationMillis;
+		} else {
+			debugLabelAlpha *= 0.75;
+		}
+
+		parent.blendMode(PConstants.BLEND);
+		parent.image(pg_labels, 0, 0);
 	}
 
 	public PVector acquireLandingSite(Bird b) {

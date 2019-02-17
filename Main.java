@@ -10,12 +10,13 @@ import Display.Trees.TreeManager;
 import Model.NoteManager;
 import Model.Section;
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.sound.SoundFile;
 
 public class Main extends PApplet {
 
 	boolean		renderVideo				= false;
-	boolean		renderGlow				= false;
+	boolean		renderGlow				= true;
 	boolean		playMusic				= true;
 	boolean		isStarRender			= false;
 	int			_frameRate				= 30;
@@ -33,6 +34,7 @@ public class Main extends PApplet {
 	NoteManager		noteManager;
 	SceneManager	sceneManager;
 	SoundFile		file;
+	PFont			labelFont;
 
 	// VARIOUS NAMED STARTING OFFSETS - NOT TO BE USED AS SECTION DEFINITIONS!
 	int	musicStart		= 10000;
@@ -46,20 +48,20 @@ public class Main extends PApplet {
 
 	Section section = Section.preroll;
 
-	int	millisOffset		= 500;
-//	int	debugOffsetMillis	= 0;
-//		int debugOffsetMillis = melodyStart;
-		int debugOffsetMillis = risingMel;
-//		int debugOffsetMillis = repeatedNotes;
+	int millisOffset = 500;
+	//	int	debugOffsetMillis	= 0;
+	//		int debugOffsetMillis = melodyStart;
+	int debugOffsetMillis = risingMel;
+	//		int debugOffsetMillis = repeatedNotes;
 	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
-//		int	debugOffsetMillis	= outro;
+	//		int	debugOffsetMillis	= outro;
 	int durationMillis;
 
 	public void settings() {
 
 		size(1692, 720, P2D);
-//		 size(2538, 1080, P2D);
+		//		 size(2538, 1080, P2D);
 	}
 
 	public void setup() {
@@ -75,10 +77,12 @@ public class Main extends PApplet {
 
 		context = new DwPixelFlow(this);
 		filter = new DwFilter(context);
+		
+		labelFont = createFont("EBGaramond-SemiBold.ttf", 48);
 
 		Glow.setupGlow(this, filter);
 		sceneManager = new SceneManager(this, debugOffsetMillis);
-		new TreeManager(this);
+		new TreeManager(this, labelFont);
 		TreeManager.instance().renderGlow = renderGlow;
 		new BirdManager(this);
 		Snow.setupSnow(this);
@@ -168,7 +172,7 @@ public class Main extends PApplet {
 		}
 
 		TreeManager.instance().updateRender(millis);
-		TreeManager.instance().drawTrees();
+		TreeManager.instance().drawTrees(millis);
 		BirdManager.instance().updateAndDraw(millis);
 		TreeManager.instance().drawOverlay();
 

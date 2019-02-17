@@ -104,18 +104,18 @@ public class NoteManager {
 			case preroll:
 			case start:
 			case melodyStart:
-				TreeManager.instance().addNote(note);
+				TreeManager.instance().addNote(note, millis);
 				break;
 			case risingMel:
-				TreeManager.instance().addNote(note);
+				TreeManager.instance().addNote(note, millis);
 				TreeManager.instance().addLeafOrFlower(note, true);
 				break;
 			case repeatedNotes:
-				TreeManager.instance().addNote(note);
+				TreeManager.instance().addNote(note, millis);
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
-				TreeManager.instance().addNote(note);
+				TreeManager.instance().addNote(note, millis);
 				TreeManager.instance().dropFlower(note);
 				break;
 			case highMel:
@@ -143,16 +143,16 @@ public class NoteManager {
 				BirdManager.instance().addNote(note, fromRight, millis);
 				break;
 			case risingMel:
-				TreeManager.instance().addNote(note);
+				TreeManager.instance().addNote(note, millis);
 				TreeManager.instance().addLeafOrFlower(note, true);
 				break;
 			case repeatedNotes:
 				birdCount = 0;
-				TreeManager.instance().addNote(note);
+				TreeManager.instance().addNote(note, millis);
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
-				TreeManager.instance().addNote(note);
+				TreeManager.instance().addNote(note, millis);
 				TreeManager.instance().dropFlower(note);
 				break;
 			case highMel:
@@ -196,14 +196,14 @@ public class NoteManager {
 			case start:
 			case melodyStart:
 			case repeatedNotes:
-				TreeManager.instance().addNote(note);
+				TreeManager.instance().addNote(note, millis);
 				TreeManager.instance().addLeafOrFlower(note, true);
 			case risingMel:
 				break;
 
 			case bigReturn:
 			case highMel:
-				TreeManager.instance().addNote(note);
+				TreeManager.instance().addNote(note, millis);
 				TreeManager.instance().glowRoot(note);
 				TreeManager.instance().dropFlower(note);
 				break;
@@ -215,7 +215,7 @@ public class NoteManager {
 			}
 			break;
 		case TreeChangeMelody:
-			TreeManager.instance().addNote(note);
+			TreeManager.instance().addNote(note, millis);
 			TreeManager.instance().addLeafOrFlower(note, false);
 			break;
 

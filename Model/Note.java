@@ -57,7 +57,7 @@ public class Note {
 		// These notes appear only once in the opening few sections
 		// so their trees are just sticks. Let's give them a boost!
 		
-		String[] rareNotes = {"A#", "C", "C#", "D#", "F", "G", "G#"};
+		String[] rareNotes = {"Bb", "C", "C#", "D#", "F", "G", "Ab"};
 		
 		for (int i = 0; i < rareNotes.length; i++) {
 			if (pitchClass.equals(rareNotes[i])) {				
@@ -91,5 +91,5 @@ public class Note {
 	//		return (float) ((pow(2, ((note - 69) / 12.0f))) * 440.0f);
 	//	}
 
-	private static String[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+	private static String[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "Ab", "A", "Bb", "B" };
 }

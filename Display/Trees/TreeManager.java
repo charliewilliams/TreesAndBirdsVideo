@@ -4,13 +4,14 @@ import Display.Birds.Bird;
 import Model.Note;
 import Util.Util;
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PVector;
 
 public class TreeManager {
 
 	// 5643821+9421841
 	// to fill in as we find a great seed for each tree
-	private static int[]	seeds	= { 0, 0, 7661790, 0, 0, 0, 0,  887068, 0, 0, 0, 0 };
+	private static int[]	seeds	= { 0, 0, 7661790, 0, 0, 0, 0, 887068, 0, 0, 0, 0 };
 	private static int[]	strides	= { 0, 0, 7109302, 0, 0, 0, 0, 3228859, 0, 0, 0, 0 };
 
 	private static TreeManager m;
@@ -20,6 +21,7 @@ public class TreeManager {
 	}
 
 	private PApplet	parent;
+	private PFont	font;
 	public boolean	renderGlow;
 
 	private TreeStack[] pitchClassTrees = new TreeStack[12];
@@ -32,8 +34,8 @@ public class TreeManager {
 		if (pitchClassTreeStack == null) {
 
 			int numChildren = 2; //(int) Util.random(3, 8);
-			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, treePositionForNote(n), renderGlow, seeds[i],
-					strides[i]);
+			pitchClassTrees[i] = new TreeStack(numChildren, parent, font, n, treePositionForNote(n), renderGlow,
+					seeds[i], strides[i]);
 		}
 
 		return pitchClassTrees[i];
@@ -55,7 +57,7 @@ public class TreeManager {
 		return new PVector(eachTreeSpace * (i + 2), parent.height * 0.8f + Util.randomf(-10, 10) - yOffset);
 	}
 
-	public TreeManager(PApplet parent) {
+	public TreeManager(PApplet parent, PFont debugLabelFont) {
 
 		if (m != null) {
 			// SHOUT
@@ -63,11 +65,12 @@ public class TreeManager {
 		}
 		m = this;
 		this.parent = parent;
+		this.font = debugLabelFont;
 	}
 
-	public void addNote(Note n) {
+	public void addNote(Note n, int millis) {
 
-		treeStackFor(n).grow(n);
+		treeStackFor(n).grow(n, millis);
 	}
 
 	public void addLeafOrFlower(Note n, boolean shouldBeLeaf) {
@@ -112,9 +115,9 @@ public class TreeManager {
 			}
 		}
 	}
-	
+
 	public void turnLeafColorTick(int millis) {
-		
+
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];
@@ -139,13 +142,14 @@ public class TreeManager {
 		}
 	}
 
-	public void drawTrees() {
+	public void drawTrees(int millis) {
 
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];
 			if (stack != null) {
 				stack.drawBack();
+				stack.drawDebugLabel(millis);
 			}
 		}
 	}
