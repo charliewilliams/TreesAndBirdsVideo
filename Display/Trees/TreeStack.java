@@ -48,7 +48,7 @@ public class TreeStack {
 		//		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
 
 		pg_trees = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
-		pg_trees.colorMode(PConstants.HSB, 360, 100, 100, 100);
+//		pg_trees.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_trees.smooth(4);
 
 		pg_leaves = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
@@ -102,7 +102,7 @@ public class TreeStack {
 		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
 		Collections.shuffle(ts);
 		for (Tree t : ts) {
-			if (t.addLeaf(leafType, pg_trees)) {
+			if (t.addLeaf(leafType, pg_leaves)) {
 				return;
 			}
 		}

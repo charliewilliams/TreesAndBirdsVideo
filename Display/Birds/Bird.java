@@ -142,10 +142,13 @@ public class Bird {
 	}
 
 	private boolean	avoidWalls		= true;
-	static float	wallAvoidWeight	= 4;
+	static float	flyingWallAvoidWeight	= 10;
+	static float	landingWallAvoidWeight	= 4;
 
 	void checkAvoidWalls() {
 
+		float wallAvoidWeight = (state == State.to_land) ? landingWallAvoidWeight : flyingWallAvoidWeight;
+		
 		PVector avoidGround = avoid(new PVector(pos.x, bottomWallY), true);
 		acc.add(PVector.mult(avoidGround, wallAvoidWeight));
 

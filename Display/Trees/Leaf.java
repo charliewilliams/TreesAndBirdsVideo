@@ -159,15 +159,6 @@ public class Leaf {
 			fallTick(parent);
 		}
 
-		//
-		//		pg.strokeWeight(1);
-		//		pg.stroke(255, 0, 0);
-		//		pg.line(0, groundY, pg.width, groundY);
-		//		pg.stroke(0, 255, 0);
-		//		pg.line(0, 0, pg.width, 0);
-		//		pg.stroke(0, 0, 255);
-		//		pg.stroke(0, pos.y, pg.width, pos.y);
-		//
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
 		pg.rotate(angle);
@@ -175,23 +166,27 @@ public class Leaf {
 		pg.shape(shape);
 		pg.popMatrix();
 	}
+	
+	float distanceToFallHue() {
+		return Math.abs(hue - fallHue);
+	}
 
 	boolean turnColorTick() {
 		
-		float colorChangeSpeed = 0.05f;
+		if (distanceToFallHue() < 2) {
+			return false;
+		}
+		
+		float colorChangeSpeed = 0.005f;
 
 		if (hue > fallHue) {
 			hue -= colorChangeSpeed;
-			updateColor();
-			return true;
-			
-		} else if (hue < fallHue) {
+		} else {
 			hue += colorChangeSpeed;
-			updateColor();
-			return true;
 		}
 		
-		return false;
+		updateColor();
+		return true;
 	}
 
 	void updateColor() {

@@ -241,25 +241,51 @@ public class Branch {
 
 	public boolean turnLeafColorTick() {
 
-		int numberOfTicksPerCall = 1;
-		int ticksCompleted = 0;
-		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
+		//		int numberOfTicksPerCall = 1;
+		//		int ticksCompleted = 0;
+		//		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 
-		Collections.shuffle(cs);
+		//		Collections.shuffle(cs);
 
-		for (Branch child : cs) {
-			if (child.turnLeafColorTick()) {
-				ticksCompleted++;
+		float maxDistanceFromFallColor = 0;
+		int idx = -1;
 
-				if (ticksCompleted >= numberOfTicksPerCall) {
-					return true;
-				}
+		for (int i = 0; i < children.size(); i++) {
+
+			Branch child = children.get(i);
+			child.turnLeafColorTick();
+			if (child.leaf == null) {
+				continue;
+			}
+			float dist = child.leaf.distanceToFallHue();
+			if (dist > maxDistanceFromFallColor) {
+				maxDistanceFromFallColor = dist;
+				idx = i;
 			}
 		}
-		if (leaf != null && leaf.turnColorTick()) {
-			ticksCompleted++;
+
+		if (idx != -1) {
+			children.get(idx).turnLeafColorTick();
+
+			return true;
 		}
-		return ticksCompleted >= numberOfTicksPerCall;
+
+		//		for (Branch child : cs) {
+		//			if (child.turnLeafColorTick()) {
+		//				ticksCompleted++;
+		//
+		//				if (ticksCompleted >= numberOfTicksPerCall) {
+		//					return true;
+		//				}
+		//			}
+		//		}
+		if (leaf != null && leaf.turnColorTick()) {
+			return true;
+			//			ticksCompleted++;
+		}
+		
+		return false;
+		//		return ticksCompleted >= numberOfTicksPerCall;
 	}
 
 	public void jitter(int millis) {
