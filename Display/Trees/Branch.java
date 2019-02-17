@@ -40,7 +40,7 @@ public class Branch {
 
 	private PVector	driftSpeed;
 	private PVector	driftMag;
-	
+
 	private float alpha;
 
 	private long seed, seedStride;
@@ -70,8 +70,8 @@ public class Branch {
 	}
 
 	// Normal branch
-	Branch(PApplet parent, long seed, long seedStride, PVector origin, PVector end, int depth, float flowerSize, float leafSize,
-			int numberOfParents, PVector driftSpeed, PVector driftMag, float hue, float alpha) {
+	Branch(PApplet parent, long seed, long seedStride, PVector origin, PVector end, int depth, float flowerSize,
+			float leafSize, int numberOfParents, PVector driftSpeed, PVector driftMag, float hue, float alpha) {
 
 		this.parent = parent;
 		this.seed = seed;
@@ -98,7 +98,7 @@ public class Branch {
 		ArrayList<Branch> newChildren = new ArrayList<Branch>();
 
 		if (finished) {
-			ArrayList<Branch> cs = (ArrayList<Branch>)children.clone();
+			ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 			Collections.shuffle(cs);
 			for (Branch b : cs) {
 
@@ -136,15 +136,15 @@ public class Branch {
 		dir.mult(Util.randomf(0.5f, 0.7f));
 		PVector newEnd = PVector.add(end, dir);
 
-		return new Branch(parent, seed + seedStride, seedStride, end, newEnd, depth + 1, flowerSize, leafSize, ++numberOfParents, driftSpeed, driftMag,
-				hue, alpha * 0.95f);
+		return new Branch(parent, seed + seedStride, seedStride, end, newEnd, depth + 1, flowerSize, leafSize,
+				++numberOfParents, driftSpeed, driftMag, hue, alpha * 0.95f);
 	}
 
 	//	t.renderTrees(pg_trees, sketcher, hue);
 	//	t.renderLeaves(pg_leaves, hue);
 	//	t.renderGlow(pg_trees, pg_leaves, pg_glow, hue);
 	// pg.blendMode(PConstants.NORMAL);
-	
+
 	private float strokeWeight() {
 		return PApplet.map(numberOfDescendants, 100, 0, 10, 0.5f);
 	}
@@ -175,7 +175,7 @@ public class Branch {
 		// so let's just give it a gray value
 		int glowPlusAlpha = Util.setAlpha((int) glowAmount, alpha);
 		sketcher.setStrokeColour(glowPlusAlpha);
-		
+
 		glowAmount *= 0.9f;
 
 		//		int color = Util.colorFrom360(0, 100, 100, alpha); // red
@@ -210,33 +210,56 @@ public class Branch {
 	}
 
 	public float renderGlow(PGraphics2D pg_glow) {
-		
+
 		float maxGlow = glowAmount;
-		
+
 		for (Branch child : children) {
 			float thisGlow = child.renderGlow(pg_glow);
 			if (thisGlow > maxGlow) {
 				maxGlow = thisGlow;
 			}
 		}
-		
+
 		float stroke = Math.max(10, strokeWeight() * 3);
-		float maxStroke = 25; 
+		float maxStroke = 15;
 		stroke = Math.min(stroke, maxStroke);
 		float weight = Util.logMapf(maxGlow, 255, 0, stroke, 0.0f);
-		
+
 		float color = 127;
 
 		pg_glow.strokeWeight(weight);
 		pg_glow.stroke(color);
 		pg_glow.fill(color);
 		pg_glow.line(origin.x, origin.y, end.x, end.y);
-		
+
 		return maxGlow;
 	}
 
 	public void glow() {
 		glowAmount = 255;
+	}
+
+	public boolean turnLeafColorTick() {
+
+		int numberOfTicksPerCall = 1;
+		int ticksCompleted = 0;
+		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
+
+		Collections.shuffle(cs);
+
+		for (Branch child : cs) {
+			if (child.turnLeafColorTick()) {
+				ticksCompleted++;
+
+				if (ticksCompleted >= numberOfTicksPerCall) {
+					return true;
+				}
+			}
+		}
+		if (leaf != null && leaf.turnColorTick()) {
+			ticksCompleted++;
+		}
+		return ticksCompleted >= numberOfTicksPerCall;
 	}
 
 	public void jitter(int millis) {
@@ -293,7 +316,7 @@ public class Branch {
 			return false;
 		}
 
-		ArrayList<Branch> cs = (ArrayList<Branch>)children.clone();
+		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 		Collections.shuffle(cs);
 		for (Branch child : cs) {
 			if (child.addFlower(flowerType)) {
@@ -318,7 +341,7 @@ public class Branch {
 			return false;
 		}
 
-		ArrayList<Branch> cs = (ArrayList<Branch>)children.clone();
+		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 		Collections.shuffle(cs);
 		for (Branch child : cs) {
 			if (child.addLeaf(leafType, pg)) {
@@ -335,14 +358,14 @@ public class Branch {
 
 	boolean dropLeaf() {
 
-		ArrayList<Branch> cs = (ArrayList<Branch>)children.clone();
+		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 		Collections.shuffle(cs);
 		for (Branch child : cs) {
 			if (child.dropLeaf()) {
 				return true;
 			}
 		}
-		
+
 		if (leaf != null && !leaf.isFalling) {
 			leaf.isFalling = true;
 			return true;
@@ -350,17 +373,17 @@ public class Branch {
 
 		return false;
 	}
-	
+
 	public boolean dropFlower() {
 
-		ArrayList<Branch> cs = (ArrayList<Branch>)children.clone();
+		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 		Collections.shuffle(cs);
 		for (Branch child : cs) {
 			if (child.dropFlower()) {
 				return true;
 			}
 		}
-		
+
 		if (flower != null && !flower.isFalling) {
 			flower.isFalling = true;
 			return true;

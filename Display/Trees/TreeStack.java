@@ -131,6 +131,13 @@ public class TreeStack {
 		}
 		return false;
 	}
+	
+	public void turnLeafColorTick() {
+		
+		for (Tree t : trees) {
+			t.turnLeafColorTick();
+		}
+	}
 
 	private void preparePGraphics(PGraphics2D p) {
 

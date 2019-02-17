@@ -195,10 +195,10 @@ public class NoteManager {
 			case preroll:
 			case start:
 			case melodyStart:
-			case risingMel:
 			case repeatedNotes:
 				TreeManager.instance().addNote(note);
 				TreeManager.instance().addLeafOrFlower(note, true);
+			case risingMel:
 				break;
 
 			case bigReturn:

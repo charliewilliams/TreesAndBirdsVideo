@@ -56,6 +56,7 @@ public class Leaf {
 		shape.beginShape();
 		shape.noStroke();
 		shape.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		shape.fill(hue, sat, bri, alp);
 
 		switch (ls) {
@@ -144,7 +145,8 @@ public class Leaf {
 		angle = (float) Util.random(0, Math.PI * 2);
 		groundY = PApplet.map(Util.randomf(0, 1), 0, 1, 30, 120);
 		fallSpeed = Util.randomf(0.5f, 1);
-		fallHue = Util.randomf(10, 50);
+		fallHue = Util.randomf(0, 50);
+//		fallHue = Util.randomf(170, 190);
 		createShape(pg, ls);
 	}
 
@@ -155,8 +157,6 @@ public class Leaf {
 		}
 		if (isFalling) {
 			fallTick(parent);
-		} else {
-			turnColorTick();
 		}
 
 		//
@@ -176,17 +176,26 @@ public class Leaf {
 		pg.popMatrix();
 	}
 
-	void turnColorTick() {
+	boolean turnColorTick() {
+		
+		float colorChangeSpeed = 0.05f;
 
 		if (hue > fallHue) {
-			hue -= 0.1;
-			bri *= 0.95;
+			hue -= colorChangeSpeed;
 			updateColor();
+			return true;
+			
+		} else if (hue < fallHue) {
+			hue += colorChangeSpeed;
+			updateColor();
+			return true;
 		}
+		
+		return false;
 	}
 
 	void updateColor() {
-		shape.setFill(Util.colorFrom360(fallHue, sat, bri, alp));
+		shape.setFill(Util.colorFrom360(hue, sat, bri, alp));
 	}
 
 	void fallTick(PApplet parent) {

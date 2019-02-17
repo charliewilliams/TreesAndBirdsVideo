@@ -111,6 +111,17 @@ public class TreeManager {
 			}
 		}
 	}
+	
+	public void turnLeafColorTick() {
+		
+		for (int i = 0; i < pitchClassTrees.length; i++) {
+
+			TreeStack stack = pitchClassTrees[i];
+			if (stack != null) {
+				stack.turnLeafColorTick();
+			}
+		}
+	}
 
 	public void glowRoot(Note n) {
 		treeStackFor(n).glowRoot();
