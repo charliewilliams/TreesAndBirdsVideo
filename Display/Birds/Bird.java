@@ -15,14 +15,15 @@ import processing.opengl.PGraphics2D;
 
 public class Bird {
 
+	static boolean debugDrawLandingPoints = false;
 	public enum State {
 		flying, to_land, landed
 	}
 
-	static private float	neighborhoodRadius	= 75;		// radius in which it looks for fellow boids
+	static private float	neighborhoodRadius	= 75;	// radius in which it looks for fellow boids
 	static private float	desiredseparation	= 25.0f;
-	static private float	maxSpeed			= 3;		// 4; //maximum magnitude for the velocity vector
-	static private float	maxSteerForce		= 0.03f;	// 0.1f; //maximum magnitude of the steering vector
+	static private float	maxSpeed			= 6;	// 4; //maximum magnitude for the velocity vector
+	static private float	maxSteerForce		= 0.3f;	// 0.1f; //maximum magnitude of the steering vector
 
 	private float	cohesionMultiplier		= 3;
 	private float	alignmentMultiplier		= 4;
@@ -209,9 +210,9 @@ public class Bird {
 		PVector coh = cohesion(myFlock);
 		PVector sep = separation(allBirds);
 
-		if (state != State.to_land) {
-			acc.add(PVector.mult(ali, alignmentMultiplier));
-		}
+		//		if (state != State.to_land) {
+		acc.add(PVector.mult(ali, alignmentMultiplier));
+		//		}
 		acc.add(PVector.mult(coh, cohesionMultiplier));
 		acc.add(PVector.mult(sep, separationMultiplier));
 	}
@@ -222,11 +223,12 @@ public class Bird {
 
 	void move() {
 
-		acc.y += flap / 20.0;
+		acc.y += flap / 10.0;
 		vel.add(acc); // add acceleration to velocity
 		vel.limit(maxSpeed); // make sure the velocity vector magnitude does not exceed maxSpeed
 		pos.add(vel); // add velocity to position
-		acc.mult(0.1f); // reset acceleration
+		//		pos.y += flap / 20;
+		acc.mult(0.5f); // reset acceleration
 	}
 
 	void render(PGraphics2D ps, HandyRenderer sketcher) {
@@ -261,7 +263,9 @@ public class Bird {
 		sketcher.endShape(PConstants.CLOSE);
 		ps.popMatrix();
 
-		// drawLandingPoint(ps);
+		if (debugDrawLandingPoints) {
+			drawLandingPoint(ps);
+		}
 	}
 
 	void drawWalls(PGraphics2D ps) {
