@@ -7,6 +7,10 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 public class TreeManager {
+	
+	// to fill in as we find a great seed for each tree
+	private static int[] seeds = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	private static int[] strides = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	private static TreeManager m;
 
@@ -27,7 +31,7 @@ public class TreeManager {
 		if (pitchClassTreeStack == null) {
 
 			int numChildren = 2; //(int) Util.random(3, 8);
-			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, treePositionForNote(n), renderGlow);
+			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, treePositionForNote(n), renderGlow, seeds[i], strides[i]);
 		}
 
 		return pitchClassTrees[i];

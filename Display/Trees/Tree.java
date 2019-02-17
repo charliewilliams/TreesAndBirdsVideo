@@ -15,10 +15,13 @@ public class Tree {
 	Branch root;
 	ArrayList<Branch> branches = new ArrayList<Branch>();
 	PApplet parent;
+	long seed, seedStride;
 
-	Tree(PApplet parent, Note n, float alpha, float flowerSize, float leafSize) {
+	Tree(PApplet parent, long seed, long seedStride, Note n, float alpha, float flowerSize, float leafSize) {
 
 		this.parent = parent;
+		this.seed = seed;
+		this.seedStride = seedStride;
 		this.alpha = alpha; // gives fake depth
 		this.flowerSize = flowerSize;
 		this.leafSize = leafSize;
@@ -27,7 +30,7 @@ public class Tree {
 	ArrayList<Branch> grow(Note n) {
 		
 		if (root == null) {
-			root = new Branch(parent, 80, flowerSize, leafSize, alpha);
+			root = new Branch(parent, seed, seedStride, 80, flowerSize, leafSize, alpha);
 			branches.add(root);
 			return new ArrayList<Branch>();
 		}

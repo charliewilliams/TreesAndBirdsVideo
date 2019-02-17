@@ -27,13 +27,22 @@ public class TreeStack {
 	//	private float			hue;
 	private Note			n;
 	private HandyRenderer	sketcher;
+	private long			seed		= (long) Util.random(0, 10000000);
+	private long			seedStride	= (long) Util.random(0, 10000000);
 
-	TreeStack(int numChildren, PApplet parent, Note n, PVector pos, boolean renderGlow) {
+	TreeStack(int numChildren, PApplet parent, Note n, PVector pos, boolean renderGlow, long seed, long seedStride) {
 
 		this.parent = parent;
 		this.renderGlow = renderGlow;
 		this.pos = pos;
 		this.n = n;
+		
+		if (seed > 0) {
+			this.seed = seed;
+		}
+		if (seedStride > 0) {
+			this.seedStride = seedStride;
+		}
 		flowerType = Flower.randomType();
 		leafType = Leaf.randomType();
 		//		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
@@ -47,17 +56,19 @@ public class TreeStack {
 		pg_leaves.smooth(8);
 
 		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
-//		pg_glow.colorMode(PConstants.HSB, 360, 100, 100, 100);
+		//		pg_glow.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_glow.smooth(8);
 
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 255, 50);
-			trees.add(new Tree(parent, n, alpha, Util.randomf(5, 15), Util.randomf(5, 15)));
+			trees.add(new Tree(parent, seed, seedStride, n, alpha, Util.randomf(5, 15), Util.randomf(5, 15)));
 		}
 
 		sketcher = HandyPresets.createWaterAndInk(parent); // new HandyRenderer(a);
 		sketcher.setRoughness(Util.randomf(0, 1.5f));
 		sketcher.setGraphics(pg_trees);
+		
+		PApplet.println(n.pitchClass + ": " + "+" + seedStride);
 	}
 
 	void grow(Note note) {
@@ -147,7 +158,7 @@ public class TreeStack {
 				t.renderTrees(pg_trees, sketcher);
 			}
 		}
-		//		drawDebugLabel(pg_trees);
+		drawDebugLabel(pg_trees);
 		finalizePGraphics(pg_trees);
 
 		preparePGraphics(pg_leaves);
@@ -211,6 +222,8 @@ public class TreeStack {
 		pg.fill(0);
 		pg.textSize(24);
 		pg.text(n.pitchClass, -20, 20);
+		pg.textSize(10);
+		pg.text(seed + "+" + seedStride, -20, 40);
 	}
 
 	public PVector acquireLandingSite(Bird b) {

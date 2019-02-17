@@ -43,12 +43,13 @@ public class Branch {
 	
 	private float alpha;
 
-	private long seed = (long) Util.random(0, 10000000);
+	private long seed, seedStride;
 
 	// Root
-	Branch(PApplet parent, float length, float flowerSize, float leafSize, float alpha) {
+	Branch(PApplet parent, long seed, long seedStride, float length, float flowerSize, float leafSize, float alpha) {
 
 		this.parent = parent;
+		this.seed = seed;
 		this.origin = new PVector();
 		this.alpha = alpha;
 		isRoot = true;
@@ -69,10 +70,11 @@ public class Branch {
 	}
 
 	// Normal branch
-	Branch(PApplet parent, PVector origin, PVector end, int depth, float flowerSize, float leafSize,
+	Branch(PApplet parent, long seed, long seedStride, PVector origin, PVector end, int depth, float flowerSize, float leafSize,
 			int numberOfParents, PVector driftSpeed, PVector driftMag, float hue, float alpha) {
 
 		this.parent = parent;
+		this.seed = seed;
 		this.origin = origin;
 		this.end = end;
 		this.depth = depth;
@@ -134,7 +136,7 @@ public class Branch {
 		dir.mult(Util.randomf(0.5f, 0.7f));
 		PVector newEnd = PVector.add(end, dir);
 
-		return new Branch(parent, end, newEnd, depth + 1, flowerSize, leafSize, ++numberOfParents, driftSpeed, driftMag,
+		return new Branch(parent, seed + seedStride, seedStride, end, newEnd, depth + 1, flowerSize, leafSize, ++numberOfParents, driftSpeed, driftMag,
 				hue, alpha * 0.95f);
 	}
 
