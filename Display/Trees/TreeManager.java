@@ -8,6 +8,7 @@ import processing.core.PVector;
 
 public class TreeManager {
 
+	// 5643821+9421841
 	// to fill in as we find a great seed for each tree
 	private static int[]	seeds	= { 0, 0, 7661790, 0, 0, 0, 0,  887068, 0, 0, 0, 0 };
 	private static int[]	strides	= { 0, 0, 7109302, 0, 0, 0, 0, 3228859, 0, 0, 0, 0 };
@@ -112,13 +113,13 @@ public class TreeManager {
 		}
 	}
 	
-	public void turnLeafColorTick() {
+	public void turnLeafColorTick(int millis) {
 		
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];
 			if (stack != null) {
-				stack.turnLeafColorTick();
+				stack.turnLeafColorTick(millis);
 			}
 		}
 	}

@@ -6,6 +6,7 @@ import java.util.Collections;
 import org.gicentre.handy.HandyRenderer;
 
 import Model.Note;
+import Model.Section;
 import Util.Util;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -239,53 +240,72 @@ public class Branch {
 		glowAmount = 255;
 	}
 
-	public boolean turnLeafColorTick() {
+	public boolean turnLeafColorTick(int millis) {
 
-		//		int numberOfTicksPerCall = 1;
-		//		int ticksCompleted = 0;
-		//		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
+		// Start out being unlikely for leaves to change
+		// this way they don't change too quickly at the start of the section
+		// but they are all changed toward the end
+		// It accelerates, just like real fall
+		boolean shouldTick = Util.logMapf(millis, Section.repeatedNotes.startTime(), Section.bigReturn.startTime(), 0,
+				1) > Util.randomf(0, 1);
 
-		//		Collections.shuffle(cs);
-
-		float maxDistanceFromFallColor = 0;
-		int idx = -1;
-
-		for (int i = 0; i < children.size(); i++) {
-
-			Branch child = children.get(i);
-			child.turnLeafColorTick();
-			if (child.leaf == null) {
-				continue;
-			}
-			float dist = child.leaf.distanceToFallHue();
-			if (dist > maxDistanceFromFallColor) {
-				maxDistanceFromFallColor = dist;
-				idx = i;
-			}
+		if (!shouldTick) {
+			return false;
 		}
 
-		if (idx != -1) {
-			children.get(idx).turnLeafColorTick();
+		int numberOfTicksPerCall = millis > Section.highMel.startTime() ? 5 : 1;
+		int ticksCompleted = 0;
+		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 
-			return true;
-		}
+		for (int i = 0; i < numberOfTicksPerCall; i++) {
+			Collections.shuffle(cs);
 
-		//		for (Branch child : cs) {
-		//			if (child.turnLeafColorTick()) {
-		//				ticksCompleted++;
-		//
-		//				if (ticksCompleted >= numberOfTicksPerCall) {
-		//					return true;
-		//				}
-		//			}
-		//		}
-		if (leaf != null && leaf.turnColorTick()) {
-			return true;
-			//			ticksCompleted++;
+			for (Branch child : cs) {
+				if (child.turnLeafColorTick(millis)) {
+					ticksCompleted++;
+
+					if (ticksCompleted >= numberOfTicksPerCall) {
+						return true;
+					}
+				}
+			}
 		}
 		
-		return false;
-		//		return ticksCompleted >= numberOfTicksPerCall;
+		if (leaf != null && leaf.turnColorTick()) {
+			return true;
+		}
+		ticksCompleted++;
+		return ticksCompleted >= numberOfTicksPerCall;
+
+		/////
+		//		float maxDistanceFromFallColor = 0;
+		//		int idx = -1;
+		//
+		//		for (int i = 0; i < children.size(); i++) {
+		//
+		//			Branch child = children.get(i);
+		//			child.turnLeafColorTick(millis);
+		//			if (child.leaf == null) {
+		//				continue;
+		//			}
+		//			float dist = child.leaf.distanceToFallHue();
+		//			if (dist > maxDistanceFromFallColor) {
+		//				maxDistanceFromFallColor = dist;
+		//				idx = i;
+		//			}
+		//		}
+		//
+		//		if (idx != -1) {
+		//			children.get(idx).turnLeafColorTick(millis);
+		//
+		//			return true;
+		//		}
+		//
+		//		if (leaf != null && leaf.turnColorTick()) {
+		//			return true;
+		//		}
+		//
+		//		return false;
 	}
 
 	public void jitter(int millis) {

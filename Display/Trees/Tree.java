@@ -73,12 +73,12 @@ public class Tree {
 		return root.dropFlower();
 	}
 
-	public void turnLeafColorTick() {
+	public void turnLeafColorTick(int millis) {
 
 		if (root == null) {
 			return;
 		}
-		root.turnLeafColorTick();
+		root.turnLeafColorTick(millis);
 	}
 
 	void growLeaves() {

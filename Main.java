@@ -16,7 +16,7 @@ public class Main extends PApplet {
 
 	boolean		renderVideo				= false;
 	boolean		renderGlow				= false;
-	boolean		playMusic				= false;
+	boolean		playMusic				= true;
 	boolean		isStarRender			= false;
 	int			_frameRate				= 30;
 	int			prerollMillis			= renderVideo ? 10000 : 0;
@@ -150,15 +150,15 @@ public class Main extends PApplet {
 			break;
 		case repeatedNotes:
 			BirdManager.instance().landAllBirds();
-			TreeManager.instance().turnLeafColorTick();
+			TreeManager.instance().turnLeafColorTick(millis);
 			break;
 		case bigReturn:
 			BirdManager.instance().flyAwayAllBirds(millis);
-			TreeManager.instance().turnLeafColorTick();
+			TreeManager.instance().turnLeafColorTick(millis);
 			break;
 		case highMel:
 			BirdManager.instance().cleanUpOffscreenBirds();
-			TreeManager.instance().turnLeafColorTick();
+			TreeManager.instance().turnLeafColorTick(millis);
 			break;
 		case outro:
 		case end:

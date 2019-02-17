@@ -53,11 +53,16 @@ public class BirdManager {
 	public void addNote(Note n, boolean fromRight, int millis) {
 
 		// Notes are added ~500ms before they sound; use `timestamp` to determine when they should take visual effect
-		Flock f = flocks[n.pitch % 12];
+		int idx = n.pitch % 12;
+		Flock f = flocks[idx];
+		
+							//C  C# D  D# E   F  F# G  G# A  Bb B
+		float[] flockSizes = {2, 2, 7, 2, 10, 2, 4, 2, 3, 5, 2, 6}; //Util.randomf(2, 10);
+		float size = flockSizes[idx];
 
 		if (f == null) {
-			f = new Flock(n, TreeManager.instance().treeStackFor(n), parent, rand);
-			flocks[n.pitch % 12] = f;
+			f = new Flock(n, TreeManager.instance().treeStackFor(n), size, parent, rand);
+			flocks[idx] = f;
 		}
 
 		float posX = fromRight ? stage.x - offScreenArea.x : offScreenArea.x;

@@ -26,14 +26,14 @@ public class Flock {
 
 	ArrayList<Bird> birds = new ArrayList<Bird>();
 
-	Flock(Note n, TreeStack t, PApplet a, Random rand) {
+	Flock(Note n, TreeStack t, float size, PApplet a, Random rand) {
 
 		this.rand = rand;
 		note = n;
 		treeStack = t;
 		// Set baseHue from note.pitch % 12
 		baseHue = 360 / ((note.pitch % 12) + 1);
-		baseSize = Util.randomf(2, 10);
+		baseSize = size;
 		flapSpeed = PApplet.map(baseSize, 2f, 10f, 0.5f, 0.01f);// Util.random(0.05, 0.5);
 		sketcher = HandyPresets.createWaterAndInk(a); // new HandyRenderer(a);
 		sketcher.setRoughness(Util.randomf(0, 1.5f));

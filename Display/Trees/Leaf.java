@@ -70,7 +70,7 @@ public class Leaf {
 			break;
 
 		case polygon:
-			float side = 9;
+			float side = 7;
 
 			int sides = (int) Util.random(5, 7);
 			float twoPi = (float) (Math.PI * 2);
@@ -86,7 +86,7 @@ public class Leaf {
 			break;
 
 		case star:
-			shape.scale(0.15f);
+			shape.scale(0.2f);
 			shape.vertex(0, -50);
 			shape.vertex(14, -20);
 			shape.vertex(47, -15);
@@ -100,7 +100,7 @@ public class Leaf {
 			break;
 
 		case crescent:
-			float size = 8f;
+			float size = 9f;
 			int step = 4;
 
 			for (int i = 0; i <= 180; i += step) {

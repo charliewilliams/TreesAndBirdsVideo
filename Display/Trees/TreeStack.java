@@ -132,10 +132,10 @@ public class TreeStack {
 		return false;
 	}
 	
-	public void turnLeafColorTick() {
+	public void turnLeafColorTick(int millis) {
 		
 		for (Tree t : trees) {
-			t.turnLeafColorTick();
+			t.turnLeafColorTick(millis);
 		}
 	}
 

@@ -8,6 +8,7 @@ import org.gicentre.handy.HandyRenderer;
 import Display.Trees.TreeManager;
 import Model.Note;
 import Util.Util;
+import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
@@ -124,16 +125,16 @@ public class Bird {
 		if (state != State.landed) {
 			return;
 		}
+		// don't ever fly below your current point
+		bottomWallY = pos.y;
 
 		// New landing site, offstage
 		landingSite = new PVector(Util.coinToss() ? -40 : stage.x + 40, Util.randomf(stage.y / 2, -stage.y / 2));
-		//		state = State.to_land;
 		state = State.flying;
 		startLandingTimer(millis);
 		cohesionMultiplier = 0.1f;
 		alignmentMultiplier = 0f;
 		avoidWalls = false;
-		//		avoidBirds = false;
 
 		// upward momentum
 		pos.x += Util.randomf(-10, 10);
@@ -169,7 +170,7 @@ public class Bird {
 
 	void updateFlap() {
 
-		if (state == State.landed && Util.random(0, 100) < 90) {
+		if (state == State.landed && Util.random(0, 100) < 95) {
 			return;
 		}
 
@@ -213,9 +214,7 @@ public class Bird {
 		PVector coh = cohesion(myFlock);
 		PVector sep = separation(allBirds);
 
-		//		if (state != State.to_land) {
 		acc.add(PVector.mult(ali, alignmentMultiplier));
-		//		}
 		acc.add(PVector.mult(coh, cohesionMultiplier));
 		acc.add(PVector.mult(sep, separationMultiplier));
 	}
@@ -226,7 +225,13 @@ public class Bird {
 
 	void move() {
 
-		acc.y += flap / 10.0;
+		// flapspeed: PApplet.map(baseSize, 2f, 10f, 0.5f, 0.01f);
+		// i.e. bigger birds flap slower
+		// However that means that the same multiplier on flap will make
+		// smaller birds jerk all over the place; we need to multiply smaller
+		// birds by a smaller number
+		
+		acc.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, 0.25f, 1);
 		vel.add(acc); // add acceleration to velocity
 		vel.limit(maxSpeed); // make sure the velocity vector magnitude does not exceed maxSpeed
 		pos.add(vel); // add velocity to position

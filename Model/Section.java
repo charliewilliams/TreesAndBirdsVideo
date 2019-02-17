@@ -26,6 +26,10 @@ public enum Section {
 
 		return Section.end;
 	}
+	
+	public float startTime() {
+		return startPointsInMillis[this.ordinal()];
+	}
 
 	private float l = 0;
 	public float length() {
