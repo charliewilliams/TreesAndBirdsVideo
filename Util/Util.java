@@ -1,5 +1,7 @@
 package Util;
 
+import java.util.Random;
+
 public class Util {
 
 	static public double random(double d, double e) {
@@ -12,6 +14,12 @@ public class Util {
 
 		float range = e - d;
 		return (float) (Math.random() * range + d);
+	}
+	
+	static public float randomf(float d, float e, Random rand) {
+
+		float range = e - d;
+		return rand.nextFloat() * (range + 1) + d;
 	}
 
 	public static boolean coinToss() {

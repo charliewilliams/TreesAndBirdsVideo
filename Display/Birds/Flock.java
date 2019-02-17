@@ -1,6 +1,7 @@
 package Display.Birds;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.gicentre.handy.HandyPresets;
 import org.gicentre.handy.HandyRenderer;
@@ -21,11 +22,13 @@ public class Flock {
 	float					baseSize;
 	double					flapSpeed;
 	private HandyRenderer	sketcher;
+	private Random			rand;
 
 	ArrayList<Bird> birds = new ArrayList<Bird>();
 
-	Flock(Note n, TreeStack t, PApplet a) {
+	Flock(Note n, TreeStack t, PApplet a, Random rand) {
 
+		this.rand = rand;
 		note = n;
 		treeStack = t;
 		// Set baseHue from note.pitch % 12
@@ -39,7 +42,7 @@ public class Flock {
 
 	Bird addBird(PVector stage, PVector pos, int millis) {
 
-		Bird newB = new Bird(note, stage, pos, flapSpeed, millis);
+		Bird newB = new Bird(note, stage, pos, flapSpeed, millis, rand);
 		newB.hue = baseHue + Util.randomf(-5, 5);
 		newB.size = baseSize + Util.randomf(-0.5f, 0.5f);
 		birds.add(newB);
@@ -80,14 +83,14 @@ public class Flock {
 
 		float pad = 5;
 		ArrayList<Bird> toRemove = new ArrayList<Bird>();
-		
+
 		for (Bird b : birds) {
 
 			if (b.pos().x < -pad || b.pos().x > stage.x + pad || b.pos().y < -pad) {
 				toRemove.add(b);
 			}
 		}
-		
+
 		birds.removeAll(toRemove);
 	}
 }

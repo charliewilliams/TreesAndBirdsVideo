@@ -18,6 +18,7 @@ public class BirdManager {
 	private PGraphics2D			pg;
 	private PVector				stage;
 	private static PVector		offScreenArea	= new PVector(100, 50);
+	private static Random		rand			= new Random();
 
 	public static void main(String[] args) {
 
@@ -55,7 +56,7 @@ public class BirdManager {
 		Flock f = flocks[n.pitch % 12];
 
 		if (f == null) {
-			f = new Flock(n, TreeManager.instance().treeStackFor(n), parent);
+			f = new Flock(n, TreeManager.instance().treeStackFor(n), parent, rand);
 			flocks[n.pitch % 12] = f;
 		}
 
@@ -120,9 +121,9 @@ public class BirdManager {
 			}
 		}
 	}
-	
+
 	public void cleanUpOffscreenBirds() {
-		
+
 		for (Flock f : flocks) {
 			if (f != null) {
 				f.cleanUpOffscreenBirds(stage);

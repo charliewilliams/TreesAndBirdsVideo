@@ -1,6 +1,9 @@
 package Display.Birds;
 
 import java.util.ArrayList;
+import java.util.Random;
+
+import org.gicentre.handy.HandyRenderer;
 
 import Display.Trees.TreeManager;
 import Model.Note;
@@ -9,7 +12,6 @@ import processing.core.PConstants;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
 
-import org.gicentre.handy.*;
 
 public class Bird {
 
@@ -52,19 +54,21 @@ public class Bird {
 
 	static private int	birdCount	= 0;
 	private int			birdSerialNumber;
+	private Random		rand;
 
-	public Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_, int millis) {
+	public Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_, int millis, Random rand) {
 
 		this.note = n;
 		this.stage = stage;
+		this.rand = rand;
 		bottomWallY = stage.y;
 		pos = initialPos;
 		vel = velocityForInitialPosition(initialPos, stage);
 		acc = new PVector(0, 0);
 
-		sat = Util.randomf(50, 80);
-		bri = Util.randomf(50, 80);
-		flapSpeed = flapSpeed_ + Util.random(-0.05, 0.05);
+		sat = Util.randomf(50, 80, rand);
+		bri = Util.randomf(50, 80, rand);
+		flapSpeed = flapSpeed_ + Util.randomf(-0.05f, 0.05f, rand);
 
 		birdSerialNumber = birdCount++;
 		// PApplet.println("New bird", pos);
@@ -172,7 +176,7 @@ public class Bird {
 	private int lastTickMillis;
 
 	void startLandingTimer(int millis) {
-		landingTimerMillis = (int) Util.randomf(8000f, 15000f);
+		landingTimerMillis = (int) Util.randomf(8000f, 15000f, rand);
 		lastTickMillis = millis;
 	}
 
