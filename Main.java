@@ -198,9 +198,21 @@ public class Main extends PApplet {
 
 		fill(0);
 
+		if (showDebugText) {
 		text("frame " + frameCount + " / " + millis + "ms / section " + section.ordinal() + " (" + section + ") – "
 				+ (int) (section.length() / 1000) + "s long – " + (int) (section.pctDone(millis) * 100) + "% done", 40,
 				height - 40);
+		}
+	}
+	
+	boolean showDebugText = false;
+	
+	public void keyPressed() {
+		if (key == ' ') {
+			showDebugText = !showDebugText;
+		} else {
+			println(key);
+		}
 	}
 
 	void checkSection(int millis) {
