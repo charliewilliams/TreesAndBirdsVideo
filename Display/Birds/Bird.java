@@ -172,7 +172,7 @@ public class Bird {
 	private int lastTickMillis;
 
 	void startLandingTimer(int millis) {
-		landingTimerMillis = (int) Util.randomf(5000f, 10000f);
+		landingTimerMillis = (int) Util.randomf(8000f, 15000f);
 		lastTickMillis = millis;
 	}
 
@@ -182,7 +182,7 @@ public class Bird {
 		int millisSinceLastTick = millis - lastTickMillis;
 		lastTickMillis = millis;
 		landingTimerMillis -= millisSinceLastTick;
-		
+
 		if (landingTimerMillis <= 0 && landingSite == null) {
 			state = State.to_land;
 			landingSite = TreeManager.instance().acquireLandingSite(this, note);
@@ -205,7 +205,9 @@ public class Bird {
 		PVector coh = cohesion(myFlock);
 		PVector sep = separation(allBirds);
 
-		acc.add(PVector.mult(ali, alignmentMultiplier));
+		if (state != State.to_land) {
+			acc.add(PVector.mult(ali, alignmentMultiplier));
+		}
 		acc.add(PVector.mult(coh, cohesionMultiplier));
 		acc.add(PVector.mult(sep, separationMultiplier));
 	}
@@ -243,15 +245,15 @@ public class Bird {
 		ps.pushMatrix();
 		ps.translate(pos.x, pos.y);
 		ps.rotate(theta);
-//		sketcher.beginShape(PConstants.TRIANGLES);
+		//		sketcher.beginShape(PConstants.TRIANGLES);
 		sketcher.beginShape(PConstants.POLYGON);
-//		sketcher.beginShape();
-		
+		//		sketcher.beginShape();
+
 		sketcher.vertex(0, -size * 2);
 		sketcher.vertex(-r * 2, size);
 		sketcher.vertex(0, -size * 1.1f);
 		sketcher.vertex(r * 2, size);
-		
+
 		sketcher.endShape(PConstants.CLOSE);
 		ps.popMatrix();
 
