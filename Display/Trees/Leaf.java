@@ -24,7 +24,7 @@ public class Leaf {
 	float	currentScale	= 0;
 
 	enum LeafShape {
-		circle, square, star, crescent;
+		ellipse, polygon, star, crescent;
 	}
 	
 	public static ArrayList<LeafShape>	usedTypes	= new ArrayList<LeafShape>();
@@ -59,7 +59,7 @@ public class Leaf {
 		shape.fill(hue, sat, bri, alp);
 
 		switch (ls) {
-		case circle:
+		case ellipse:
 			float diam = 6;
 			for (int i = 0; i <= 360; i += 4) {
 				float x = (float) (diam * Math.sin(Math.toRadians(i)));
@@ -68,12 +68,20 @@ public class Leaf {
 			}
 			break;
 
-		case square:
+		case polygon:
 			float side = 9;
-			shape.vertex(0, 0);
-			shape.vertex(0, side);
-			shape.vertex(side, side);
-			shape.vertex(side, 0);
+
+			int sides = (int) Util.random(5, 7);
+			float twoPi = (float) (Math.PI * 2);
+			float angle = twoPi / (float) sides;
+
+			for (float a = 0; a < twoPi; a += angle) {
+
+				float sx = (float) (Math.cos(a) * side);
+				float sy = (float) (Math.sin(a) * side);
+				shape.vertex(sx, sy);
+			}
+			
 			break;
 
 		case star:

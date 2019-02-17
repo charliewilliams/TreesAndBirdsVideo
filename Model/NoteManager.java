@@ -153,6 +153,7 @@ public class NoteManager {
 				break;
 			case bigReturn:
 				TreeManager.instance().addNote(note);
+				TreeManager.instance().dropFlower(note);
 				break;
 			case highMel:
 				birdCount = -1;
@@ -204,6 +205,7 @@ public class NoteManager {
 			case highMel:
 				TreeManager.instance().addNote(note);
 				TreeManager.instance().glowRoot(note);
+				TreeManager.instance().dropFlower(note);
 				break;
 
 			case outro:

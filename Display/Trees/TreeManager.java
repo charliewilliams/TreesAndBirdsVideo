@@ -7,10 +7,10 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 public class TreeManager {
-	
+
 	// to fill in as we find a great seed for each tree
-	private static int[] seeds = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	private static int[] strides = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	private static int[]	seeds	= { 0, 0, 7661790, 0, 0, 0, 0,  887068, 0, 0, 0, 0 };
+	private static int[]	strides	= { 0, 0, 7109302, 0, 0, 0, 0, 3228859, 0, 0, 0, 0 };
 
 	private static TreeManager m;
 
@@ -31,7 +31,8 @@ public class TreeManager {
 		if (pitchClassTreeStack == null) {
 
 			int numChildren = 2; //(int) Util.random(3, 8);
-			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, treePositionForNote(n), renderGlow, seeds[i], strides[i]);
+			pitchClassTrees[i] = new TreeStack(numChildren, parent, n, treePositionForNote(n), renderGlow, seeds[i],
+					strides[i]);
 		}
 
 		return pitchClassTrees[i];
@@ -94,7 +95,7 @@ public class TreeManager {
 			}
 		}
 	}
-	
+
 	public void dropFlower(Note n) {
 
 		int tries = 0;
@@ -150,6 +151,6 @@ public class TreeManager {
 	}
 
 	public PVector acquireLandingSite(Bird b, Note n) {
-		return treeStackFor(n).acquireLandingSite(b);		
+		return treeStackFor(n).acquireLandingSite(b);
 	}
 }

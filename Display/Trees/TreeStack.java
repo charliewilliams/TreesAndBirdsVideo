@@ -68,7 +68,7 @@ public class TreeStack {
 		sketcher.setRoughness(Util.randomf(0, 1.5f));
 		sketcher.setGraphics(pg_trees);
 		
-		PApplet.println(n.pitchClass + ": " + "+" + seedStride);
+		PApplet.println(n.pitchClass + ": " + this.seed + "+" + this.seedStride);
 	}
 
 	void grow(Note note) {

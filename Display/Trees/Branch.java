@@ -220,8 +220,10 @@ public class Branch {
 			}
 		}
 		
-		float maxStroke = Math.max(10, strokeWeight() * 3);
-		float weight = Util.logMapf(maxGlow, 255, 0, maxStroke, 0.0f);
+		float stroke = Math.max(10, strokeWeight() * 3);
+		float maxStroke = 25; 
+		stroke = Math.min(stroke, maxStroke);
+		float weight = Util.logMapf(maxGlow, 255, 0, stroke, 0.0f);
 		
 		float color = 127;
 
