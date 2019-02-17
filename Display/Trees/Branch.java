@@ -142,6 +142,10 @@ public class Branch {
 	//	t.renderLeaves(pg_leaves, hue);
 	//	t.renderGlow(pg_trees, pg_leaves, pg_glow, hue);
 	// pg.blendMode(PConstants.NORMAL);
+	
+	private float strokeWeight() {
+		return PApplet.map(numberOfDescendants, 100, 0, 10, 0.5f);
+	}
 
 	public void renderBranch(PGraphics2D pg_trees, HandyRenderer sketcher) {
 		sketcher.setSeed(seed);
@@ -163,7 +167,7 @@ public class Branch {
 			}
 		}
 
-		pg_trees.strokeWeight(PApplet.map(numberOfDescendants, 100, 0, 10, 0.5f));
+		pg_trees.strokeWeight(strokeWeight());
 
 		// sketcher takes BGRA (!)
 		// so let's just give it a gray value
@@ -213,17 +217,15 @@ public class Branch {
 				maxGlow = thisGlow;
 			}
 		}
-
-		if (glowAmount < 0.01 && !isRoot) {
-			return maxGlow;
-		}
-
-		float myGlow = isRoot ? maxGlow : glowAmount;
-		float weight = Util.logMapf(myGlow, 255, 0, 10, 0.0f);
+		
+		float maxStroke = Math.max(10, strokeWeight() * 3);
+		float weight = Util.logMapf(maxGlow, 255, 0, maxStroke, 0.0f);
+		
+		float color = 127;
 
 		pg_glow.strokeWeight(weight);
-		pg_glow.stroke(255);
-		pg_glow.fill(255);
+		pg_glow.stroke(color);
+		pg_glow.fill(color);
 		pg_glow.line(origin.x, origin.y, end.x, end.y);
 		
 		return maxGlow;
