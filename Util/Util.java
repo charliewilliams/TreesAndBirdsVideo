@@ -19,7 +19,7 @@ public class Util {
 	static public float randomf(float d, float e, Random rand) {
 
 		float range = e - d;
-		return rand.nextFloat() * (range + 1) + d;
+		return rand.nextFloat() * range + d;
 	}
 
 	public static boolean coinToss() {
