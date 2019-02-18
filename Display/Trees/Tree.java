@@ -138,4 +138,12 @@ public class Tree {
 		}
 		root.jitter(millis);
 	}
+	
+	public float trunkWeight() {
+		
+		if (root == null) {
+			return 0;
+		}
+		return root.strokeWeight();
+	}
 }

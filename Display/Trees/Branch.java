@@ -141,7 +141,7 @@ public class Branch {
 				++numberOfParents, driftSpeed, driftMag, hue, alpha * 0.95f);
 	}
 
-	private float strokeWeight() {
+	float strokeWeight() {
 		return PApplet.map(numberOfDescendants, 100, 0, 10, 0.5f);
 	}
 
