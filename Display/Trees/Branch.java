@@ -227,7 +227,7 @@ public class Branch {
 		glowAmount = 255;
 	}
 
-	public boolean turnLeafColorTick(int millis) {
+	public boolean turnLeafColorTick(int millis, boolean forceAll) {
 
 		// Start out being unlikely for leaves to change
 		// this way they don't change too quickly at the start of the section
@@ -236,11 +236,14 @@ public class Branch {
 		boolean shouldTick = Util.logMapf(millis, Section.repeatedNotes.startTime(), Section.bigReturn.startTime(), 0,
 				1) > Util.randomf(0, 1);
 
-		if (!shouldTick) {
+		if (!shouldTick && !forceAll) {
 			return false;
 		}
 
 		int numberOfTicksPerCall = millis > Section.highMel.startTime() ? 5 : 1;
+		if (forceAll) {
+			numberOfTicksPerCall = 25;
+		}
 		int ticksCompleted = 0;
 		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 
@@ -248,7 +251,7 @@ public class Branch {
 			Collections.shuffle(cs);
 
 			for (Branch child : cs) {
-				if (child.turnLeafColorTick(millis)) {
+				if (child.turnLeafColorTick(millis, forceAll)) {
 					ticksCompleted++;
 
 					if (ticksCompleted >= numberOfTicksPerCall) {
@@ -263,36 +266,6 @@ public class Branch {
 		}
 		ticksCompleted++;
 		return ticksCompleted >= numberOfTicksPerCall;
-
-		/////
-		//		float maxDistanceFromFallColor = 0;
-		//		int idx = -1;
-		//
-		//		for (int i = 0; i < children.size(); i++) {
-		//
-		//			Branch child = children.get(i);
-		//			child.turnLeafColorTick(millis);
-		//			if (child.leaf == null) {
-		//				continue;
-		//			}
-		//			float dist = child.leaf.distanceToFallHue();
-		//			if (dist > maxDistanceFromFallColor) {
-		//				maxDistanceFromFallColor = dist;
-		//				idx = i;
-		//			}
-		//		}
-		//
-		//		if (idx != -1) {
-		//			children.get(idx).turnLeafColorTick(millis);
-		//
-		//			return true;
-		//		}
-		//
-		//		if (leaf != null && leaf.turnColorTick()) {
-		//			return true;
-		//		}
-		//
-		//		return false;
 	}
 
 	public void jitter(int millis) {
@@ -338,54 +311,56 @@ public class Branch {
 		return angle;
 	}
 
-	boolean addFlower(Flower.FlowerType flowerType) {
+	Flower addFlower(Flower.FlowerType flowerType) {
 		return addFlower(flowerType, end);
 	}
 
-	boolean addFlower(Flower.FlowerType flowerType, PVector pos) {
+	Flower addFlower(Flower.FlowerType flowerType, PVector pos) {
 
 		if (flower != null) {
-			return false;
+			return null;
 		}
 
 		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 		Collections.shuffle(cs);
 		for (Branch child : cs) {
-			if (child.addFlower(flowerType)) {
-				return true;
+			Flower f = child.addFlower(flowerType);
+			if (f != null) {
+				return f;
 			}
 		}
 
 		if (isRoot) {
-			return false;
+			return null;
 		}
 		flower = new Flower(flowerType, pos);
-		return true;
+		return flower;
 	}
 
-	boolean addLeaf(Leaf.LeafShape leafType, PGraphics pg) {
+	Leaf addLeaf(Leaf.LeafShape leafType, PGraphics pg) {
 		return addLeaf(leafType, pg, end);
 	}
 
-	boolean addLeaf(Leaf.LeafShape leafType, PGraphics pg, PVector pos) {
+	Leaf addLeaf(Leaf.LeafShape leafType, PGraphics pg, PVector pos) {
 
 		if (leaf != null) {
-			return false;
+			return null;
 		}
 
 		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 		Collections.shuffle(cs);
 		for (Branch child : cs) {
-			if (child.addLeaf(leafType, pg)) {
-				return true;
+			Leaf l = child.addLeaf(leafType, pg);
+			if (l != null) {
+				return l;
 			}
 		}
 
 		if (isRoot) {
-			return false;
+			return null;
 		}
 		leaf = new Leaf(leafType, pos, hue, pg);
-		return true;
+		return leaf;
 	}
 
 	boolean dropLeaf() {

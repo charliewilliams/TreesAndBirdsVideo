@@ -269,7 +269,16 @@ public class TreeStack {
 		pg_labels.fill(75, debugLabelAlpha);
 		pg_labels.textAlign(PConstants.CENTER);
 		pg_labels.textFont(labelFont);
-		pg_labels.text(note.pitchClass, pos.x + labelXOffset, pos.y);
+		
+		float weight = 1;
+		if (trees.size() > 0) {
+			weight = trees.get(0).trunkWeight() / 2;
+			
+			if (labelXOffset < 0) {
+				weight *= -1;
+			}
+		}
+		pg_labels.text(note.pitchClass, pos.x + labelXOffset + weight, pos.y);
 		pg_labels.endDraw();
 
 		float millisRemaining = (debugLabelTriggerMillis + debugLabelDurationMillis) - millis;
