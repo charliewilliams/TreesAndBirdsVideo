@@ -141,11 +141,6 @@ public class Branch {
 				++numberOfParents, driftSpeed, driftMag, hue, alpha * 0.95f);
 	}
 
-	//	t.renderTrees(pg_trees, sketcher, hue);
-	//	t.renderLeaves(pg_leaves, hue);
-	//	t.renderGlow(pg_trees, pg_leaves, pg_glow, hue);
-	// pg.blendMode(PConstants.NORMAL);
-
 	private float strokeWeight() {
 		return PApplet.map(numberOfDescendants, 100, 0, 10, 0.5f);
 	}
@@ -178,14 +173,6 @@ public class Branch {
 		sketcher.setStrokeColour(glowPlusAlpha);
 
 		glowAmount *= 0.9f;
-
-		//		int color = Util.colorFrom360(0, 100, 100, alpha); // red
-		//		float red = parent.red(color);
-		//		float gre = parent.green(color);
-		//		float blu = parent.blue(color);
-		//		float alp = parent.alpha(color);
-		//		int bgra = Util.bgraFrom255(red, gre, blu, alp);
-		//		sketcher.setStrokeColour(bgra);
 
 		sketcher.line(origin.x, origin.y, end.x, end.y);
 		//		pg_trees.line(origin.x, origin.y, end.x, end.y);
@@ -348,7 +335,6 @@ public class Branch {
 		}
 
 		existingAngles.add(angle);
-		// TODO push down according to whether we're left or right of centre?
 		return angle;
 	}
 
