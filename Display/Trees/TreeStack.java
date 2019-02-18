@@ -31,9 +31,10 @@ public class TreeStack {
 	private long			seedStride					= (long) Util.random(0, 10000000);
 	private float			debugLabelAlpha				= 0;
 	private float			debugLabelDurationMillis	= 0;
-	private float			debugLabelTextSize			= 24;
-	private PFont			debugLabelFont;
+	private PFont			labelFont;
 	private float			labelXOffset				= 0;
+	private float			labelXOffsetAmount			= 15;
+	private float[]			labelXOffsetDirections		= { 1, 1, 1, -1, 1, -1, -1, 1, 1, 1, -1, -1 };
 
 	TreeStack(int numChildren, PApplet parent, PFont font, Note n, PVector pos, boolean renderGlow, long seed,
 			long seedStride) {
@@ -42,7 +43,7 @@ public class TreeStack {
 		this.renderGlow = renderGlow;
 		this.pos = pos;
 		this.note = n;
-		this.debugLabelFont = font;
+		this.labelFont = font;
 
 		if (seed > 0) {
 			this.seed = seed;
@@ -66,7 +67,6 @@ public class TreeStack {
 
 		pg_labels = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_labels.smooth(8);
-		pg_labels.textFont(debugLabelFont, debugLabelTextSize);
 
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 255, 50);
@@ -76,8 +76,8 @@ public class TreeStack {
 		sketcher = HandyPresets.createWaterAndInk(parent); // new HandyRenderer(a);
 		sketcher.setRoughness(Util.randomf(0, 1.5f));
 		sketcher.setGraphics(pg_trees);
-		
-		labelXOffset = Util.coinToss() ? 15 : -15;
+
+		labelXOffset = labelXOffsetDirections[n.pitch % 12] * labelXOffsetAmount;
 
 		PApplet.println(n.pitchClass + ": " + this.seed + "+" + this.seedStride);
 	}
@@ -268,7 +268,8 @@ public class TreeStack {
 		pg_labels.clear();
 		pg_labels.fill(75, debugLabelAlpha);
 		pg_labels.textAlign(PConstants.CENTER);
-		pg_labels.text(note.pitchClass, pos.x + labelXOffset, pos.y); //parent.height - 30);
+		pg_labels.textFont(labelFont);
+		pg_labels.text(note.pitchClass, pos.x + labelXOffset, pos.y);
 		pg_labels.endDraw();
 
 		float millisRemaining = (debugLabelTriggerMillis + debugLabelDurationMillis) - millis;

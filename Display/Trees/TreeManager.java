@@ -21,7 +21,7 @@ public class TreeManager {
 	}
 
 	private PApplet	parent;
-	private PFont	font;
+	private PFont	labelFont;
 	public boolean	renderGlow;
 
 	private TreeStack[] pitchClassTrees = new TreeStack[12];
@@ -34,7 +34,7 @@ public class TreeManager {
 		if (pitchClassTreeStack == null) {
 
 			int numChildren = 2; //(int) Util.random(3, 8);
-			pitchClassTrees[i] = new TreeStack(numChildren, parent, font, n, treePositionForNote(n), renderGlow,
+			pitchClassTrees[i] = new TreeStack(numChildren, parent, labelFont, n, treePositionForNote(n), renderGlow,
 					seeds[i], strides[i]);
 		}
 
@@ -57,7 +57,7 @@ public class TreeManager {
 		return new PVector(eachTreeSpace * (i + 2), parent.height * 0.8f + Util.randomf(-10, 10) - yOffset);
 	}
 
-	public TreeManager(PApplet parent, PFont debugLabelFont) {
+	public TreeManager(PApplet parent, PFont labelFont) {
 
 		if (m != null) {
 			// SHOUT
@@ -65,7 +65,7 @@ public class TreeManager {
 		}
 		m = this;
 		this.parent = parent;
-		this.font = debugLabelFont;
+		this.labelFont = labelFont;
 	}
 
 	public void addNote(Note n, int millis) {
