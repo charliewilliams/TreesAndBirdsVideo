@@ -10,11 +10,12 @@ import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PShape;
 import processing.core.PVector;
+import processing.opengl.PGraphics2D;
 
 public class Leaf {
 
 	PVector	pos;
-	PShape	shape;
+	PShape	shape, glowShape;
 	float	angle;
 	float	hue, sat, bri, alp;
 	float	fallHue;
@@ -23,16 +24,17 @@ public class Leaf {
 	boolean	isFalling		= false;
 	float	nominalScale	= 1;
 	float	currentScale	= 0;
+	float	glowAmount		= 255;
 
 	enum LeafShape {
 		ellipse, polygon, star, crescent;
 	}
-	
+
 	public static ArrayList<LeafShape>	usedTypes	= new ArrayList<LeafShape>();
 	private static LeafShape			types[]		= LeafShape.values();
 
 	public static LeafShape randomType(Random rnd) {
-		
+
 		if (usedTypes.size() == types.length) {
 			usedTypes.removeAll(usedTypes);
 		}
@@ -40,7 +42,7 @@ public class Leaf {
 		while (true) {
 			int idx = rnd.nextInt(types.length);
 			LeafShape type = types[idx];
-			
+
 			if (usedTypes.contains(types)) {
 				continue;
 			}
@@ -49,17 +51,17 @@ public class Leaf {
 		}
 	}
 
-	void createShape(PGraphics pg, LeafShape ls) {
+	PShape createShape(PGraphics pg, LeafShape ls) {
 
 		// POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
-		shape = pg.createShape();
+		PShape shape = pg.createShape();
 		shape.beginShape();
-		
+
 		shape.noStroke();
 		shape.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		shape.fill(hue, sat, bri, alp);
-//		PApplet.println(hue, fallHue);
+		//		PApplet.println(hue, fallHue);
 
 		switch (ls) {
 		case ellipse:
@@ -84,7 +86,7 @@ public class Leaf {
 				float sy = (float) (Math.sin(a) * side);
 				shape.vertex(sx, sy);
 			}
-			
+
 			break;
 
 		case star:
@@ -133,6 +135,8 @@ public class Leaf {
 		}
 
 		shape.endShape(PConstants.CLOSE);
+		
+		return shape;
 	}
 
 	Leaf(LeafShape ls, PVector pos, float hue, PGraphics pg) {
@@ -149,11 +153,13 @@ public class Leaf {
 		groundY = PApplet.map(Util.randomf(0, 1), 0, 1, 30, 120);
 		fallSpeed = Util.randomf(0.5f, 1);
 		fallHue = Util.randomf(0, 50);
-		createShape(pg, ls);
+		shape = createShape(pg, ls);
+		glowShape = createShape(pg, ls); // annoying that we can't copy it, oh well.
+		glowShape.setFill(0xFFFFFFFF);
 	}
 
 	void draw(PApplet parent, PGraphics pg) {
-		
+
 		if (currentScale < nominalScale) {
 			currentScale += 0.005;
 		}
@@ -162,7 +168,7 @@ public class Leaf {
 		}
 
 		updateColor();
-		
+
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
 		pg.rotate(angle);
@@ -170,17 +176,35 @@ public class Leaf {
 		pg.shape(shape);
 		pg.popMatrix();
 	}
-	
+
+	void drawGlow(PGraphics2D pg) {
+		
+		if (glowAmount < 0.01) {
+			return;
+		}
+		
+		updateGlowColor();
+
+		pg.pushMatrix();
+		pg.translate(pos.x, pos.y);
+		pg.rotate(angle);
+		pg.scale(nominalScale);
+		pg.shape(glowShape);
+		pg.popMatrix();
+
+		glowAmount *= 0.9f;
+	}
+
 	float distanceToFallHue() {
 		return Math.abs(hue - fallHue);
 	}
 
 	boolean turnColorTick() {
-		
+
 		if (distanceToFallHue() < 2) {
 			return false;
 		}
-		
+
 		float colorChangeSpeed = 0.5f;
 
 		if (hue > fallHue) {
@@ -188,14 +212,19 @@ public class Leaf {
 		} else {
 			hue += colorChangeSpeed;
 		}
-		
+
 		return true;
 	}
 
 	void updateColor() {
-		
+
 		int rgb = Color.HSBtoRGB(hue / 360, sat / 100, bri / 100);
 		shape.setFill(Util.setAlpha(rgb, alp * 2.55f));
+	}
+	
+	void updateGlowColor() {
+		
+		glowShape.setFill(Util.setAlpha(0xFFFFFFFF, glowAmount));
 	}
 
 	void fallTick(PApplet parent) {

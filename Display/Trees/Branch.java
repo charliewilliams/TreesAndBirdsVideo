@@ -224,6 +224,10 @@ public class Branch {
 		pg_glow.stroke(color);
 		pg_glow.fill(color);
 		pg_glow.line(origin.x, origin.y, end.x, end.y);
+		
+		if (leaf != null) {
+			leaf.drawGlow(pg_glow);
+		}
 
 		return maxGlow;
 	}
