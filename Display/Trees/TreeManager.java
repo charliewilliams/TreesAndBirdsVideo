@@ -126,6 +126,28 @@ public class TreeManager {
 			}
 		}
 	}
+	
+	public void dropAllLeaves(int millis) {
+		
+		for (int i = 0; i < pitchClassTrees.length; i++) {
+
+			TreeStack stack = pitchClassTrees[i];
+			if (stack != null) {
+				stack.dropAllLeaves();
+			}
+		}
+	}
+	
+	public void dropAllFlowers() {
+		
+		for (int i = 0; i < pitchClassTrees.length; i++) {
+
+			TreeStack stack = pitchClassTrees[i];
+			if (stack != null) {
+				stack.dropAllFlowers();
+			}
+		}
+	}
 
 	public void glowRoot(Note n) {
 		treeStackFor(n).glowRoot();
@@ -168,5 +190,25 @@ public class TreeManager {
 
 	public PVector acquireLandingSite(Bird b, Note n) {
 		return treeStackFor(n).acquireLandingSite(b);
+	}
+	
+	public void buildDebugLeaves() {
+
+		for (int i = 0; i < 128; i++) {
+			Note n = new Note(i % 12);
+			addLeafOrFlower(n, true);
+		}
+		
+		for (int i = 0; i < pitchClassTrees.length; i++) {
+
+			TreeStack stack = pitchClassTrees[i];
+			if (stack != null) {
+				for (Tree t : stack.trees) {
+					for (Leaf l : t.allLeaves) {
+						l.currentScale = 1;
+					}
+				}
+			}
+		}
 	}
 }

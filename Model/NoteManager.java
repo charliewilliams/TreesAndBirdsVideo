@@ -117,9 +117,11 @@ public class NoteManager {
 			case bigReturn:
 				TreeManager.instance().addNote(note, millis);
 				TreeManager.instance().dropFlower(note);
+				TreeManager.instance().turnLeafColorTick(millis);
 				break;
 			case highMel:
-				TreeManager.instance().dropLeaf(note);
+				TreeManager.instance().dropAllFlowers();
+				TreeManager.instance().dropAllLeaves(millis);
 				//				Stars.addStar(note);
 				break;
 			case outro:

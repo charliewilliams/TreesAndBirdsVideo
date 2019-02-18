@@ -15,6 +15,8 @@ public class Tree {
 	float				leafSize	= 10, flowerSize = 10;
 	Branch				root;
 	ArrayList<Branch>	branches	= new ArrayList<Branch>();
+	ArrayList<Leaf>		allLeaves	= new ArrayList<Leaf>();
+	ArrayList<Flower>	allFlowers	= new ArrayList<Flower>();
 	PApplet				parent;
 	long				seed, seedStride;
 
@@ -46,7 +48,12 @@ public class Tree {
 		if (root == null) {
 			return false;
 		}
-		return root.addFlower(flowerType);
+		Flower f = root.addFlower(flowerType);
+		if (f == null) {
+			return false;
+		}
+		allFlowers.add(f);
+		return true;
 	}
 
 	public boolean addLeaf(Leaf.LeafShape leafType, PGraphics pg) {
@@ -54,7 +61,12 @@ public class Tree {
 		if (root == null) {
 			return false;
 		}
-		return root.addLeaf(leafType, pg);
+		Leaf l = root.addLeaf(leafType, pg);
+		if (l == null) {
+			return false;
+		}
+		allLeaves.add(l);
+		return true;
 	}
 
 	public boolean dropLeaf() {
@@ -67,26 +79,32 @@ public class Tree {
 
 	public boolean dropFlower() {
 
-		if (root == null) {
-			return false;
+		for (Flower f : allFlowers) {
+			f.isFalling = true;
 		}
-		return root.dropFlower();
+		return true;
 	}
 
 	public void turnLeafColorTick(int millis) {
 
-		if (root == null) {
-			return;
+		for (Leaf l : allLeaves) {
+			l.turnColorTick();
 		}
-		root.turnLeafColorTick(millis);
 	}
 
-	void growLeaves() {
-		leafSize += 0.1;
-	}
+	public void dropAllLeaves() {
 
-	void growFlowers() {
-		flowerSize += 0.1;
+		for (Leaf l : allLeaves) {
+			l.hue = l.fallHue;
+			l.isFalling = true;
+		}
+	}
+	
+	public void dropAllFlowers() {
+
+		for (Flower f : allFlowers) {
+			f.isFalling = true;
+		}
 	}
 
 	void renderTrees(PGraphics2D pg_trees, HandyRenderer sketcher) {

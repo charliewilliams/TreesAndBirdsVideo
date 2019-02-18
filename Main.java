@@ -16,8 +16,8 @@ import processing.sound.SoundFile;
 public class Main extends PApplet {
 
 	boolean		renderVideo				= false;
-	boolean		renderGlow				= true;
-	boolean		playMusic				= true;
+	boolean		renderGlow				= false;
+	boolean		playMusic				= false;
 	boolean		isStarRender			= false;
 	int			_frameRate				= 30;
 	int			prerollMillis			= renderVideo ? 10000 : 0;
@@ -41,6 +41,7 @@ public class Main extends PApplet {
 	int	melodyStart		= 38000;
 	int	risingMel		= 104000;
 	int	repeatedNotes	= 170000;
+	int	bigReturnMinus  = 240000;
 	int	bigReturn		= 251000;
 	int	highMel			= 290000;
 	int	outro			= 365000;
@@ -51,8 +52,9 @@ public class Main extends PApplet {
 	int millisOffset = 500;
 	//	int	debugOffsetMillis	= 0;
 	//		int debugOffsetMillis = melodyStart;
-	int debugOffsetMillis = risingMel;
-	//		int debugOffsetMillis = repeatedNotes;
+//	int debugOffsetMillis = risingMel;
+//			int debugOffsetMillis = repeatedNotes;
+			int debugOffsetMillis = bigReturnMinus;
 	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
 	//		int	debugOffsetMillis	= outro;
@@ -78,7 +80,8 @@ public class Main extends PApplet {
 		context = new DwPixelFlow(this);
 		filter = new DwFilter(context);
 		
-		labelFont = createFont("EBGaramond-SemiBold.ttf", 48);
+		labelFont = createFont("EBGaramond-SemiBold.ttf", 18);
+		PApplet.println("FONT: " + labelFont.getName());
 
 		Glow.setupGlow(this, filter);
 		sceneManager = new SceneManager(this, debugOffsetMillis);
@@ -93,10 +96,10 @@ public class Main extends PApplet {
 
 		noteManager = new NoteManager(this, "song.json", isStarRender);
 
-		file = new SoundFile(this, "mix.mp3");
-		durationMillis = (int) (file.duration() * 1000);
 
 		if (playMusic) {
+			file = new SoundFile(this, "mix.mp3");
+			durationMillis = (int) (file.duration() * 1000);
 			file.jump((debugOffsetMillis + moveAudioEarlierMillis) / 1000.0f);
 			file.play();
 		}
@@ -154,21 +157,26 @@ public class Main extends PApplet {
 			break;
 		case repeatedNotes:
 			BirdManager.instance().landAllBirds();
-			TreeManager.instance().turnLeafColorTick(millis);
+//			TreeManager.instance().turnLeafColorTick(millis);
 			break;
 		case bigReturn:
 			BirdManager.instance().flyAwayAllBirds(millis);
-			TreeManager.instance().turnLeafColorTick(millis);
+//			TreeManager.instance().turnLeafColorTick(millis);
 			break;
 		case highMel:
 			BirdManager.instance().cleanUpOffscreenBirds();
-			TreeManager.instance().turnLeafColorTick(millis);
+//			TreeManager.instance().turnLeafColorTick(millis);
 			break;
 		case outro:
 		case end:
 			Snow.addSnowTick();
 			BirdManager.instance().landAllBirds();
 			break;
+		}
+		
+		if (debugOffsetMillis == repeatedNotes || debugOffsetMillis == bigReturnMinus) {
+			TreeManager.instance().buildDebugLeaves();
+			debugOffsetMillis += 1;
 		}
 
 		TreeManager.instance().updateRender(millis);
@@ -205,7 +213,7 @@ public class Main extends PApplet {
 		}
 	}
 	
-	boolean showDebugText = false;
+	boolean showDebugText = true;
 	
 	public void keyPressed() {
 		if (key == ' ') {

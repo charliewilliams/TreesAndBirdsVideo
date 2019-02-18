@@ -20,7 +20,7 @@ public class TreeStack {
 
 	Flower.FlowerType		flowerType;
 	Leaf.LeafShape			leafType;
-	private ArrayList<Tree>	trees						= new ArrayList<Tree>();
+	ArrayList<Tree>			trees						= new ArrayList<Tree>();
 	public PGraphics2D		pg_trees, pg_leaves, pg_glow, pg_labels;
 	private PApplet			parent;
 	private boolean			renderGlow;
@@ -153,6 +153,20 @@ public class TreeStack {
 
 		for (Tree t : trees) {
 			t.turnLeafColorTick(millis);
+		}
+	}
+
+	public void dropAllLeaves() {
+
+		for (Tree t : trees) {
+			t.dropAllLeaves();
+		}
+	}
+
+	public void dropAllFlowers() {
+
+		for (Tree t : trees) {
+			t.dropAllFlowers();
 		}
 	}
 

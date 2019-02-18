@@ -1,5 +1,6 @@
 package Display.Trees;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -54,10 +55,12 @@ public class Leaf {
 		// POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
 		shape = pg.createShape();
 		shape.beginShape();
+		
 		shape.noStroke();
 		shape.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		shape.fill(hue, sat, bri, alp);
+//		PApplet.println(hue, fallHue);
 
 		switch (ls) {
 		case ellipse:
@@ -136,8 +139,9 @@ public class Leaf {
 	Leaf(LeafShape ls, PVector pos, float hue, PGraphics pg) {
 
 		this.pos = pos.copy();
-		this.pos.x += Util.randomf(-8, 8);
-		this.pos.y += Util.randomf(-8, 8);
+		float posDrift = 5;
+		this.pos.x += Util.randomf(-posDrift, posDrift);
+		this.pos.y += Util.randomf(-posDrift, posDrift);
 		this.hue = hue;
 		this.sat = Util.randomf(70, 100);
 		this.bri = Util.randomf(70, 100);
@@ -146,12 +150,11 @@ public class Leaf {
 		groundY = PApplet.map(Util.randomf(0, 1), 0, 1, 30, 120);
 		fallSpeed = Util.randomf(0.5f, 1);
 		fallHue = Util.randomf(0, 50);
-//		fallHue = Util.randomf(170, 190);
 		createShape(pg, ls);
 	}
 
 	void draw(PApplet parent, PGraphics pg, float size) {
-
+		
 		if (currentScale < nominalScale) {
 			currentScale += 0.005;
 		}
@@ -159,6 +162,8 @@ public class Leaf {
 			fallTick(parent);
 		}
 
+		updateColor();
+		
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
 		pg.rotate(angle);
@@ -177,7 +182,7 @@ public class Leaf {
 			return false;
 		}
 		
-		float colorChangeSpeed = 0.005f;
+		float colorChangeSpeed = 0.5f;
 
 		if (hue > fallHue) {
 			hue -= colorChangeSpeed;
@@ -185,12 +190,13 @@ public class Leaf {
 			hue += colorChangeSpeed;
 		}
 		
-		updateColor();
 		return true;
 	}
 
 	void updateColor() {
-		shape.setFill(Util.colorFrom360(hue, sat, bri, alp));
+		
+		int rgb = Color.HSBtoRGB(hue / 360, sat / 100, bri / 100);
+		shape.setFill(Util.setAlpha(rgb, alp * 2.55f));
 	}
 
 	void fallTick(PApplet parent) {
@@ -200,7 +206,6 @@ public class Leaf {
 			if (alp > 0) {
 				alp *= 0.99;
 				sat *= 0.95;
-				updateColor();
 			} else {
 				isFalling = false;
 			}
@@ -213,7 +218,5 @@ public class Leaf {
 		pos.x += (parent.noise(pos.y) - 0.5) * 4;
 		angle += (parent.noise(pos.y) - 0.5) * 0.25;
 		fallSpeed += 0.01 * fallSpeed;
-
-		updateColor();
 	}
 }
