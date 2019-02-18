@@ -1,6 +1,7 @@
 package Display.Trees;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.gicentre.handy.HandyRenderer;
 
@@ -19,6 +20,7 @@ public class Tree {
 	ArrayList<Flower>	allFlowers	= new ArrayList<Flower>();
 	PApplet				parent;
 	long				seed, seedStride;
+	Random				rand		= new Random();
 
 	Tree(PApplet parent, long seed, long seedStride, Note n, float alpha, float flowerSize, float leafSize) {
 
@@ -28,12 +30,13 @@ public class Tree {
 		this.alpha = alpha; // gives fake depth
 		this.flowerSize = flowerSize;
 		this.leafSize = leafSize;
+		rand.setSeed(seed);
 	}
 
 	ArrayList<Branch> grow(Note n, boolean shouldGlow) {
 
 		if (root == null) {
-			root = new Branch(parent, seed, seedStride, 80, alpha, true);
+			root = new Branch(parent, seed + seedStride, seedStride, 80, alpha, true);
 			branches.add(root);
 			return new ArrayList<Branch>();
 		}
@@ -99,7 +102,7 @@ public class Tree {
 			l.isFalling = true;
 		}
 	}
-	
+
 	public void dropAllFlowers() {
 
 		for (Flower f : allFlowers) {
@@ -138,9 +141,9 @@ public class Tree {
 		}
 		root.jitter(millis);
 	}
-	
+
 	public float trunkWeight() {
-		
+
 		if (root == null) {
 			return 0;
 		}

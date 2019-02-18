@@ -25,10 +25,9 @@ public class Flower {
 	}
 
 	public static ArrayList<FlowerType>	usedTypes	= new ArrayList<FlowerType>();
-	private static Random				rnd			= new Random();
 	private static FlowerType			types[]		= FlowerType.values();
 
-	public static FlowerType randomType() {
+	public static FlowerType randomType(Random rnd) {
 
 		if (usedTypes.size() == types.length) {
 			usedTypes.removeAll(usedTypes);

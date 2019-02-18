@@ -180,14 +180,14 @@ public class TreeManager {
 		}
 	}
 
-	public void drawOverlay() {
+	public void drawOverlay(int frameNumber) {
 
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];
 			if (stack != null) {
 				stack.drawLeaves();
-				stack.drawGlow();
+				stack.drawGlow(frameNumber);
 			}
 		}
 	}

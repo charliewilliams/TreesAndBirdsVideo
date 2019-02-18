@@ -2,6 +2,7 @@ package Display.Trees;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import org.gicentre.handy.HandyRenderer;
 
@@ -26,7 +27,7 @@ public class Branch {
 	private PApplet	parent;
 	float			diam, angle, length;
 	private int		depth;
-	private int		numberOfParents = 0;
+	private int		numberOfParents		= 0;
 	private int		numberOfDescendants	= 0;
 	private int		maxChildren			= 2;
 	private float	maxAlpha			= 100;
@@ -43,18 +44,21 @@ public class Branch {
 
 	private float alpha;
 
-	private long seed, seedStride;
+	private Random	rand	= new Random();
+	private long	seed, seedStride;
 
 	// Root
 	Branch(PApplet parent, long seed, long seedStride, float length, float alpha, boolean shouldGlow) {
 
 		this.parent = parent;
 		this.seed = seed;
+		this.seedStride = seedStride;
+		rand.setSeed(seed);
 		this.origin = new PVector();
 		this.alpha = alpha;
 		isRoot = true;
 		hue = Util.randomf(100, 140);
-		
+
 		if (!shouldGlow) {
 			glowAmount = 0;
 		}
@@ -63,15 +67,18 @@ public class Branch {
 		end = new PVector(0, -length);
 		angle = PVector.angleBetween(end, origin);
 
-		driftSpeed = new PVector(Util.randomf(800, 1200), Util.randomf(2000, 2500));
-		driftMag = new PVector(Util.randomf(10, 30), Util.randomf(20, 30));
+		driftSpeed = new PVector(Util.randomf(800, 1200, rand), Util.randomf(2000, 2500, rand));
+		driftMag = new PVector(Util.randomf(10, 30, rand), Util.randomf(20, 30, rand));
 	}
 
 	// Normal branch
-	Branch(PApplet parent, long seed, long seedStride, PVector origin, PVector end, int depth, int numberOfParents, PVector driftSpeed, PVector driftMag, float hue, float alpha, boolean shouldGlow) {
+	Branch(PApplet parent, long seed, long seedStride, PVector origin, PVector end, int depth, int numberOfParents,
+			PVector driftSpeed, PVector driftMag, float hue, float alpha, boolean shouldGlow) {
 
 		this.parent = parent;
 		this.seed = seed;
+		this.seedStride = seedStride;
+		rand.setSeed(seed);
 		this.origin = origin;
 		this.end = end;
 		this.depth = depth;
@@ -81,7 +88,7 @@ public class Branch {
 		length = PVector.dist(origin, end);
 		angle = PVector.angleBetween(end, origin);
 		circleAlpha = maxAlpha;
-		
+
 		if (!shouldGlow) {
 			glowAmount = 0;
 		}
@@ -113,7 +120,7 @@ public class Branch {
 		newChildren.add(makeChild(shouldGlow));
 
 		// 10% chance of 2nd child on this pass
-		if (Util.random(0, 1) < 0.1) {
+		if (Util.randomf(0, 1, rand) < 0.1) {
 			newChildren.add(makeChild(shouldGlow));
 		}
 
@@ -130,10 +137,13 @@ public class Branch {
 
 		PVector dir = PVector.sub(end, origin);
 		dir.rotate(suitableRangomAngle(existingAngles));
-		dir.mult(Util.randomf(0.5f, 0.7f));
+		dir.mult(Util.randomf(0.5f, 0.7f, rand));
 		PVector newEnd = PVector.add(end, dir);
 
-		return new Branch(parent, seed + seedStride, seedStride, end, newEnd, depth + 1, ++numberOfParents, driftSpeed, driftMag, hue, alpha * 0.95f, shouldGlow);
+		seed += seedStride; // we can do this bc we've already set up our random
+		
+		return new Branch(parent, seed, seedStride, end, newEnd, depth + 1, ++numberOfParents, driftSpeed,
+				driftMag, hue, alpha * 0.95f, shouldGlow);
 	}
 
 	float strokeWeight() {
@@ -229,7 +239,7 @@ public class Branch {
 		// but they are all changed toward the end
 		// It accelerates, just like real fall
 		boolean shouldTick = Util.logMapf(millis, Section.repeatedNotes.startTime(), Section.bigReturn.startTime(), 0,
-				1) > Util.randomf(0, 1);
+				1) > Util.randomf(0, 1, rand);
 
 		if (!shouldTick && !forceAll) {
 			return false;
@@ -255,7 +265,7 @@ public class Branch {
 				}
 			}
 		}
-		
+
 		if (leaf != null && leaf.turnColorTick()) {
 			return true;
 		}
@@ -287,7 +297,7 @@ public class Branch {
 
 			// take a random angle in range
 			angle = Util.randomf(piOver15, maxAngle);
-			if (Util.coinToss() || (!existingAngles.isEmpty() && existingAngles.get(0) > 0)) {
+			if (Util.coinToss(rand) || (!existingAngles.isEmpty() && existingAngles.get(0) > 0)) {
 				angle *= -1;
 			}
 

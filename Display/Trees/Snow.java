@@ -2,6 +2,8 @@ package Display.Trees;
 
 import java.util.ArrayList;
 
+import Model.Section;
+import Util.Util;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.opengl.PGraphics2D;
@@ -20,8 +22,18 @@ public class Snow {
 		pg_snow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 	}
 
-	public static void addSnowTick() {
+	public static void addSnowTick(int millis) {
+		
+		// gradually add more snow during the highMel section
+		Section thisSection = Section.forMillis(millis);
 
+		if (thisSection == Section.highMel) {
+			if (Util.logMapf(millis, thisSection.startTime(), thisSection.startTime() + thisSection.length(), 0, 1) > Util.randomf(0, 1)) {
+				snow.add(new Snowflake(pg_snow));
+			}
+			return;
+		}
+		
 		for (int i = 0; i < snowPerTick; i++) {
 			snow.add(new Snowflake(pg_snow));
 		}

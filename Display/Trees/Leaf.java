@@ -29,10 +29,9 @@ public class Leaf {
 	}
 	
 	public static ArrayList<LeafShape>	usedTypes	= new ArrayList<LeafShape>();
-	private static Random				rnd			= new Random();
 	private static LeafShape			types[]		= LeafShape.values();
 
-	public static LeafShape randomType() {
+	public static LeafShape randomType(Random rnd) {
 		
 		if (usedTypes.size() == types.length) {
 			usedTypes.removeAll(usedTypes);

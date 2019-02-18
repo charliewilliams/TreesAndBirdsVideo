@@ -20,8 +20,9 @@ public class SceneManager {
 	int							w, h;
 	int							groundColor, skyBackgroundColor;
 	float						backgroundXOffset	= 0;
+	float						skySpeed			= 0.2f;
 
-	public SceneManager(PApplet parent, int debugOffsetMillis) {
+	public SceneManager(PApplet parent, int totalFrames) {
 
 		if (m != null) {
 			// SHOUT
@@ -41,16 +42,17 @@ public class SceneManager {
 		ground_pg = parent.createGraphics(w, h);
 		grass_pg = (PGraphics2D) parent.createGraphics(w, h, PConstants.P2D);
 
-//		int startColor = parent.color(39, 5, 100); // paper beige
-//		int sunset1 = parent.color(43, 91, 100); // sunset 1 (yellow)
-//		int sunset2 = parent.color(14, 94, 90); // sunset 2 (orange)
-//		int nightBlue = parent.color(204, 100, 25); // night blue
+		//		int startColor = parent.color(39, 5, 100); // paper beige
+		//		int sunset1 = parent.color(43, 91, 100); // sunset 1 (yellow)
+		//		int sunset2 = parent.color(14, 94, 90); // sunset 2 (orange)
+		//		int nightBlue = parent.color(204, 100, 25); // night blue
 
 		groundColor = parent.color(37, 42, 100);
 		skyBackgroundColor = parent.color(223, 40, 46);
 
-		int idx = Section.forMillis(debugOffsetMillis).ordinal();
-		generateSky(sky_pg, debugOffsetMillis, idx);
+		int requiredWidth = (int) (totalFrames * skySpeed + w);
+		generateSky(sky_pg, requiredWidth);
+
 		generateGround(ground_pg);
 	}
 
@@ -60,7 +62,6 @@ public class SceneManager {
 
 	public void update(int millis) {
 
-		float skySpeed = 0.2f;
 		backgroundXOffset -= skySpeed;
 
 		// Background paper
@@ -70,40 +71,32 @@ public class SceneManager {
 		// Colour tint
 		parent.blendMode(PConstants.BLEND);
 		Section section = Section.forMillis(millis);
-		
+
 		float maxAlpha = 60;
-		
+
 		if (section == Section.bigReturn) {
-			
+
 			float pct = section.pctDone(millis);
 			float alpha = Util.logMapf(pct, 0, 1, 0, maxAlpha);
 			parent.fill(204, 100, 25, alpha);
 			parent.rect(w / 2, h / 2, w, h);
-			
+
 		} else if (section == Section.highMel) {
-			
+
 			parent.fill(204, 100, 25, maxAlpha);
 			parent.rect(w / 2, h / 2, w, h);
-			
+
 		} else if (section == Section.outro) {
-			
+
 			float pct = section.pctDone(millis);
 			float alpha = Util.logMapf(pct, 0, 1, maxAlpha, 0);
 			parent.fill(204, 100, 25, alpha);
-			parent.rect(w / 2, h / 2, w, h);			
+			parent.rect(w / 2, h / 2, w, h);
 		}
 
 		// Multiply the clouds in
 		parent.blendMode(PConstants.MULTIPLY);
 		parent.image(sky_pg, backgroundXOffset, 0);
-
-		if (backgroundXOffset < -w) {
-
-			backgroundXOffset = 0;
-
-			int idx = section.ordinal();
-			generateSky(sky_pg, millis, idx);
-		}
 
 		parent.image(ground_pg, 0, 0);
 	}
@@ -115,25 +108,24 @@ public class SceneManager {
 	 * https://www.openprocessing.org/sketch/184276
 	 */
 
-	void generateSky(PGraphics pg, int millis, int idx) {
+	void generateSky(PGraphics pg, int requiredWidth) {
 
 		pg.beginDraw();
 
 		pg.background(skyBackgroundColor);
 
 		float horizonY = 2 * h / 3;
-		
+
 		int color = parent.color(39, 5, 100); // paper beige
 
 		for (int y = 0; y < h; y += 2) {
 
 			pg.noStroke();
 
-			for (int x = 0; x < w * 2; x += 2) {
-				//draw clouds
-				float xOff = millis / 100.0f;
-				float yOff = millis / 1000.0f;
-				float n = parent.noise((x + xOff) / 200.0f, (y + yOff) / 50.0f);
+			//draw clouds
+			for (int x = 0; x < requiredWidth; x += 2) {
+				
+				float n = parent.noise(x / 200.0f, y / 50.0f);
 
 				pg.fill(color, n * PApplet.map(y, 0, 2 * h / 3.0f, 255, 0));
 				pg.ellipse(x, y, skyNodeSize, skyNodeSize);
@@ -148,9 +140,6 @@ public class SceneManager {
 		}
 
 		pg.endDraw();
-
-		Section section = Section.forMillis(millis);
-		pg.save("tmp/sky-sec-" + idx + "-" + section + ".jpg");
 	}
 
 	void generateGround(PGraphics pg) {

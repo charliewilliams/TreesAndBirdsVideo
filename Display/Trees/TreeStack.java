@@ -2,6 +2,7 @@ package Display.Trees;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import org.gicentre.handy.HandyPresets;
 import org.gicentre.handy.HandyRenderer;
@@ -35,6 +36,7 @@ public class TreeStack {
 	private float			labelXOffset				= 0;
 	private float			labelXOffsetAmount			= 15;
 	private float[]			labelXOffsetDirections		= { 1, 1, 1, -1, 1, -1, -1, 1, 1, 1, -1, -1 };
+	private Random			rand						= new Random();
 
 	TreeStack(int numChildren, PApplet parent, PFont font, Note n, PVector pos, boolean renderGlow, long seed,
 			long seedStride) {
@@ -51,8 +53,10 @@ public class TreeStack {
 		if (seedStride > 0) {
 			this.seedStride = seedStride;
 		}
-		flowerType = Flower.randomType();
-		leafType = Leaf.randomType();
+		rand.setSeed(seed);
+		
+		flowerType = Flower.randomType(rand);
+		leafType = Leaf.randomType(rand);
 		//		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
 
 		pg_trees = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
@@ -70,11 +74,12 @@ public class TreeStack {
 
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 255, 50);
-			trees.add(new Tree(parent, seed, seedStride, n, alpha, Util.randomf(5, 15), Util.randomf(5, 15)));
+			trees.add(
+					new Tree(parent, seed + seedStride * i, seedStride, n, alpha, Util.randomf(5, 15, rand), Util.randomf(5, 15, rand)));
 		}
 
 		sketcher = HandyPresets.createWaterAndInk(parent); // new HandyRenderer(a);
-		sketcher.setRoughness(Util.randomf(0, 1.5f));
+		sketcher.setRoughness(Util.randomf(0, 1.5f, rand));
 		sketcher.setGraphics(pg_trees);
 
 		labelXOffset = labelXOffsetDirections[n.pitch % 12] * labelXOffsetAmount;
@@ -232,13 +237,13 @@ public class TreeStack {
 		//				pg_leaves.save("tmp/pg-leaves-" + n.pitchClass + "-" + parent.frameCount + ".png");			
 	}
 
-	void drawGlow() {
+	void drawGlow(int frameNumber) {
 
 		if (!renderGlow) {
 			return;
 		}
 
-		Glow.render(pg_glow);
+		Glow.render(pg_glow, frameNumber);
 
 		//		pg_glow.tint(12);
 
@@ -269,11 +274,11 @@ public class TreeStack {
 		pg_labels.fill(75, debugLabelAlpha);
 		pg_labels.textAlign(PConstants.CENTER);
 		pg_labels.textFont(labelFont);
-		
+
 		float weight = 1;
 		if (trees.size() > 0) {
 			weight = trees.get(0).trunkWeight() / 2;
-			
+
 			if (labelXOffset < 0) {
 				weight *= -1;
 			}
@@ -328,6 +333,6 @@ public class TreeStack {
 		float xNoise = 80;
 		float yNoise = 50;
 
-		return fallback.add(new PVector(Util.randomf(-xNoise, xNoise), Util.randomf(0, yNoise)));
+		return fallback.add(new PVector(Util.randomf(-xNoise, xNoise, rand), Util.randomf(0, yNoise, rand)));
 	}
 }

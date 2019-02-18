@@ -81,10 +81,11 @@ public class Main extends PApplet {
 		filter = new DwFilter(context);
 
 		labelFont = createFont("EBGaramond-SemiBold.ttf", 18);
-		PApplet.println("FONT: " + labelFont.getName());
+
+		file = new SoundFile(this, "mix.mp3");
+		durationMillis = (int) (file.duration() * 1000);
 
 		Glow.setupGlow(this, filter);
-		sceneManager = new SceneManager(this, debugOffsetMillis);
 		new TreeManager(this, labelFont);
 		TreeManager.instance().renderGlow = renderGlow;
 		new BirdManager(this);
@@ -96,17 +97,16 @@ public class Main extends PApplet {
 
 		noteManager = new NoteManager(this, "song.json", isStarRender);
 
-		file = new SoundFile(this, "mix.mp3");
-		durationMillis = (int) (file.duration() * 1000);
-
 		if (playMusic && !renderVideo) {
 			file.jump((debugOffsetMillis + moveAudioEarlierMillis) / 1000.0f);
 			file.play();
 		}
 
+		float offsetSecs = (prerollMillis * 2 + moveAudioEarlierMillis) / 1000;
+		totalFrames = (int) ((file.duration() + offsetSecs) * _frameRate);
+		sceneManager = new SceneManager(this, totalFrames);
+		
 		if (renderVideo) {
-			float offsetSecs = (prerollMillis * 2 + moveAudioEarlierMillis) / 1000;
-			totalFrames = (int) ((file.duration() + offsetSecs) * _frameRate);
 			println("Rendering", totalFrames, "frames.");
 		}
 
@@ -136,52 +136,55 @@ public class Main extends PApplet {
 		// Read notes from JSON in memory; add to managers if there are new notes this tick
 		noteManager.readNotes(millis, section);
 
-		if (isStarRender) {
-			//			background(0);
-			Stars.renderStars(millis, this);
-		} else {
-			// Draw the background
-			sceneManager.update(millis);
+		// Draw the background
+		sceneManager.update(millis);
 
-			// Special per-section behaviour
-			switch (section) {
-			case preroll:
-				Snow.addSnowTick();
-				break;
-			case start:
-			case melodyStart:
-				break;
-			case risingMel:
-				BirdManager.instance().landAllBirds();
-				break;
-			case repeatedNotes:
-				BirdManager.instance().landAllBirds();
-				break;
-			case bigReturn:
-				BirdManager.instance().flyAwayAllBirds(millis);
-				break;
-			case highMel:
-				BirdManager.instance().cleanUpOffscreenBirds();
-				break;
-			case outro:
-			case end:
-				Snow.addSnowTick();
-				BirdManager.instance().landAllBirds();
-				break;
-			}
+		// Special per-section behaviour
+		switch (section) {
+		case preroll:
+		case start:
+			Snow.addSnowTick(millis);
+			break;
 
-			if (debugOffsetMillis == repeatedNotes || debugOffsetMillis == bigReturnMinus) {
-				TreeManager.instance().buildDebugLeaves();
-				debugOffsetMillis += 1;
-			}
+		case melodyStart:
+			break;
 
-			TreeManager.instance().updateRender(millis);
-			TreeManager.instance().drawTrees(millis);
-			BirdManager.instance().updateAndDraw(millis);
-			TreeManager.instance().drawOverlay();
+		case risingMel:
+			BirdManager.instance().landAllBirds();
+			break;
 
-			Snow.render();
+		case repeatedNotes:
+			BirdManager.instance().landAllBirds();
+			break;
+
+		case bigReturn:
+			BirdManager.instance().flyAwayAllBirds(millis);
+			break;
+
+		case highMel:
+			BirdManager.instance().cleanUpOffscreenBirds();
+			Snow.addSnowTick(millis);
+			break;
+
+		case outro:
+		case end:
+			Snow.addSnowTick(millis);
+			BirdManager.instance().landAllBirds();
+			break;
 		}
+
+		if (debugOffsetMillis == repeatedNotes || debugOffsetMillis == bigReturnMinus) {
+			TreeManager.instance().buildDebugLeaves();
+			debugOffsetMillis += 1;
+		}
+
+		TreeManager.instance().updateRender(millis);
+		TreeManager.instance().drawTrees(millis);
+		BirdManager.instance().updateAndDraw(millis);
+		TreeManager.instance().drawOverlay(frameCount);
+
+		Stars.renderStars(millis, this, frameCount);
+		Snow.render();
 
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;
@@ -205,15 +208,10 @@ public class Main extends PApplet {
 
 		if (showDebugText) {
 
-			if (isStarRender) {
-				println("frame " + frameCount + " / " + totalFrames + " frames. (" + (int)(100 * frameCount / totalFrames) + "%)" + millis + "ms / section " + section.ordinal() + " (" + section
-						+ ") – " + (int) (section.length() / 1000) + "s long – " + (int) (section.pctDone(millis) * 100)
-						+ "% done");
-			} else {
-				text("frame " + frameCount + " / " + totalFrames + " frames. (" + (int)(100 * frameCount / totalFrames) + "%)" + millis + "ms / section " + section.ordinal() + " (" + section
-						+ ") – " + (int) (section.length() / 1000) + "s long – " + (int) (section.pctDone(millis) * 100)
-						+ "% done", 40, height - 40);
-			}
+			text("frame " + frameCount + " / " + totalFrames + " frames. (" + (int) (100 * frameCount / totalFrames)
+					+ "%)" + millis + "ms / section " + section.ordinal() + " (" + section + ") – "
+					+ (int) (section.length() / 1000) + "s long – " + (int) (section.pctDone(millis) * 100) + "% done",
+					40, height - 40);
 		}
 	}
 

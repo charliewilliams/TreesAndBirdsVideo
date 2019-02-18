@@ -26,7 +26,7 @@ public class Stars {
 	static float	highestPitch	= 87;
 
 	public static void addStar(Note n) {
-		
+
 		boolean xPitch = false;
 		float horizon = stage.y * 0.64f;
 		float x, y;
@@ -35,37 +35,38 @@ public class Stars {
 		boolean isBass = n.pitch < 48;
 
 		if (xPitch) {
-		// x = pitch; y = velocity
-		float nominalPitch = n.pitch;
-		if (n.pitch - lowestPitch < 20) {
-			nominalPitch += 24;
-		}
-		
-		x = PApplet.map(nominalPitch, highestPitch - 12, highestPitch, 0, stage.x) + Util.randomf(-xNoise, xNoise);
-		y = PApplet.map(n.velocity, 0.1f, 0.6f, horizon, 0) + Util.randomf(-yNoise, yNoise);
+			// x = pitch; y = velocity
+			float nominalPitch = n.pitch;
+			if (n.pitch - lowestPitch < 20) {
+				nominalPitch += 24;
+			}
 
-		if (y > horizon) {
-			y %= horizon;
-		}
-		//
-		// x = velocity; y = pitch
+			x = PApplet.map(nominalPitch, highestPitch - 12, highestPitch, 0, stage.x) + Util.randomf(-xNoise, xNoise);
+			y = PApplet.map(n.velocity, 0.1f, 0.6f, horizon, 0) + Util.randomf(-yNoise, yNoise);
+
+			if (y > horizon) {
+				y %= horizon;
+			}
+			//
+			// x = velocity; y = pitch
 		} else {
-			
+
 			if (isBass) {
-				
+
 				float xSpacing = stage.x / 7;
 				x = PApplet.map(n.pitch % 12, 0, 5, xSpacing, stage.x - xSpacing) + Util.randomf(-xNoise, xNoise);
-				y = PApplet.map((int)(n.pitch / 12), 0, 6, horizon, horizon / 2) + Util.randomf(-yNoise, yNoise);
-				
+				y = PApplet.map((int) (n.pitch / 12), 0, 6, horizon, horizon / 2) + Util.randomf(-yNoise, yNoise);
+
 			} else {
-				
+
 				int offset = 7;
 				float xSpacing = stage.x / 14;
-				x = PApplet.map((n.pitch + offset) % 12, 0, 11, xSpacing, stage.x - xSpacing) + Util.randomf(-xNoise, xNoise);
-				y = PApplet.map((int)((n.pitch + offset) / 12), 4, 8.5f, horizon, 0) + Util.randomf(-yNoise, yNoise);
+				x = PApplet.map((n.pitch + offset) % 12, 0, 11, xSpacing, stage.x - xSpacing)
+						+ Util.randomf(-xNoise, xNoise);
+				y = PApplet.map((int) ((n.pitch + offset) / 12), 4, 8.5f, horizon, 0) + Util.randomf(-yNoise, yNoise);
 			}
 		}
-		
+
 		//
 		PVector pos = new PVector(x, y);
 		float size = PApplet.map(n.velocity + n.duration, 0, 5, 0.25f, 1.5f);
@@ -73,7 +74,7 @@ public class Stars {
 		//		PApplet.println("New star", pos, size);
 	}
 
-	public static void renderStars(int millis, PApplet parent) {
+	public static void renderStars(int millis, PApplet parent, int frameNumber) {
 
 		if (stars.isEmpty()) {
 			return;
@@ -91,10 +92,10 @@ public class Stars {
 		renderGlow(pg_stars);
 		pg_stars.endDraw();
 
-		//		pg_stars.save("tmp/stars-" + millis + ".jpg");
+		pg_stars.save("stars/" + frameNumber + ".jpg");
 
-		parent.blendMode(PConstants.ADD);
-		parent.image(pg_stars, 0, 0);
+//		parent.blendMode(PConstants.ADD);
+//		parent.image(pg_stars, 0, 0);
 	}
 
 	public static void goOutTick() {
@@ -104,7 +105,7 @@ public class Stars {
 		int attempts = 0;
 		int maxAttempts = 1024;
 		while (removedCount < starsToRemovePerTick && attempts < maxAttempts) {
-			
+
 			Collections.shuffle(stars);
 			attempts++;
 

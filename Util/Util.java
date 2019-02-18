@@ -25,6 +25,10 @@ public class Util {
 	public static boolean coinToss() {
 		return Math.random() > 0.5f;
 	}
+	
+	public static boolean coinToss(Random rand) {
+		return rand.nextFloat() > 0.5f;
+	}
 
 	public static float logMapf(float value, float start1, float stop1, float start2, float stop2) {
 		return (float) logMap((double) value, (double) start1, (double) stop1, (double) start2, (double) stop2);
