@@ -107,12 +107,12 @@ public class NoteManager {
 				TreeManager.instance().addNote(note, millis);
 				break;
 			case risingMel:
-				TreeManager.instance().addNote(note, millis, false);
-				TreeManager.instance().addLeafOrFlower(note, true);
+				TreeManager.instance().addNote(note, millis, false); // false == shouldGlow
+				TreeManager.instance().addLeafOrFlower(note, true); // true == isLeaf
 				break;
 			case repeatedNotes:
-				TreeManager.instance().addNote(note, millis, false);
-				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
+				TreeManager.instance().addNote(note, millis, false); // false == shouldGlow
+				TreeManager.instance().addLeafOrFlower(note, Util.coinToss()); // leaf OR flower
 				break;
 			case bigReturn:
 				TreeManager.instance().addNote(note, millis);
@@ -146,16 +146,16 @@ public class NoteManager {
 				BirdManager.instance().addNote(note, fromRight, millis);
 				break;
 			case risingMel:
-				TreeManager.instance().addNote(note, millis);
-				TreeManager.instance().addLeafOrFlower(note, true);
+				TreeManager.instance().addNote(note, millis, false);
+				TreeManager.instance().addLeafOrFlower(note, true); // true == isLeaf
 				break;
 			case repeatedNotes:
 				birdCount = 0;
-				TreeManager.instance().addNote(note, millis);
+				TreeManager.instance().addNote(note, millis, false);
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
-				TreeManager.instance().addNote(note, millis);
+				TreeManager.instance().addNote(note, millis, false);
 				TreeManager.instance().dropFlower(note);
 				break;
 			case highMel:
@@ -202,7 +202,7 @@ public class NoteManager {
 			case melodyStart:
 			case repeatedNotes:
 				TreeManager.instance().addNote(note, millis);
-				TreeManager.instance().addLeafOrFlower(note, true);
+				TreeManager.instance().addLeafOrFlower(note, true); // true == isLeaf
 			case risingMel:
 				break;
 
@@ -221,7 +221,7 @@ public class NoteManager {
 			break;
 		case TreeChangeMelody:
 			TreeManager.instance().addNote(note, millis);
-			TreeManager.instance().addLeafOrFlower(note, false);
+			TreeManager.instance().addLeafOrFlower(note, false); // false == flower
 			break;
 
 		default:
