@@ -55,7 +55,7 @@ public class Flower {
 		fallSpeed = Util.randomf(0.5f, 1);
 	}
 
-	void draw(PApplet parent, PGraphics pg, float size) {
+	void draw(PApplet parent, PGraphics pg) {
 
 		if (currentScale < nominalScale) {
 			currentScale += 0.05f;
@@ -112,12 +112,14 @@ public class Flower {
 	}
 
 	private void fallTick(PApplet parent) {
-		
-//		nominalScale = 0;
 
 		if (pos.y >= groundY) {
 
 			isFalling = false;
+			if (alpha > 0) {
+				alpha *= 0.97;
+				satBri *= 0.95;
+			}
 			return;
 		}
 		

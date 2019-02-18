@@ -13,18 +13,18 @@ import processing.core.PConstants;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
 
-
 public class Bird {
 
 	static boolean debugDrawLandingPoints = false;
+
 	public enum State {
 		flying, to_land, landed
 	}
 
 	static private float	neighborhoodRadius	= 75;	// radius in which it looks for fellow boids
 	static private float	desiredseparation	= 25.0f;
-	static private float	maxSpeed			= 6;	// 4; //maximum magnitude for the velocity vector
 	static private float	maxSteerForce		= 0.3f;	// 0.1f; //maximum magnitude of the steering vector
+	private float			maxSpeed			= 6;	// 4; //maximum magnitude for the velocity vector
 
 	private float	cohesionMultiplier		= 3;
 	private float	alignmentMultiplier		= 4;
@@ -58,7 +58,7 @@ public class Bird {
 	private int			birdSerialNumber;
 	private Random		rand;
 
-	public Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_, int millis, Random rand) {
+	public Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_, int millis, Random rand, float maxSpeed) {
 
 		this.note = n;
 		this.stage = stage;
@@ -67,6 +67,10 @@ public class Bird {
 		pos = initialPos;
 		vel = velocityForInitialPosition(initialPos, stage);
 		acc = new PVector(0, 0);
+
+		if (maxSpeed > 0) {
+			this.maxSpeed = maxSpeed;
+		}
 
 		sat = Util.randomf(50, 80, rand);
 		bri = Util.randomf(50, 80, rand);
@@ -142,14 +146,14 @@ public class Bird {
 		acc = new PVector(Util.randomf(-20, 20), 0);
 	}
 
-	private boolean	avoidWalls		= true;
+	private boolean	avoidWalls				= true;
 	static float	flyingWallAvoidWeight	= 10;
 	static float	landingWallAvoidWeight	= 4;
 
 	void checkAvoidWalls() {
 
 		float wallAvoidWeight = (state == State.to_land) ? landingWallAvoidWeight : flyingWallAvoidWeight;
-		
+
 		PVector avoidGround = avoid(new PVector(pos.x, bottomWallY), true);
 		acc.add(PVector.mult(avoidGround, wallAvoidWeight));
 
@@ -230,7 +234,7 @@ public class Bird {
 		// However that means that the same multiplier on flap will make
 		// smaller birds jerk all over the place; we need to multiply smaller
 		// birds by a smaller number
-		
+
 		acc.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, 0.25f, 1);
 		vel.add(acc); // add acceleration to velocity
 		vel.limit(maxSpeed); // make sure the velocity vector magnitude does not exceed maxSpeed

@@ -30,15 +30,15 @@ public class Tree {
 		this.leafSize = leafSize;
 	}
 
-	ArrayList<Branch> grow(Note n) {
+	ArrayList<Branch> grow(Note n, boolean shouldGlow) {
 
 		if (root == null) {
-			root = new Branch(parent, seed, seedStride, 80, flowerSize, leafSize, alpha);
+			root = new Branch(parent, seed, seedStride, 80, alpha, true);
 			branches.add(root);
 			return new ArrayList<Branch>();
 		}
 
-		ArrayList<Branch> newChildren = root.grow(n);
+		ArrayList<Branch> newChildren = root.grow(n, shouldGlow);
 		branches.addAll(newChildren);
 		return newChildren;
 	}

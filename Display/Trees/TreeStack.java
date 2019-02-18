@@ -82,7 +82,7 @@ public class TreeStack {
 		PApplet.println(n.pitchClass + ": " + this.seed + "+" + this.seedStride);
 	}
 
-	void grow(Note note, int millis) {
+	void grow(Note note, int millis, boolean shouldGlow) {
 
 		debugLabelAlpha = 255;
 		debugLabelDurationMillis = (note.velocity + note.duration) * 1000;
@@ -94,7 +94,7 @@ public class TreeStack {
 			Collections.shuffle(ts);
 			for (Tree t : ts) {
 
-				if (t.grow(note).size() > 0) {
+				if (t.grow(note, shouldGlow).size() > 0) {
 					return;
 				}
 			}

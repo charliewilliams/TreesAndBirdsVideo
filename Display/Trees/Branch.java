@@ -20,18 +20,17 @@ public class Branch {
 	PVector	origin, end;
 	Leaf	leaf;
 	Flower	flower;
-	float	flowerSize, leafSize;
 
 	private ArrayList<Branch> children = new ArrayList<Branch>();
 
 	private PApplet	parent;
 	float			diam, angle, length;
 	private int		depth;
-	private int		numberOfParents;
+	private int		numberOfParents = 0;
 	private int		numberOfDescendants	= 0;
 	private int		maxChildren			= 2;
-	private float	circleAlpha			= 0, circleDiam = 0;
 	private float	maxAlpha			= 100;
+	private float	circleAlpha			= maxAlpha, circleDiam = 0;
 	private float	glowAmount			= 255;
 	private float	hue;
 
@@ -47,32 +46,29 @@ public class Branch {
 	private long seed, seedStride;
 
 	// Root
-	Branch(PApplet parent, long seed, long seedStride, float length, float flowerSize, float leafSize, float alpha) {
+	Branch(PApplet parent, long seed, long seedStride, float length, float alpha, boolean shouldGlow) {
 
 		this.parent = parent;
 		this.seed = seed;
 		this.origin = new PVector();
 		this.alpha = alpha;
 		isRoot = true;
-		numberOfParents = 0;
-		circleAlpha = maxAlpha;
-		circleDiam = 0;
 		hue = Util.randomf(100, 140);
+		
+		if (!shouldGlow) {
+			glowAmount = 0;
+		}
 
 		this.length = length;
 		end = new PVector(0, -length);
 		angle = PVector.angleBetween(end, origin);
-
-		this.flowerSize = flowerSize;
-		this.leafSize = leafSize;
 
 		driftSpeed = new PVector(Util.randomf(800, 1200), Util.randomf(2000, 2500));
 		driftMag = new PVector(Util.randomf(10, 30), Util.randomf(20, 30));
 	}
 
 	// Normal branch
-	Branch(PApplet parent, long seed, long seedStride, PVector origin, PVector end, int depth, float flowerSize,
-			float leafSize, int numberOfParents, PVector driftSpeed, PVector driftMag, float hue, float alpha) {
+	Branch(PApplet parent, long seed, long seedStride, PVector origin, PVector end, int depth, int numberOfParents, PVector driftSpeed, PVector driftMag, float hue, float alpha, boolean shouldGlow) {
 
 		this.parent = parent;
 		this.seed = seed;
@@ -85,16 +81,16 @@ public class Branch {
 		length = PVector.dist(origin, end);
 		angle = PVector.angleBetween(end, origin);
 		circleAlpha = maxAlpha;
-		circleDiam = 0;
-
-		this.flowerSize = flowerSize;
-		this.leafSize = leafSize;
+		
+		if (!shouldGlow) {
+			glowAmount = 0;
+		}
 
 		this.driftSpeed = driftSpeed.copy().mult(0.9f);
-		this.driftMag = driftMag.copy().mult(1.1f);
+		this.driftMag = driftMag.copy().mult(1.15f);
 	}
 
-	ArrayList<Branch> grow(Note n) {
+	ArrayList<Branch> grow(Note n, boolean shouldGlow) {
 
 		ArrayList<Branch> newChildren = new ArrayList<Branch>();
 
@@ -103,7 +99,7 @@ public class Branch {
 			Collections.shuffle(cs);
 			for (Branch b : cs) {
 
-				newChildren = b.grow(n);
+				newChildren = b.grow(n, shouldGlow);
 				if (newChildren.size() > 0) {
 
 					numberOfDescendants += newChildren.size();
@@ -114,11 +110,11 @@ public class Branch {
 			return newChildren;
 		}
 
-		newChildren.add(makeChild());
+		newChildren.add(makeChild(shouldGlow));
 
 		// 10% chance of 2nd child on this pass
 		if (Util.random(0, 1) < 0.1) {
-			newChildren.add(makeChild());
+			newChildren.add(makeChild(shouldGlow));
 		}
 
 		children.addAll(newChildren);
@@ -130,15 +126,14 @@ public class Branch {
 
 	ArrayList<Float> existingAngles = new ArrayList<Float>();
 
-	Branch makeChild() {
+	Branch makeChild(boolean shouldGlow) {
 
 		PVector dir = PVector.sub(end, origin);
 		dir.rotate(suitableRangomAngle(existingAngles));
 		dir.mult(Util.randomf(0.5f, 0.7f));
 		PVector newEnd = PVector.add(end, dir);
 
-		return new Branch(parent, seed + seedStride, seedStride, end, newEnd, depth + 1, flowerSize, leafSize,
-				++numberOfParents, driftSpeed, driftMag, hue, alpha * 0.95f);
+		return new Branch(parent, seed + seedStride, seedStride, end, newEnd, depth + 1, ++numberOfParents, driftSpeed, driftMag, hue, alpha * 0.95f, shouldGlow);
 	}
 
 	float strokeWeight() {
@@ -185,11 +180,11 @@ public class Branch {
 	public void renderLeaves(PGraphics pg_leaves) {
 
 		if (leaf != null) {
-			leaf.draw(parent, pg_leaves, leafSize);
+			leaf.draw(parent, pg_leaves);
 		}
 
 		if (flower != null) {
-			flower.draw(parent, pg_leaves, flowerSize);
+			flower.draw(parent, pg_leaves);
 		}
 
 		for (Branch child : children) {

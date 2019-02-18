@@ -51,13 +51,17 @@ public class BirdManager {
 	}
 
 	public void addNote(Note n, boolean fromRight, int millis) {
+		addNote(n, fromRight, millis, 0);
+	}
+
+	public void addNote(Note n, boolean fromRight, int millis, float maxSpeed) {
 
 		// Notes are added ~500ms before they sound; use `timestamp` to determine when they should take visual effect
 		int idx = n.pitch % 12;
 		Flock f = flocks[idx];
-		
-							//C  C# D  D# E   F  F# G  G# A  Bb B
-		float[] flockSizes = {2, 2, 7, 2, 10, 2, 4, 2, 3, 5, 2, 6}; //Util.randomf(2, 10);
+
+		//C  C# D  D# E   F  F# G  G# A  Bb B
+		float[] flockSizes = { 2, 2, 7, 2, 10, 2, 4, 2, 3, 5, 2, 6 }; //Util.randomf(2, 10);
 		float size = flockSizes[idx];
 
 		if (f == null) {
@@ -71,7 +75,7 @@ public class BirdManager {
 		//		posY += Util.randomf(-50f, 50f);
 		PVector pos = new PVector(posX, posY);
 
-		allBirds.add(f.addBird(stage, pos, millis));
+		allBirds.add(f.addBird(stage, pos, millis, maxSpeed));
 	}
 
 	public void buildDebugBirds() {

@@ -153,7 +153,7 @@ public class Leaf {
 		createShape(pg, ls);
 	}
 
-	void draw(PApplet parent, PGraphics pg, float size) {
+	void draw(PApplet parent, PGraphics pg) {
 		
 		if (currentScale < nominalScale) {
 			currentScale += 0.005;

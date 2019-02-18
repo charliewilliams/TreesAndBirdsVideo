@@ -15,10 +15,10 @@ import processing.sound.SoundFile;
 
 public class Main extends PApplet {
 
-	boolean		renderVideo				= false;
-	boolean		renderGlow				= false;
-	boolean		playMusic				= false;
-	boolean		isStarRender			= false;
+	boolean		renderVideo				= true;
+	boolean		renderGlow				= renderVideo;
+	boolean		playMusic				= true;
+	boolean		isStarRender			= true;
 	int			_frameRate				= 30;
 	int			prerollMillis			= renderVideo ? 10000 : 0;
 	int			moveAudioEarlierMillis	= 4800;
@@ -41,7 +41,7 @@ public class Main extends PApplet {
 	int	melodyStart		= 38000;
 	int	risingMel		= 104000;
 	int	repeatedNotes	= 170000;
-	int	bigReturnMinus  = 240000;
+	int	bigReturnMinus	= 240000;
 	int	bigReturn		= 251000;
 	int	highMel			= 290000;
 	int	outro			= 365000;
@@ -49,12 +49,12 @@ public class Main extends PApplet {
 
 	Section section = Section.preroll;
 
-	int millisOffset = 500;
-	//	int	debugOffsetMillis	= 0;
+	int	millisOffset		= 500;
+	int	debugOffsetMillis	= 0;
 	//		int debugOffsetMillis = melodyStart;
-//	int debugOffsetMillis = risingMel;
-//			int debugOffsetMillis = repeatedNotes;
-			int debugOffsetMillis = bigReturnMinus;
+	//	int debugOffsetMillis = risingMel;
+	//			int debugOffsetMillis = repeatedNotes;
+	//			int debugOffsetMillis = bigReturnMinus;
 	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
 	//		int	debugOffsetMillis	= outro;
@@ -74,12 +74,12 @@ public class Main extends PApplet {
 		ellipseMode(CENTER);
 		colorMode(HSB, 360, 100, 100, 100);
 
-		background(0, 0, 51);
+		background(0);
 		noStroke();
 
 		context = new DwPixelFlow(this);
 		filter = new DwFilter(context);
-		
+
 		labelFont = createFont("EBGaramond-SemiBold.ttf", 18);
 		PApplet.println("FONT: " + labelFont.getName());
 
@@ -96,10 +96,10 @@ public class Main extends PApplet {
 
 		noteManager = new NoteManager(this, "song.json", isStarRender);
 
+		file = new SoundFile(this, "mix.mp3");
+		durationMillis = (int) (file.duration() * 1000);
 
-		if (playMusic) {
-			file = new SoundFile(this, "mix.mp3");
-			durationMillis = (int) (file.duration() * 1000);
+		if (playMusic && !renderVideo) {
 			file.jump((debugOffsetMillis + moveAudioEarlierMillis) / 1000.0f);
 			file.play();
 		}
@@ -133,58 +133,55 @@ public class Main extends PApplet {
 
 		checkSection(millis);
 
-		if (isStarRender) {
-			Stars.renderStars(millis, this);
-			return;
-		}
-
-		// Draw the background
-		sceneManager.update(millis);
-
 		// Read notes from JSON in memory; add to managers if there are new notes this tick
 		noteManager.readNotes(millis, section);
 
-		// Special per-section behaviour
-		switch (section) {
-		case preroll:
-			Snow.addSnowTick();
-			break;
-		case start:
-		case melodyStart:
-			break;
-		case risingMel:
-			BirdManager.instance().landAllBirds();
-			break;
-		case repeatedNotes:
-			BirdManager.instance().landAllBirds();
-//			TreeManager.instance().turnLeafColorTick(millis);
-			break;
-		case bigReturn:
-			BirdManager.instance().flyAwayAllBirds(millis);
-//			TreeManager.instance().turnLeafColorTick(millis);
-			break;
-		case highMel:
-			BirdManager.instance().cleanUpOffscreenBirds();
-//			TreeManager.instance().turnLeafColorTick(millis);
-			break;
-		case outro:
-		case end:
-			Snow.addSnowTick();
-			BirdManager.instance().landAllBirds();
-			break;
-		}
-		
-		if (debugOffsetMillis == repeatedNotes || debugOffsetMillis == bigReturnMinus) {
-			TreeManager.instance().buildDebugLeaves();
-			debugOffsetMillis += 1;
-		}
+		if (isStarRender) {
+			//			background(0);
+			Stars.renderStars(millis, this);
+		} else {
+			// Draw the background
+			sceneManager.update(millis);
 
-		TreeManager.instance().updateRender(millis);
-		TreeManager.instance().drawTrees(millis);
-		BirdManager.instance().updateAndDraw(millis);
-		TreeManager.instance().drawOverlay();
+			// Special per-section behaviour
+			switch (section) {
+			case preroll:
+				Snow.addSnowTick();
+				break;
+			case start:
+			case melodyStart:
+				break;
+			case risingMel:
+				BirdManager.instance().landAllBirds();
+				break;
+			case repeatedNotes:
+				BirdManager.instance().landAllBirds();
+				break;
+			case bigReturn:
+				BirdManager.instance().flyAwayAllBirds(millis);
+				break;
+			case highMel:
+				BirdManager.instance().cleanUpOffscreenBirds();
+				break;
+			case outro:
+			case end:
+				Snow.addSnowTick();
+				BirdManager.instance().landAllBirds();
+				break;
+			}
 
-		Snow.render();
+			if (debugOffsetMillis == repeatedNotes || debugOffsetMillis == bigReturnMinus) {
+				TreeManager.instance().buildDebugLeaves();
+				debugOffsetMillis += 1;
+			}
+
+			TreeManager.instance().updateRender(millis);
+			TreeManager.instance().drawTrees(millis);
+			BirdManager.instance().updateAndDraw(millis);
+			TreeManager.instance().drawOverlay();
+
+			Snow.render();
+		}
 
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;
@@ -207,14 +204,21 @@ public class Main extends PApplet {
 		fill(0);
 
 		if (showDebugText) {
-		text("frame " + frameCount + " / " + millis + "ms / section " + section.ordinal() + " (" + section + ") – "
-				+ (int) (section.length() / 1000) + "s long – " + (int) (section.pctDone(millis) * 100) + "% done", 40,
-				height - 40);
+
+			if (isStarRender) {
+				println("frame " + frameCount + " / " + totalFrames + " frames. (" + (int)(100 * frameCount / totalFrames) + "%)" + millis + "ms / section " + section.ordinal() + " (" + section
+						+ ") – " + (int) (section.length() / 1000) + "s long – " + (int) (section.pctDone(millis) * 100)
+						+ "% done");
+			} else {
+				text("frame " + frameCount + " / " + totalFrames + " frames. (" + (int)(100 * frameCount / totalFrames) + "%)" + millis + "ms / section " + section.ordinal() + " (" + section
+						+ ") – " + (int) (section.length() / 1000) + "s long – " + (int) (section.pctDone(millis) * 100)
+						+ "% done", 40, height - 40);
+			}
 		}
 	}
-	
+
 	boolean showDebugText = true;
-	
+
 	public void keyPressed() {
 		if (key == ' ') {
 			showDebugText = !showDebugText;

@@ -107,11 +107,11 @@ public class NoteManager {
 				TreeManager.instance().addNote(note, millis);
 				break;
 			case risingMel:
-				TreeManager.instance().addNote(note, millis);
+				TreeManager.instance().addNote(note, millis, false);
 				TreeManager.instance().addLeafOrFlower(note, true);
 				break;
 			case repeatedNotes:
-				TreeManager.instance().addNote(note, millis);
+				TreeManager.instance().addNote(note, millis, false);
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
@@ -120,11 +120,12 @@ public class NoteManager {
 				TreeManager.instance().turnLeafColorTick(millis);
 				break;
 			case highMel:
-				TreeManager.instance().dropAllFlowers();
-				TreeManager.instance().dropAllLeaves(millis);
-				//				Stars.addStar(note);
+				TreeManager.instance().dropFlower(note);
+				TreeManager.instance().dropLeaf(note);
 				break;
 			case outro:
+				TreeManager.instance().dropAllFlowers();
+				TreeManager.instance().dropAllLeaves(millis);
 			case end:
 				if (isStarRender) {
 					Stars.goOutTick();
@@ -162,11 +163,13 @@ public class NoteManager {
 				if (isStarRender) {
 					Stars.addStar(note);
 				}
+				TreeManager.instance().dropFlower(note);
+				TreeManager.instance().dropLeaf(note);
 				break;
 			case outro:
 			case end:
 				TreeManager.instance().dropLeaf(note);
-				BirdManager.instance().addNote(note, fromRight, millis);
+				BirdManager.instance().addNote(note, fromRight, millis, 4); // slower than normal
 				break;
 			}
 
@@ -205,9 +208,9 @@ public class NoteManager {
 
 			case bigReturn:
 			case highMel:
-				TreeManager.instance().addNote(note, millis);
-				TreeManager.instance().glowRoot(note);
 				TreeManager.instance().dropFlower(note);
+				TreeManager.instance().dropLeaf(note);
+				TreeManager.instance().glowRoot(note);
 				break;
 
 			case outro:
