@@ -235,7 +235,9 @@ public class Bird {
 		// smaller birds jerk all over the place; we need to multiply smaller
 		// birds by a smaller number
 
-		acc.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, 0.25f, 1);
+		float slowestFlapSpeed = 0.125f;
+		float fastestFlapSpeed = 0.5f;
+		acc.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, fastestFlapSpeed, slowestFlapSpeed);
 		vel.add(acc); // add acceleration to velocity
 		vel.limit(maxSpeed); // make sure the velocity vector magnitude does not exceed maxSpeed
 		pos.add(vel); // add velocity to position
