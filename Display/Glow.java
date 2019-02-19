@@ -42,7 +42,7 @@ public class Glow {
 //		filter.bloom.apply(pg_luminance, pg_bloom, pg_render);
 		filter.bloom.apply(pg_luminance, pg_bloom, dest);
 		
-		dest.save("glow/" + frameNumber + ".jpg");
+		dest.save("glow/" + PApplet.nf(frameNumber, 5) + ".png");
 
 //		dest.blendMode(PConstants.ADD);
 //		dest.blendMode(PConstants.DILATE);

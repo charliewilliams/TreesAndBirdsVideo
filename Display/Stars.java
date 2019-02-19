@@ -76,15 +76,9 @@ public class Stars {
 
 	public static void renderStars(int millis, PApplet parent, int frameNumber) {
 
-		if (stars.isEmpty()) {
-			return;
-		}
-		//		rotation -= 0.0001;
-
 		pg_stars.beginDraw();
 		pg_stars.clear();
-		//		pg_stars.translate(0, stage.y);
-		//		pg_stars.rotate(rotation);
+		
 		for (Star s : stars) {
 			s.draw(pg_stars);
 		}
@@ -92,7 +86,7 @@ public class Stars {
 		renderGlow(pg_stars);
 		pg_stars.endDraw();
 
-		pg_stars.save("stars/" + frameNumber + ".jpg");
+		pg_stars.save("stars/" + PApplet.nf(frameNumber, 5) + ".png");
 
 //		parent.blendMode(PConstants.ADD);
 //		parent.image(pg_stars, 0, 0);
@@ -123,7 +117,7 @@ public class Stars {
 		stage = new PVector(parent.width, parent.height);
 		filter = _filter;
 
-		pg_stars = (PGraphics2D) parent.createGraphics(parent.width, parent.height * 2, PConstants.P2D);
+		pg_stars = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_stars.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_stars.smooth(8);
 
