@@ -34,7 +34,7 @@ public class Flock {
 		// Set baseHue from note.pitch % 12
 		baseHue = 360 / ((note.pitch % 12) + 1);
 		baseSize = size;
-		flapSpeed = PApplet.map(baseSize, 2f, 10f, 0.5f, 0.01f);// Util.random(0.05, 0.5);
+		flapSpeed = PApplet.map(baseSize, 2f, 10f, 0.5f, 0.02f);// Util.random(0.05, 0.5);
 		sketcher = HandyPresets.createWaterAndInk(a); // new HandyRenderer(a);
 		sketcher.setRoughness(Util.randomf(0, 1.5f));
 		sketcher.setStrokeWeight(Util.randomf(0.15f, 0.5f));
