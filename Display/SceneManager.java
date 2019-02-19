@@ -20,7 +20,7 @@ public class SceneManager {
 	int							w, h;
 	int							groundColor, skyBackgroundColor;
 	float						backgroundXOffset	= 0;
-	float						skySpeed			= 0.2f;
+	float						skySpeed			= 0.4f;
 
 	public SceneManager(PApplet parent, int totalFrames) {
 
@@ -36,7 +36,8 @@ public class SceneManager {
 
 		bg = parent.loadImage("paper.jpg");
 
-		sky_pg = (PGraphics2D) parent.createGraphics(w * 2, h, PConstants.P2D);
+		int requiredWidth = (int) (totalFrames * skySpeed + w * 2);
+		sky_pg = (PGraphics2D) parent.createGraphics(requiredWidth, h, PConstants.P2D);
 		sky_pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 
 		ground_pg = parent.createGraphics(w, h);
@@ -50,7 +51,6 @@ public class SceneManager {
 		groundColor = parent.color(37, 42, 100);
 		skyBackgroundColor = parent.color(223, 40, 46);
 
-		int requiredWidth = (int) (totalFrames * skySpeed + w);
 		generateSky(sky_pg, requiredWidth);
 
 		generateGround(ground_pg);
