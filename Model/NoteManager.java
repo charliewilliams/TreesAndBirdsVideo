@@ -122,6 +122,7 @@ public class NoteManager {
 			case highMel:
 				TreeManager.instance().dropFlower(note);
 				TreeManager.instance().dropLeaf(note);
+				TreeManager.instance().turnLeafColorTick(millis);
 				break;
 			case outro:
 				TreeManager.instance().dropAllFlowers();
@@ -155,6 +156,9 @@ public class NoteManager {
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
+				for (int i = 0; i < Util.random(5, 9); i++) {
+					BirdManager.instance().addNote(note, fromRight, millis);
+				}
 				TreeManager.instance().addNote(note, millis, false);
 				TreeManager.instance().dropFlower(note);
 				break;
@@ -199,22 +203,27 @@ public class NoteManager {
 			switch (section) {
 			case preroll:
 			case start:
+				TreeManager.instance().addNote(note, millis, true);
 			case melodyStart:
-			case repeatedNotes:
-				TreeManager.instance().addNote(note, millis);
+				TreeManager.instance().addNote(note, millis, false);
 				TreeManager.instance().addLeafOrFlower(note, true); // true == isLeaf
+				break;
+			case repeatedNotes:
+				TreeManager.instance().addNote(note, millis, false);
+				TreeManager.instance().addLeafOrFlower(note, true); // true == isLeaf
+				TreeManager.instance().glowRoot(note);
 			case risingMel:
 				break;
 
 			case bigReturn:
 			case highMel:
 				TreeManager.instance().dropFlower(note);
-				TreeManager.instance().dropLeaf(note);
 				TreeManager.instance().glowRoot(note);
 				break;
 
 			case outro:
 			case end:
+				TreeManager.instance().dropLeaf(note);
 				TreeManager.instance().dropLeaf(note);
 				break;
 			}
