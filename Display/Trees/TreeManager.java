@@ -11,8 +11,13 @@ public class TreeManager {
 
 	// 5643821+9421841
 	// to fill in as we find a great seed for each tree
-	private static int[]	seeds	= { 25,     0, 7661790, 0, 0, 887068,  0, 887068,  0, 887068,  887068,  0 };
+	private static int[]	seeds	= { 25, 0, 7661790, 0, 0, 887068, 0, 887068, 0, 887068, 887068, 0 };
 	private static int[]	strides	= { 102938, 0, 7109302, 0, 0, 3228859, 0, 3228859, 0, 3228859, 3228859, 0 };
+
+	private static Leaf.LeafShape[] leafTypes = { Leaf.LeafShape.star, Leaf.LeafShape.polygon, Leaf.LeafShape.ellipse,
+			Leaf.LeafShape.crescent, Leaf.LeafShape.polygon, Leaf.LeafShape.crescent, Leaf.LeafShape.star,
+			Leaf.LeafShape.star, Leaf.LeafShape.crescent, Leaf.LeafShape.star, Leaf.LeafShape.ellipse,
+			Leaf.LeafShape.star };
 
 	private static TreeManager m;
 
@@ -34,8 +39,8 @@ public class TreeManager {
 		if (pitchClassTreeStack == null) {
 
 			int numChildren = 2; //(int) Util.random(3, 8);
-			pitchClassTrees[i] = new TreeStack(numChildren, parent, labelFont, n, treePositionForNote(n), renderGlow,
-					seeds[i], strides[i]);
+			pitchClassTrees[i] = new TreeStack(numChildren, parent, labelFont, n, treePositionForNote(n), leafTypes[i],
+					renderGlow, seeds[i], strides[i]);
 		}
 
 		return pitchClassTrees[i];
@@ -71,7 +76,7 @@ public class TreeManager {
 	public void addNote(Note n, int millis) {
 		addNote(n, millis, true);
 	}
-	
+
 	public void addNote(Note n, int millis, boolean shouldGlow) {
 
 		treeStackFor(n).grow(n, millis, shouldGlow);
@@ -130,9 +135,9 @@ public class TreeManager {
 			}
 		}
 	}
-	
+
 	public void dropAllLeaves(int millis) {
-		
+
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];
@@ -141,9 +146,9 @@ public class TreeManager {
 			}
 		}
 	}
-	
+
 	public void dropAllFlowers() {
-		
+
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];
@@ -195,14 +200,14 @@ public class TreeManager {
 	public PVector acquireLandingSite(Bird b, Note n) {
 		return treeStackFor(n).acquireLandingSite(b);
 	}
-	
+
 	public void buildDebugLeaves() {
 
 		for (int i = 0; i < 128; i++) {
 			Note n = new Note(i % 12);
 			addLeafOrFlower(n, true);
 		}
-		
+
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];

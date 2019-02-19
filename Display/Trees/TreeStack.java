@@ -20,7 +20,7 @@ import processing.opengl.PGraphics2D;
 public class TreeStack {
 
 	Flower.FlowerType		flowerType;
-	Leaf.LeafShape			leafType;
+	Leaf.LeafShape			leafShape;
 	ArrayList<Tree>			trees						= new ArrayList<Tree>();
 	public PGraphics2D		pg_trees, pg_leaves, pg_glow, pg_labels;
 	private PApplet			parent;
@@ -38,7 +38,7 @@ public class TreeStack {
 	private float[]			labelXOffsetDirections		= { 1, 1, 1, -1, 1, -1, -1, 1, 1, 1, -1, -1 };
 	private Random			rand						= new Random();
 
-	TreeStack(int numChildren, PApplet parent, PFont font, Note n, PVector pos, boolean renderGlow, long seed,
+	TreeStack(int numChildren, PApplet parent, PFont font, Note n, PVector pos, Leaf.LeafShape leafShape, boolean renderGlow, long seed,
 			long seedStride) {
 
 		this.parent = parent;
@@ -56,7 +56,7 @@ public class TreeStack {
 		rand.setSeed(seed);
 		
 		flowerType = Flower.randomType(rand);
-		leafType = Leaf.randomType(rand);
+		this.leafShape = leafShape;
 		//		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
 
 		pg_trees = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
@@ -124,7 +124,7 @@ public class TreeStack {
 		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
 		Collections.shuffle(ts);
 		for (Tree t : ts) {
-			if (t.addLeaf(leafType, pg_leaves)) {
+			if (t.addLeaf(leafShape, pg_leaves)) {
 				return;
 			}
 		}
