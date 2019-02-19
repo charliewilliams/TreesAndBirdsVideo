@@ -44,7 +44,7 @@ public class Star {
 
 		case appearing:
 			if (currentSize > nominalSize) {
-				currentSize *= isBass ? 0.97f : 0.95f;
+				currentSize *= isBass ? 0.99f : 0.97f;
 			} else {
 				state = StarState.steady;
 			}
