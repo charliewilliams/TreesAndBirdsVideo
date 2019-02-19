@@ -11,8 +11,8 @@ public class TreeManager {
 
 	// 5643821+9421841
 	// to fill in as we find a great seed for each tree
-	private static int[]	seeds	= { 25, 0, 7661790, 0, 0, 887068, 0, 887068, 0, 887068, 887068, 0 };
-	private static int[]	strides	= { 102938, 0, 7109302, 0, 0, 3228859, 0, 3228859, 0, 3228859, 3228859, 0 };
+	private static int[]	seeds	= { 25,     6031596, 7661790, 7468500, 7452885, 887068,  7897006, 887068,  7661790, 887068,  887068,  7661790 };
+	private static int[]	strides	= { 102938, 8667501, 7109302, 7778934, 7055614, 3228859, 2543517, 3228859, 7109302, 3228859, 3228859, 7109302 };
 
 	private static Leaf.LeafShape[] leafTypes = { Leaf.LeafShape.star, Leaf.LeafShape.polygon, Leaf.LeafShape.ellipse,
 			Leaf.LeafShape.crescent, Leaf.LeafShape.polygon, Leaf.LeafShape.crescent, Leaf.LeafShape.star,
