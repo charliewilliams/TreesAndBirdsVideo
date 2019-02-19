@@ -69,7 +69,7 @@ public class Stars {
 
 		//
 		PVector pos = new PVector(x, y);
-		float size = PApplet.map(n.velocity + n.duration, 0, 5, 0.25f, 1.5f);
+		float size = PApplet.map(n.velocity + n.duration, 0, 4, 0.5f, 3f);
 		stars.add(new Star(pos, size, isBass));
 		//		PApplet.println("New star", pos, size);
 	}

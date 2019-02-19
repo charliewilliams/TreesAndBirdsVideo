@@ -24,7 +24,7 @@ public class Star {
 
 		this.isBass = isBass;
 		if (isBass) {
-			maxSize = 5;
+			maxSize = 8;
 		}
 		size *=3;
 		
