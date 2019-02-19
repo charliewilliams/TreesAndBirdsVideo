@@ -7,6 +7,7 @@ import Util.Util;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
+import processing.opengl.PGraphics2D;
 
 public class Flower {
 
@@ -19,6 +20,7 @@ public class Flower {
 	float		groundY;
 	float		fallSpeed;
 	float		currentScale	= 0, nominalScale = 1;
+	float		glowAmount		= 255;
 
 	public enum FlowerType {
 		Sakura, White, Yellow, Purple;
@@ -54,25 +56,21 @@ public class Flower {
 		fallSpeed = Util.randomf(0.5f, 1);
 	}
 
-	void draw(PApplet parent, PGraphics pg) {
+	void draw(PApplet parent, PGraphics pg, boolean forGlow) {
 
-		if (currentScale < nominalScale) {
-			currentScale += 0.05f;
-		}
-//		else if (currentScale > nominalScale) {
-//			currentScale *= 0.98f;
-//		}
-//		if (currentScale == 0) {
-//			return;
-//		}
-		if (isFalling) {
-			fallTick(parent);
+		if (!forGlow) {
+			if (currentScale < nominalScale) {
+				currentScale += 0.05f;
+			}
+			if (isFalling) {
+				fallTick(parent);
+			}
 		}
 
 		pg.noStroke();
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);
-		pg.scale(currentScale);
+		pg.scale(forGlow ? nominalScale : currentScale);
 
 		switch (flowerType) {
 
@@ -108,6 +106,10 @@ public class Flower {
 			break;
 		}
 		pg.popMatrix();
+		
+		if (forGlow) {
+			glowAmount *= 0.9f;
+		}
 	}
 
 	private void fallTick(PApplet parent) {
@@ -121,7 +123,7 @@ public class Flower {
 			}
 			return;
 		}
-		
+
 		if (alpha > 0) {
 			alpha *= 0.97;
 			satBri *= 1.05;

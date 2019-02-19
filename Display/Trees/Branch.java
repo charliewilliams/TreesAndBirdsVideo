@@ -194,7 +194,7 @@ public class Branch {
 		}
 
 		if (flower != null) {
-			flower.draw(parent, pg_leaves);
+			flower.draw(parent, pg_leaves, false);
 		}
 
 		for (Branch child : children) {
@@ -227,6 +227,10 @@ public class Branch {
 		
 		if (leaf != null) {
 			leaf.drawGlow(pg_glow);
+		}
+		
+		if (flower != null) {
+			flower.draw(parent, pg_glow, true);
 		}
 
 		return maxGlow;
