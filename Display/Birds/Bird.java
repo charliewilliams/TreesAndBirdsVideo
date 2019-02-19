@@ -58,7 +58,8 @@ public class Bird {
 	private int			birdSerialNumber;
 	private Random		rand;
 
-	public Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_, int millis, Random rand, float maxSpeed) {
+	public Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_, int millis, Random rand, float maxSpeed,
+			boolean startLandingTimer) {
 
 		this.note = n;
 		this.stage = stage;
@@ -79,7 +80,9 @@ public class Bird {
 		birdSerialNumber = birdCount++;
 		// PApplet.println("New bird", pos);
 
-		startLandingTimer(millis);
+		if (startLandingTimer) {
+			startLandingTimer(millis);
+		}
 	}
 
 	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg, int millis,

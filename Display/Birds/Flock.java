@@ -40,9 +40,9 @@ public class Flock {
 		sketcher.setStrokeWeight(Util.randomf(0.15f, 0.5f));
 	}
 
-	Bird addBird(PVector stage, PVector pos, int millis, float maxSpeed) {
+	Bird addBird(PVector stage, PVector pos, int millis, float maxSpeed, boolean startLandingTimer) {
 
-		Bird newB = new Bird(note, stage, pos, flapSpeed, millis, rand, maxSpeed);
+		Bird newB = new Bird(note, stage, pos, flapSpeed, millis, rand, maxSpeed, startLandingTimer);
 		newB.hue = baseHue + Util.randomf(-5, 5);
 		newB.size = baseSize + Util.randomf(-0.5f, 0.5f);
 		birds.add(newB);

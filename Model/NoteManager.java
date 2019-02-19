@@ -157,7 +157,8 @@ public class NoteManager {
 				break;
 			case bigReturn:
 				for (int i = 0; i < Util.random(5, 9); i++) {
-					BirdManager.instance().addNote(note, fromRight, millis);
+					boolean startLandingTimer = false;
+					BirdManager.instance().addNote(note, fromRight, millis, startLandingTimer);
 				}
 				TreeManager.instance().addNote(note, millis, false);
 				TreeManager.instance().dropFlower(note);
