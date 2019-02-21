@@ -1,6 +1,5 @@
 package Display;
 
-import Display.Trees.Grass;
 import Model.Section;
 import Util.Util;
 import processing.core.PApplet;
@@ -15,7 +14,7 @@ public class SceneManager {
 	private PApplet				parent;
 	PImage						bg;
 	private PGraphics			ground_pg;
-	private PGraphics2D			sky_pg, grass_pg;
+	private PGraphics2D			sky_pg;
 	float						cameraZ				= 600;
 	int							w, h;
 	int							groundColor, skyBackgroundColor;
@@ -41,7 +40,6 @@ public class SceneManager {
 		sky_pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
 
 		ground_pg = parent.createGraphics(w, h);
-		grass_pg = (PGraphics2D) parent.createGraphics(w, h, PConstants.P2D);
 
 		//		int startColor = parent.color(39, 5, 100); // paper beige
 		//		int sunset1 = parent.color(43, 91, 100); // sunset 1 (yellow)
@@ -171,14 +169,6 @@ public class SceneManager {
 		}
 
 		pg.endDraw();
-	}
-
-	public void createGrass() {
-		Grass.generate(grass_pg);
-	}
-
-	public void renderGrass() {
-		parent.image(grass_pg, 0, 0);
 	}
 
 	void generateRadialBlur(PGraphics pg) {

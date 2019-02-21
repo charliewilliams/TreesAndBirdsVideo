@@ -7,7 +7,6 @@ import Util.Util;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
-import processing.opengl.PGraphics2D;
 
 public class Flower {
 
