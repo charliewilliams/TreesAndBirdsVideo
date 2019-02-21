@@ -11,14 +11,17 @@ import Model.NoteManager;
 import Model.Section;
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PImage;
 import processing.sound.SoundFile;
 
 public class Main extends PApplet {
 
 	boolean		renderVideo				= true;
+	boolean		efficientRender			= true;
+	boolean		renderStarsAndSnow		= false;
 	boolean		renderGlow				= true;
-	boolean		playMusic				= true;
-	boolean		isStarRender			= true;
+	boolean		playMusic				= false;
+	boolean		isStarRender			= false;
 	int			_frameRate				= 30;
 	int			prerollMillis			= renderVideo ? 10000 : 0;
 	int			moveAudioEarlierMillis	= 4800;
@@ -51,10 +54,10 @@ public class Main extends PApplet {
 
 	int	millisOffset		= 500;
 	int	debugOffsetMillis	= 0;
-	//		int debugOffsetMillis = melodyStart;
+	//			int debugOffsetMillis = melodyStart;
 	//	int debugOffsetMillis = risingMel;
-//				int debugOffsetMillis = repeatedNotes;
-	//			int debugOffsetMillis = bigReturnMinus;
+	//	int debugOffsetMillis = repeatedNotes;
+	//				int debugOffsetMillis = bigReturnMinus;
 	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
 	//		int	debugOffsetMillis	= outro;
@@ -105,7 +108,7 @@ public class Main extends PApplet {
 		float offsetSecs = (prerollMillis * 2 + moveAudioEarlierMillis) / 1000;
 		totalFrames = (int) ((file.duration() + offsetSecs) * _frameRate);
 		sceneManager = new SceneManager(this, totalFrames);
-		
+
 		if (renderVideo) {
 			println("Rendering", totalFrames, "frames.");
 		}
@@ -129,6 +132,11 @@ public class Main extends PApplet {
 
 	public void draw() {
 
+		if (efficientRender) {
+			clear();
+			//			background(255);
+		}
+
 		int millis = _millis();
 
 		checkSection(millis);
@@ -137,13 +145,17 @@ public class Main extends PApplet {
 		noteManager.readNotes(millis, section);
 
 		// Draw the background
-		sceneManager.update(millis);
+		if (!efficientRender) {
+			sceneManager.update(millis);
+		}
 
 		// Special per-section behaviour
 		switch (section) {
 		case preroll:
 		case start:
-			Snow.addSnowTick(millis);
+			if (!efficientRender) {
+				Snow.addSnowTick(millis);
+			}
 			break;
 
 		case melodyStart:
@@ -168,7 +180,9 @@ public class Main extends PApplet {
 
 		case outro:
 		case end:
-			Snow.addSnowTick(millis);
+			if (!efficientRender) {
+				Snow.addSnowTick(millis);
+			}
 			BirdManager.instance().landAllBirds();
 			break;
 		}
@@ -183,8 +197,10 @@ public class Main extends PApplet {
 		BirdManager.instance().updateAndDraw(millis);
 		TreeManager.instance().drawOverlay(frameCount);
 
-		Stars.renderStars(millis, this, frameCount);
-		Snow.render();
+		if (renderStarsAndSnow) {
+			Stars.renderStars(millis, this, frameCount);
+			Snow.render();
+		}
 
 		int seconds = millis / 1000;
 		int minutes = seconds / 60;
@@ -195,7 +211,8 @@ public class Main extends PApplet {
 		surface.setTitle(txt_fps);
 
 		if (renderVideo) {
-			saveFrame("video-export/#####.png");
+			//			saveFrame("video-export/#####.png");
+			saveTransparentFrame();
 
 			if (frameCount > totalFrames) {
 				exit();
@@ -208,11 +225,27 @@ public class Main extends PApplet {
 
 		if (showDebugText) {
 
-			text("frame " + frameCount + " / " + totalFrames + " frames. (" + (int) (100 * frameCount / totalFrames)
-					+ "%)" + millis + "ms / section " + section.ordinal() + " (" + section + ") – "
-					+ (int) (section.length() / 1000) + "s long – " + (int) (section.pctDone(millis) * 100) + "% done",
-					40, height - 40);
+			text("frame " + frameCount + " / " + totalFrames + ". (" + (int) (100 * frameCount / totalFrames)
+					+ "%) / section " + section.ordinal() + " (" + section + ") – " + (int) (section.length() / 1000)
+					+ "s long – " + (int) (section.pctDone(millis) * 100) + "% done", 40, height - 40);
 		}
+	}
+
+	void saveTransparentFrame() {
+
+		final PImage canvas = get();
+		canvas.format = ARGB;
+
+		int bg = -1;
+		final int p[] = canvas.pixels;
+		final int bgt = bg & ~0b000000;
+
+		for (int i = 0; i != p.length; ++i)
+			if (p[i] == bg)
+				p[i] = bgt;
+
+		canvas.updatePixels();
+		canvas.save("transparent/" + nf(frameCount, 5) + ".png");
 	}
 
 	boolean showDebugText = true;
