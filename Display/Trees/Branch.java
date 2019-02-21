@@ -27,13 +27,14 @@ public class Branch {
 	private PApplet	parent;
 	float			diam, angle, length;
 	private int		depth;
-	private int		numberOfParents		= 0;
-	private int		numberOfDescendants	= 0;
-	private int		maxChildren			= 2;
-	private float	maxAlpha			= 100;
-	private float	circleAlpha			= maxAlpha, circleDiam = 0;
-	private float	glowAmount			= 255;
+	private int		numberOfParents			= 0;
+	private int		numberOfDescendants		= 0;
+	private int		maxChildren				= 2;
+	private float	maxAlpha				= 100;
+	private float	circleAlpha				= maxAlpha, circleDiam = 0;
+	private float	glowAmount				= 255;
 	private float	hue;
+	private boolean	propagateGlowDownward = true;
 
 	static private float	piOver2		= (float) (Math.PI / 2.0);
 	static private float	piOver5		= (float) (Math.PI / 5.0);
@@ -48,7 +49,7 @@ public class Branch {
 	private long	seed, seedStride;
 
 	// Root
-	Branch(PApplet parent, long seed, long seedStride, float length, float alpha, boolean shouldGlow) {
+	Branch(PApplet parent, long seed, long seedStride, float length, float alpha) {
 
 		this.parent = parent;
 		this.seed = seed;
@@ -59,10 +60,6 @@ public class Branch {
 		isRoot = true;
 		hue = Util.randomf(100, 140);
 
-		if (!shouldGlow) {
-			glowAmount = 0;
-		}
-
 		this.length = length;
 		end = new PVector(0, -length);
 		angle = PVector.angleBetween(end, origin);
@@ -72,8 +69,8 @@ public class Branch {
 	}
 
 	// Normal branch
-	Branch(PApplet parent, long seed, long seedStride, PVector origin, PVector end, int depth, int numberOfParents,
-			PVector driftSpeed, PVector driftMag, float hue, float alpha, boolean shouldGlow) {
+	private Branch(PApplet parent, long seed, long seedStride, PVector origin, PVector end, int depth,
+			int numberOfParents, PVector driftSpeed, PVector driftMag, float hue, float alpha, boolean propagateGlow) {
 
 		this.parent = parent;
 		this.seed = seed;
@@ -89,15 +86,11 @@ public class Branch {
 		angle = PVector.angleBetween(end, origin);
 		circleAlpha = maxAlpha;
 
-		if (!shouldGlow) {
-			glowAmount = 0;
-		}
-
 		this.driftSpeed = driftSpeed.copy().mult(0.9f);
 		this.driftMag = driftMag.copy().mult(1.15f);
 	}
 
-	ArrayList<Branch> grow(Note n, boolean shouldGlow) {
+	ArrayList<Branch> grow(Note n, boolean propagateGlow) {
 
 		ArrayList<Branch> newChildren = new ArrayList<Branch>();
 
@@ -106,7 +99,7 @@ public class Branch {
 			Collections.shuffle(cs);
 			for (Branch b : cs) {
 
-				newChildren = b.grow(n, shouldGlow);
+				newChildren = b.grow(n, propagateGlow);
 				if (newChildren.size() > 0) {
 
 					numberOfDescendants += newChildren.size();
@@ -117,23 +110,24 @@ public class Branch {
 			return newChildren;
 		}
 
-		newChildren.add(makeChild(shouldGlow));
+		newChildren.add(makeChild(propagateGlow));
 
 		// 10% chance of 2nd child on this pass
 		if (Util.randomf(0, 1, rand) < 0.1) {
-			newChildren.add(makeChild(shouldGlow));
+			newChildren.add(makeChild(propagateGlow));
 		}
 
 		children.addAll(newChildren);
 		finished = children.size() >= maxChildren;
 		numberOfDescendants += newChildren.size();
+		propagateGlowDownward = propagateGlow;
 
 		return newChildren;
 	}
 
 	ArrayList<Float> existingAngles = new ArrayList<Float>();
 
-	Branch makeChild(boolean shouldGlow) {
+	Branch makeChild(boolean propagateGlow) {
 
 		PVector dir = PVector.sub(end, origin);
 		dir.rotate(suitableRangomAngle(existingAngles));
@@ -141,9 +135,9 @@ public class Branch {
 		PVector newEnd = PVector.add(end, dir);
 
 		seed += seedStride; // we can do this bc we've already set up our random
-		
-		return new Branch(parent, seed, seedStride, end, newEnd, depth + 1, ++numberOfParents, driftSpeed,
-				driftMag, hue, alpha * 0.95f, shouldGlow);
+
+		return new Branch(parent, seed, seedStride, end, newEnd, depth + 1, ++numberOfParents, driftSpeed, driftMag,
+				hue, alpha * 0.95f, propagateGlow);
 	}
 
 	float strokeWeight() {
@@ -208,7 +202,7 @@ public class Branch {
 
 		for (Branch child : children) {
 			float thisGlow = child.renderGlow(pg_glow);
-			if (thisGlow > maxGlow) {
+			if (child.propagateGlowDownward && thisGlow > maxGlow) {
 				maxGlow = thisGlow;
 			}
 		}
@@ -224,11 +218,11 @@ public class Branch {
 		pg_glow.stroke(color);
 		pg_glow.fill(color);
 		pg_glow.line(origin.x, origin.y, end.x, end.y);
-		
+
 		if (leaf != null) {
 			leaf.drawGlow(pg_glow);
 		}
-		
+
 		if (flower != null) {
 			flower.draw(parent, pg_glow, true);
 		}

@@ -103,8 +103,9 @@ public class NoteManager {
 			switch (section) {
 			case preroll:
 			case start:
-			case melodyStart:
 				TreeManager.instance().addNote(note, millis);
+			case melodyStart:
+				TreeManager.instance().addNote(note, millis, false);
 				break;
 			case risingMel:
 				TreeManager.instance().addNote(note, millis, false); // false == shouldGlow

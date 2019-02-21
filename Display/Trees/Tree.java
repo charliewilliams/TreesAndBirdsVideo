@@ -36,7 +36,7 @@ public class Tree {
 	ArrayList<Branch> grow(Note n, boolean shouldGlow) {
 
 		if (root == null) {
-			root = new Branch(parent, seed + seedStride, seedStride, 80, alpha, true);
+			root = new Branch(parent, seed + seedStride, seedStride, 80, alpha);
 			branches.add(root);
 			return new ArrayList<Branch>();
 		}
