@@ -51,7 +51,7 @@ public class BirdManager {
 	}
 
 	public void addNote(Note n, boolean fromRight, int millis) {
-		addNote(n, fromRight, millis, 0);
+		addNote(n, fromRight, millis, 0, true);
 	}
 	
 	public void addNote(Note n, boolean fromRight, int millis, float maxSpeed) {
@@ -59,7 +59,7 @@ public class BirdManager {
 	}
 
 	public void addNote(Note n, boolean fromRight, int millis, boolean startLandingTimer) {
-		addNote(n, fromRight, millis, 0, true);
+		addNote(n, fromRight, millis, 0, startLandingTimer);
 	}
 	
 	public void addNote(Note n, boolean fromRight, int millis, float maxSpeed, boolean startLandingTimer) {

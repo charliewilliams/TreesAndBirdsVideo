@@ -26,9 +26,9 @@ public class Bird {
 	static private float	maxSteerForce		= 0.3f;	// 0.1f; //maximum magnitude of the steering vector
 	private float			maxSpeed			= 6;	// 4; //maximum magnitude for the velocity vector
 
-	private float	cohesionMultiplier		= 3;
-	private float	alignmentMultiplier		= 4;
-	private float	separationMultiplier	= 5;
+	private float	cohesionMultiplier		= 1; //3;
+	private float	alignmentMultiplier		= 0.5f;
+	private float	separationMultiplier	= 3;
 	private boolean	avoidBirds				= true;
 
 	private PVector pos; // pos, velocity, and acceleration in a vector datatype
@@ -248,6 +248,9 @@ public class Bird {
 		acc.mult(0.5f); // reset acceleration
 	}
 
+	float	lastTheta	= -1;
+	float	maxRotation	= (float) Math.toRadians(30);
+
 	void render(PGraphics2D ps, HandyRenderer sketcher) {
 
 		if (state == State.landed) {
@@ -256,6 +259,10 @@ public class Bird {
 
 		// Draw a triangle rotated in the direction of velocity
 		float theta = (float) (vel.heading() + Math.toRadians(90));
+		if (theta > maxRotation) {
+			theta = PApplet.lerp(lastTheta, theta, 0.25f); // lerp to maybe fix judder?
+		}
+		lastTheta = theta;
 
 		float r = size * (float) (flap / 3 + 0.5);
 

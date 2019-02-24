@@ -247,10 +247,10 @@ public class TreeStack {
 
 		//		pg_glow.tint(12);
 
-		parent.blendMode(PConstants.ADD);
-		parent.image(pg_glow, 0, 0);
+//		parent.blendMode(PConstants.ADD);
+//		parent.image(pg_glow, 0, 0);
 
-		//		pg_glow.save("tmp/pg-glow-" + n.pitchClass + "-" + parent.frameCount + ".png");
+		pg_glow.save("glow/" + PApplet.nf(frameNumber, 5) + ".png");
 	}
 
 	void glowRoot() {

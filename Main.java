@@ -18,7 +18,8 @@ public class Main extends PApplet {
 
 	boolean		renderVideo				= true;
 	boolean		efficientRender			= true;
-	boolean		renderStarsAndSnow		= false;
+	boolean		renderStars				= false;
+	boolean		renderSnow				= true;
 	boolean		renderGlow				= true;
 	boolean		playMusic				= false;
 	boolean		isStarRender			= false;
@@ -153,7 +154,7 @@ public class Main extends PApplet {
 		switch (section) {
 		case preroll:
 		case start:
-			if (!efficientRender) {
+			if (renderSnow) {
 				Snow.addSnowTick(millis);
 			}
 			break;
@@ -180,7 +181,7 @@ public class Main extends PApplet {
 
 		case outro:
 		case end:
-			if (!efficientRender) {
+			if (renderSnow) {
 				Snow.addSnowTick(millis);
 			}
 			BirdManager.instance().landAllBirds();
@@ -197,9 +198,12 @@ public class Main extends PApplet {
 		BirdManager.instance().updateAndDraw(millis);
 		TreeManager.instance().drawOverlay(frameCount);
 
-		if (renderStarsAndSnow) {
+		if (renderStars) {
 			Stars.renderStars(millis, this, frameCount);
-			Snow.render();
+
+		}
+		if (renderSnow) {
+			Snow.render(frameCount);
 		}
 
 		int seconds = millis / 1000;

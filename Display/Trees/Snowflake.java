@@ -40,7 +40,7 @@ public class Snowflake {
 		shape.endShape(PShape.CLOSE);
 	}
 
-	void draw(PApplet parent, PGraphics2D pg) {
+	void draw(PGraphics2D pg) {
 
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);

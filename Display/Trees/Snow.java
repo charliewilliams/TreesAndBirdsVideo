@@ -39,7 +39,7 @@ public class Snow {
 		}
 	}
 
-	public static void render() {
+	public static void render(int frameNumber) {
 
 		// Update position & alpha, removing alpha == 0
 		ArrayList<Snowflake> toRemove = new ArrayList<Snowflake>();
@@ -57,15 +57,15 @@ public class Snow {
 		pg_snow.clear();
 		
 		for (Snowflake s : snow) {
-			s.draw(parent, pg_snow);
+			s.draw(pg_snow);
 		}
 		pg_snow.endDraw();
+		
+		pg_snow.save("snow/" + PApplet.nf(frameNumber, 5) + ".png");
 
 		// Draw onto parent
 		parent.blendMode(PConstants.ADD);
-//		parent.blendMode(PConstants.NORMAL);
-		pg_snow.save("tmp/snow.jpg");
-		parent.image(pg_snow, 0, 0);
+//		parent.image(pg_snow, 0, 0);
 	}
 
 }
