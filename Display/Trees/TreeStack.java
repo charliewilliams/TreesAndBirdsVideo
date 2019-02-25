@@ -87,7 +87,7 @@ public class TreeStack {
 		PApplet.println(n.pitchClass + ": " + this.seed + "+" + this.seedStride);
 	}
 
-	void grow(Note note, int millis, boolean shouldGlow) {
+	void grow(Note note, int millis, boolean propagateGlow) {
 
 		debugLabelAlpha = 255;
 		debugLabelDurationMillis = (note.velocity + note.duration) * 1000;
@@ -99,7 +99,7 @@ public class TreeStack {
 			Collections.shuffle(ts);
 			for (Tree t : ts) {
 
-				if (t.grow(note, shouldGlow).size() > 0) {
+				if (t.grow(note, propagateGlow).size() > 0) {
 					return;
 				}
 			}
@@ -237,7 +237,7 @@ public class TreeStack {
 		//				pg_leaves.save("tmp/pg-leaves-" + n.pitchClass + "-" + parent.frameCount + ".png");			
 	}
 
-	void drawGlow(int frameNumber) {
+	void drawGlow(PGraphics2D onto, int frameNumber) {
 
 		if (!renderGlow) {
 			return;
@@ -245,12 +245,8 @@ public class TreeStack {
 
 		Glow.render(pg_glow, frameNumber);
 
-		//		pg_glow.tint(12);
-
-//		parent.blendMode(PConstants.ADD);
-//		parent.image(pg_glow, 0, 0);
-
-		pg_glow.save("glow/" + PApplet.nf(frameNumber, 5) + ".png");
+		onto.blendMode(PConstants.ADD);
+		onto.image(pg_glow, 0, 0);
 	}
 
 	void glowRoot() {

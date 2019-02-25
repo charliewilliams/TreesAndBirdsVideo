@@ -4,15 +4,19 @@ import Display.Birds.Bird;
 import Model.Note;
 import Util.Util;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PVector;
+import processing.opengl.PGraphics2D;
 
 public class TreeManager {
 
 	// 5643821+9421841
 	// to fill in as we find a great seed for each tree
-	private static int[]	seeds	= { 25,     6031596, 7661790, 7468500, 7452885, 887068,  7897006, 887068,  7661790, 887068,  887068,  7661790 };
-	private static int[]	strides	= { 102938, 8667501, 7109302, 7778934, 7055614, 3228859, 2543517, 3228859, 7109302, 3228859, 3228859, 7109302 };
+	private static int[]	seeds	= { 25, 6031596, 7661790, 7468500, 7452885, 887068, 7897006, 887068, 7661790,
+			887068, 887068, 7661790 };
+	private static int[]	strides	= { 102938, 8667501, 7109302, 7778934, 7055614, 3228859, 2543517, 3228859, 7109302,
+			3228859, 3228859, 7109302 };
 
 	private static Leaf.LeafShape[] leafTypes = { Leaf.LeafShape.star, Leaf.LeafShape.polygon, Leaf.LeafShape.ellipse,
 			Leaf.LeafShape.crescent, Leaf.LeafShape.polygon, Leaf.LeafShape.crescent, Leaf.LeafShape.star,
@@ -25,9 +29,10 @@ public class TreeManager {
 		return m;
 	}
 
-	private PApplet	parent;
-	private PFont	labelFont;
-	public boolean	renderGlow;
+	private PApplet		parent;
+	private PFont		labelFont;
+	public boolean		renderGlow;
+	private PGraphics2D	pg_glow;
 
 	private TreeStack[] pitchClassTrees = new TreeStack[12];
 
@@ -71,6 +76,8 @@ public class TreeManager {
 		m = this;
 		this.parent = parent;
 		this.labelFont = labelFont;
+		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_glow.smooth(8);
 	}
 
 	public void addNote(Note n, int millis) {
@@ -192,9 +199,11 @@ public class TreeManager {
 			TreeStack stack = pitchClassTrees[i];
 			if (stack != null) {
 				stack.drawLeaves();
-				stack.drawGlow(frameNumber);
+				stack.drawGlow(pg_glow, frameNumber);
 			}
 		}
+		
+		pg_glow.save("glow/" + PApplet.nf(frameNumber, 5) + ".png");
 	}
 
 	public PVector acquireLandingSite(Bird b, Note n) {
