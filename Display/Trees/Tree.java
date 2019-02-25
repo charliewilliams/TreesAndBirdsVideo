@@ -33,7 +33,7 @@ public class Tree {
 		rand.setSeed(seed);
 	}
 
-	ArrayList<Branch> grow(Note n, boolean shouldGlow) {
+	ArrayList<Branch> grow(Note n, boolean propagateGlow) {
 
 		if (root == null) {
 			root = new Branch(parent, seed + seedStride, seedStride, 80, alpha);
@@ -41,7 +41,7 @@ public class Tree {
 			return new ArrayList<Branch>();
 		}
 
-		ArrayList<Branch> newChildren = root.grow(n, shouldGlow);
+		ArrayList<Branch> newChildren = root.grow(n, propagateGlow);
 		branches.addAll(newChildren);
 		return newChildren;
 	}

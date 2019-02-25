@@ -77,9 +77,9 @@ public class TreeManager {
 		addNote(n, millis, true);
 	}
 
-	public void addNote(Note n, int millis, boolean shouldGlow) {
+	public void addNote(Note n, int millis, boolean propagateGlow) {
 
-		treeStackFor(n).grow(n, millis, shouldGlow);
+		treeStackFor(n).grow(n, millis, propagateGlow);
 	}
 
 	public void addLeafOrFlower(Note n, boolean shouldBeLeaf) {
