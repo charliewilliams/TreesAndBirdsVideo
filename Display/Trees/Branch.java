@@ -171,7 +171,7 @@ public class Branch {
 		int glowPlusAlpha = Util.setAlpha((int) glowAmount, alpha);
 		sketcher.setStrokeColour(glowPlusAlpha);
 
-		glowAmount *= 0.9f;
+		glowAmount *= 0.95f;
 
 		sketcher.line(origin.x, origin.y, end.x, end.y);
 		//		pg_trees.line(origin.x, origin.y, end.x, end.y);
