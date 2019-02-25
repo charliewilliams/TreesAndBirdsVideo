@@ -140,7 +140,7 @@ public class Bird {
 		state = State.flying;
 		startLandingTimer(millis);
 		cohesionMultiplier = 0.1f;
-		alignmentMultiplier = 0f;
+		alignmentMultiplier = 0.05f;
 		avoidWalls = false;
 
 		// upward momentum
@@ -186,14 +186,20 @@ public class Bird {
 	}
 
 	private int lastTickMillis;
+	private boolean landingTimerStarted = false;
 
 	void startLandingTimer(int millis) {
 		landingTimerMillis = (int) Util.randomf(8000f, 15000f, rand);
 		lastTickMillis = millis;
+		landingTimerStarted = true;
 	}
 
 	// This timer counts how long the bird has been flying and makes it land after `landingTimerMillis`.
 	void tickLandingTimer(int millis) {
+		
+		if (!landingTimerStarted) {
+			return;
+		}
 
 		int millisSinceLastTick = millis - lastTickMillis;
 		lastTickMillis = millis;
