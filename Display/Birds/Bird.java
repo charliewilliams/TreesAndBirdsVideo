@@ -245,7 +245,7 @@ public class Bird {
 		vel.limit(maxSpeed); // make sure the velocity vector magnitude does not exceed maxSpeed
 		pos.add(vel); // add velocity to position
 		//		pos.y += flap / 20;
-		acc.mult(0.5f); // reset acceleration
+		acc.mult(0); // reset acceleration
 	}
 
 	float	lastTheta	= -1;
