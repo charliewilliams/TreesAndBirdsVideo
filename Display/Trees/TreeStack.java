@@ -237,16 +237,18 @@ public class TreeStack {
 		//				pg_leaves.save("tmp/pg-leaves-" + n.pitchClass + "-" + parent.frameCount + ".png");			
 	}
 
-	void drawGlow(PGraphics2D onto, int frameNumber) {
+	void drawGlow(PGraphics2D onto) {
 
 		if (!renderGlow) {
 			return;
 		}
 
-		Glow.render(pg_glow, frameNumber);
+		Glow.render(pg_glow);
 
+		onto.beginDraw();
 		onto.blendMode(PConstants.ADD);
 		onto.image(pg_glow, 0, 0);
+		onto.endDraw();
 	}
 
 	void glowRoot() {

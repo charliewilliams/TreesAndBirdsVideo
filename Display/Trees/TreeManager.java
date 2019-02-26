@@ -192,18 +192,33 @@ public class TreeManager {
 		}
 	}
 
-	public void drawOverlay(int frameNumber) {
+	public void drawOverlay() {
 
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];
 			if (stack != null) {
 				stack.drawLeaves();
-				stack.drawGlow(pg_glow, frameNumber);
+			}
+		}
+	}
+	
+	public void drawGlow(PApplet sketch) {
+		
+		pg_glow.beginDraw();
+		pg_glow.clear();
+		
+		for (int i = 0; i < pitchClassTrees.length; i++) {
+
+			TreeStack stack = pitchClassTrees[i];
+			if (stack != null) {
+				stack.drawGlow(pg_glow);
 			}
 		}
 		
-		pg_glow.save("glow/" + PApplet.nf(frameNumber, 5) + ".png");
+		pg_glow.endDraw();
+		
+		sketch.image(pg_glow, 0, 0);
 	}
 
 	public PVector acquireLandingSite(Bird b, Note n) {

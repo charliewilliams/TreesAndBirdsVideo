@@ -25,7 +25,7 @@ public class Glow {
 		pg_bloom.smooth(8);
 	}
 
-	public static void render(PGraphics2D dest, int frameNumber) {
+	public static void render(PGraphics2D dest) {
 
 		// luminance pass
 		filter.luminance_threshold.param.threshold = 0.1f; // when 0, all colors are used

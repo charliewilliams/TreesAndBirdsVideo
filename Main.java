@@ -196,7 +196,7 @@ public class Main extends PApplet {
 		TreeManager.instance().updateRender(millis);
 		TreeManager.instance().drawTrees(millis);
 		BirdManager.instance().updateAndDraw(millis);
-		TreeManager.instance().drawOverlay(frameCount);
+		TreeManager.instance().drawOverlay();
 
 		if (renderStars) {
 			Stars.renderStars(millis, this, frameCount);
@@ -206,17 +206,17 @@ public class Main extends PApplet {
 			Snow.render(frameCount);
 		}
 
-		int seconds = millis / 1000;
-		int minutes = seconds / 60;
-		int displaySeconds = minutes > 0 ? seconds % 60 : seconds;
-
-		String txt_fps = String.format(" | %s | %02d:%02d | %2.0f fps", noteManager.locationString(), minutes,
-				displaySeconds, frameRate);
+		String txt_fps = String.format("frame %d / %d (%2.0f%%) | %2.0f fps", frameCount, totalFrames, frameCount/(float)totalFrames, frameRate);
 		surface.setTitle(txt_fps);
 
 		if (renderVideo) {
 			//			saveFrame("video-export/#####.png");
-			saveTransparentFrame();
+			saveTransparentFrame("output");
+			
+			clear();
+			TreeManager.instance().drawGlow(this);
+			
+			saveTransparentFrame("glow");
 
 			if (frameCount > totalFrames) {
 				exit();
@@ -235,7 +235,7 @@ public class Main extends PApplet {
 		}
 	}
 
-	void saveTransparentFrame() {
+	void saveTransparentFrame(String folder) {
 
 		final PImage canvas = get();
 		canvas.format = ARGB;
@@ -249,7 +249,7 @@ public class Main extends PApplet {
 				p[i] = bgt;
 
 		canvas.updatePixels();
-		canvas.save("transparent/" + nf(frameCount, 5) + ".png");
+		canvas.save(folder + "/" + nf(frameCount, 5) + ".png");
 	}
 
 	boolean showDebugText = true;
