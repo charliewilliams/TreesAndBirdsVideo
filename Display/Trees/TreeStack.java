@@ -11,9 +11,11 @@ import Display.Glow;
 import Display.Birds.Bird;
 import Model.Note;
 import Util.Util;
+import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
+import processing.core.PGraphics;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
 
@@ -22,7 +24,8 @@ public class TreeStack {
 	Flower.FlowerType		flowerType;
 	Leaf.LeafShape			leafShape;
 	ArrayList<Tree>			trees						= new ArrayList<Tree>();
-	public PGraphics2D		pg_trees, pg_leaves, pg_glow, pg_labels;
+	public PGraphics2D		pg_glow;
+	public PGraphicsJava2D	pg_trees, pg_leaves, pg_labels;
 	private PApplet			parent;
 	private boolean			renderGlow;
 	private PVector			pos;
@@ -38,8 +41,8 @@ public class TreeStack {
 	private float[]			labelXOffsetDirections		= { 1, 1, 1, -1, 1, -1, -1, 1, 1, 1, -1, -1 };
 	private Random			rand						= new Random();
 
-	TreeStack(int numChildren, PApplet parent, PFont font, Note n, PVector pos, Leaf.LeafShape leafShape, boolean renderGlow, long seed,
-			long seedStride) {
+	TreeStack(int numChildren, PApplet parent, PFont font, Note n, PVector pos, Leaf.LeafShape leafShape,
+			boolean renderGlow, long seed, long seedStride) {
 
 		this.parent = parent;
 		this.renderGlow = renderGlow;
@@ -54,28 +57,28 @@ public class TreeStack {
 			this.seedStride = seedStride;
 		}
 		rand.setSeed(seed);
-		
+
 		flowerType = Flower.randomType(rand);
 		this.leafShape = leafShape;
 		//		hue = PApplet.map(n.pitch % 12.0f, 0, 12, 0, 360);
 
-		pg_trees = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_trees = (PGraphicsJava2D) parent.createGraphics(parent.width, parent.height, PConstants.JAVA2D);
 		pg_trees.smooth(2);
 
-		pg_leaves = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_leaves = (PGraphicsJava2D) parent.createGraphics(parent.width, parent.height, PConstants.JAVA2D);
 		pg_leaves.colorMode(PConstants.HSB, 360, 100, 100, 100);
 		pg_leaves.smooth(8);
 
 		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
 		pg_glow.smooth(8);
 
-		pg_labels = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_labels = (PGraphicsJava2D) parent.createGraphics(parent.width, parent.height, PConstants.JAVA2D);
 		pg_labels.smooth(2);
 
 		for (int i = 0; i < numChildren; i++) {
 			float alpha = PApplet.map(i, 0, numChildren, 255, 50);
-			trees.add(
-					new Tree(parent, seed + seedStride * i, seedStride, n, alpha, Util.randomf(5, 15, rand), Util.randomf(5, 15, rand)));
+			trees.add(new Tree(parent, seed + seedStride * i, seedStride, n, alpha, Util.randomf(5, 15, rand),
+					Util.randomf(5, 15, rand)));
 		}
 
 		sketcher = HandyPresets.createWaterAndInk(parent); // new HandyRenderer(a);
@@ -175,7 +178,7 @@ public class TreeStack {
 		}
 	}
 
-	private void preparePGraphics(PGraphics2D p) {
+	private void preparePGraphics(PGraphics p) {
 
 		p.beginDraw();
 		p.clear();
@@ -184,7 +187,7 @@ public class TreeStack {
 
 	}
 
-	private void finalizePGraphics(PGraphics2D p) {
+	private void finalizePGraphics(PGraphics p) {
 
 		p.popMatrix();
 		p.endDraw();

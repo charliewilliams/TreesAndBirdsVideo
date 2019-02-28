@@ -9,6 +9,7 @@ import org.gicentre.handy.HandyRenderer;
 import Model.Note;
 import Model.Section;
 import Util.Util;
+import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -144,7 +145,7 @@ public class Branch {
 		return PApplet.map(numberOfDescendants, 100, 0, 10, 0.5f);
 	}
 
-	public void renderBranch(PGraphics2D pg_trees, HandyRenderer sketcher) {
+	public void renderBranch(PGraphicsJava2D pg_trees, HandyRenderer sketcher) {
 		sketcher.setSeed(seed);
 
 		// Background circle

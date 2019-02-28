@@ -16,11 +16,11 @@ import processing.sound.SoundFile;
 
 public class Main extends PApplet {
 
-	boolean		renderVideo				= true;
+	boolean		renderVideo				= false;
 	boolean		efficientRender			= true;
 	boolean		renderStars				= false;
-	boolean		renderSnow				= true;
-	boolean		renderGlow				= true;
+	boolean		renderSnow				= false;
+	boolean		renderGlow				= false;
 	boolean		playMusic				= false;
 	boolean		isStarRender			= false;
 	int			_frameRate				= 30;
@@ -54,19 +54,21 @@ public class Main extends PApplet {
 	Section section = Section.preroll;
 
 	int	millisOffset		= 500;
-	int	debugOffsetMillis	= 0;
+//	int	debugOffsetMillis	= 0;
 	//			int debugOffsetMillis = melodyStart;
 	//	int debugOffsetMillis = risingMel;
 	//	int debugOffsetMillis = repeatedNotes;
-	//				int debugOffsetMillis = bigReturnMinus;
+					int debugOffsetMillis = bigReturnMinus;
 	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
 	//		int	debugOffsetMillis	= outro;
 	int durationMillis;
+	
+	public static String renderer = P2D;
 
 	public void settings() {
 
-		size(1692, 720, P2D);
+		size(1692, 720, renderer);
 		//		 size(2538, 1080, P2D);
 	}
 
@@ -136,6 +138,10 @@ public class Main extends PApplet {
 		if (efficientRender) {
 			clear();
 			//			background(255);
+		}
+		
+		if (!renderVideo) {
+			background(255);
 		}
 
 		int millis = _millis();

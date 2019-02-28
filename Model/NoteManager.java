@@ -157,10 +157,10 @@ public class NoteManager {
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
 			case bigReturn:
-				for (int i = 0; i < Util.random(5, 9); i++) {
-					boolean startLandingTimer = false;
-					BirdManager.instance().addNote(note, fromRight, millis, startLandingTimer);
-				}
+//				for (int i = 0; i < Util.random(5, 9); i++) {
+//					boolean startLandingTimer = false;
+//					BirdManager.instance().addNote(note, fromRight, millis, startLandingTimer);
+//				}
 				TreeManager.instance().addNote(note, millis, false);
 				TreeManager.instance().dropFlower(note);
 				break;

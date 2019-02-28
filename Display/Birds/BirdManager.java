@@ -1,24 +1,27 @@
 package Display.Birds;
 
-import processing.core.*;
-import processing.opengl.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 import Display.Trees.TreeManager;
 import Model.Note;
 import Util.Util;
+import processing.awt.PGraphicsJava2D;
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PVector;
 
 public class BirdManager {
 
 	private static BirdManager	m;
 	private PApplet				parent;
+	private String				renderer		= PConstants.JAVA2D;
 	private Random				r				= new Random(0);
 	private Flock[]				flocks			= new Flock[12];
 	ArrayList<Bird>				allBirds		= new ArrayList<Bird>();
-	private PGraphics2D			pg;
+	private PGraphicsJava2D			pg;
 	private PVector				stage;
 	private static PVector		offScreenArea	= new PVector(100, 50);
-	private static Random		rand			= new Random();
 
 	public static void main(String[] args) {
 
@@ -38,7 +41,7 @@ public class BirdManager {
 		stage = new PVector(parent.width + offScreenArea.x * 2, parent.height + offScreenArea.y);
 		//		stage = new PVector(parent.width, parent.height);
 
-		pg = (PGraphics2D) parent.createGraphics((int) stage.x, (int) stage.y, PConstants.P2D);
+		pg = (PGraphicsJava2D) parent.createGraphics((int) stage.x, (int) stage.y, renderer);
 		//		pg.pixelDensity = 2;
 		pg.noStroke();
 		pg.rectMode(PConstants.CENTER);
@@ -53,7 +56,7 @@ public class BirdManager {
 	public void addNote(Note n, boolean fromRight, int millis) {
 		addNote(n, fromRight, millis, 0, true);
 	}
-	
+
 	public void addNote(Note n, boolean fromRight, int millis, float maxSpeed) {
 		addNote(n, fromRight, millis, maxSpeed, true);
 	}
@@ -61,7 +64,7 @@ public class BirdManager {
 	public void addNote(Note n, boolean fromRight, int millis, boolean startLandingTimer) {
 		addNote(n, fromRight, millis, 0, startLandingTimer);
 	}
-	
+
 	public void addNote(Note n, boolean fromRight, int millis, float maxSpeed, boolean startLandingTimer) {
 
 		// Notes are added ~500ms before they sound; use `timestamp` to determine when they should take visual effect
@@ -73,7 +76,7 @@ public class BirdManager {
 		float size = flockSizes[idx];
 
 		if (f == null) {
-			f = new Flock(n, TreeManager.instance().treeStackFor(n), size, parent, rand);
+			f = new Flock(n, TreeManager.instance().treeStackFor(n), size, parent, r);
 			flocks[idx] = f;
 		}
 

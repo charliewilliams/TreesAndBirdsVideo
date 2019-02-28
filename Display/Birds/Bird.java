@@ -8,6 +8,7 @@ import org.gicentre.handy.HandyRenderer;
 import Display.Trees.TreeManager;
 import Model.Note;
 import Util.Util;
+import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -85,7 +86,7 @@ public class Bird {
 		}
 	}
 
-	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphics2D pg, int millis,
+	public void run(ArrayList<Bird> allBirds, ArrayList<Bird> myFlock, PGraphicsJava2D pg, int millis,
 			HandyRenderer sketcher) {
 
 		updateFlap();
@@ -107,15 +108,17 @@ public class Bird {
 		if (landingSite != null) {
 
 			float landingSiteRadius = 15;
-			float landingSiteMult = 0.00000005f;
+			float landingSiteMult = 0.05f;
 			if (PVector.dist(pos, landingSite) < landingSiteRadius) {
 				state = State.landed;
-			} else {
-				acc.add(PVector.mult(steer(landingSite, true), landingSiteMult * toLandTimerMillis));
+			} 
+			else {
+				vel.add(PVector.mult(steer(landingSite, true), landingSiteMult));
+//				acc.add(PVector.mult(steer(landingSite, true), landingSiteMult));
 			}
 		}
-
-		flock(allBirds, myFlock);
+		
+			flock(allBirds, myFlock);
 		move();
 		render(pg, sketcher);
 	}
@@ -160,7 +163,7 @@ public class Bird {
 		PVector avoidGround = avoid(new PVector(pos.x, bottomWallY), true);
 		acc.add(PVector.mult(avoidGround, wallAvoidWeight));
 
-		if (!avoidWalls) {
+		if (!avoidWalls || state == State.to_land) {
 			return;
 		}
 
@@ -208,6 +211,7 @@ public class Bird {
 		if (landingTimerMillis <= 0 && landingSite == null) {
 			state = State.to_land;
 			landingSite = TreeManager.instance().acquireLandingSite(this, note);
+			landingTimerStarted = true;
 		}
 	}
 
@@ -257,7 +261,7 @@ public class Bird {
 	float	lastTheta	= -1;
 	float	maxRotation	= (float) Math.toRadians(30);
 
-	void render(PGraphics2D ps, HandyRenderer sketcher) {
+	void render(PGraphicsJava2D ps, HandyRenderer sketcher) {
 
 		if (state == State.landed) {
 			sketcher.setSeed(0);
@@ -281,9 +285,8 @@ public class Bird {
 		ps.pushMatrix();
 		ps.translate(pos.x, pos.y);
 		ps.rotate(theta);
-		//		sketcher.beginShape(PConstants.TRIANGLES);
+		
 		sketcher.beginShape(PConstants.POLYGON);
-		//		sketcher.beginShape();
 
 		sketcher.vertex(0, -size * 2);
 		sketcher.vertex(-r * 2, size);
@@ -312,7 +315,7 @@ public class Bird {
 		ps.stroke(255);
 	}
 
-	void drawLandingPoint(PGraphics2D ps) {
+	void drawLandingPoint(PGraphicsJava2D ps) {
 
 		// serial number label
 		ps.fill(255);
@@ -368,10 +371,10 @@ public class Bird {
 
 		double dist = PVector.dist(pos, target);
 
-		//		if (dist < 5) {
-		//			PVector random = new PVector(Util.randomf(-0.5f, 0.5f), Util.randomf(-0.5f, 0.5f), 0.0f);
-		//			steer = PVector.add(steer, random);
-		//		}
+		if (dist < 5) {
+			PVector random = new PVector(Util.randomf(-0.5f, 0.5f), Util.randomf(-0.5f, 0.5f), 0.0f);
+			steer = PVector.add(steer, random);
+		}
 		if (weight) {
 			double divisor = dist * dist + 1;
 			steer.mult((float) (1 / divisor));
@@ -465,7 +468,7 @@ public class Bird {
 		}
 		if (count > 0) {
 			sum.div(count);
-			return steer(sum, state == State.to_land); // Steer towards the position.
+			return steer(sum, false); // Steer towards the position.
 		} else {
 			return new PVector(0, 0);
 		}

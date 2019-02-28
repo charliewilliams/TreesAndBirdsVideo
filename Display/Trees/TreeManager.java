@@ -23,7 +23,8 @@ public class TreeManager {
 			Leaf.LeafShape.star, Leaf.LeafShape.crescent, Leaf.LeafShape.star, Leaf.LeafShape.ellipse,
 			Leaf.LeafShape.star };
 
-	private static TreeManager m;
+	private static TreeManager	m;
+	private static String		renderer	= PConstants.P2D;
 
 	public static TreeManager instance() {
 		return m;
@@ -76,7 +77,7 @@ public class TreeManager {
 		m = this;
 		this.parent = parent;
 		this.labelFont = labelFont;
-		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_glow = (PGraphics2D) parent.createGraphics(parent.width, parent.height, renderer);
 		pg_glow.smooth(8);
 	}
 
@@ -202,12 +203,12 @@ public class TreeManager {
 			}
 		}
 	}
-	
+
 	public void drawGlow(PApplet sketch) {
-		
+
 		pg_glow.beginDraw();
 		pg_glow.clear();
-		
+
 		for (int i = 0; i < pitchClassTrees.length; i++) {
 
 			TreeStack stack = pitchClassTrees[i];
@@ -215,9 +216,9 @@ public class TreeManager {
 				stack.drawGlow(pg_glow);
 			}
 		}
-		
+
 		pg_glow.endDraw();
-		
+
 		sketch.image(pg_glow, 0, 0);
 	}
 

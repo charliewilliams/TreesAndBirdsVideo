@@ -10,9 +10,9 @@ import Display.Birds.Bird.State;
 import Display.Trees.TreeStack;
 import Model.Note;
 import Util.Util;
+import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PVector;
-import processing.opengl.PGraphics2D;
 
 public class Flock {
 
@@ -49,7 +49,7 @@ public class Flock {
 		return newB;
 	}
 
-	void update(PGraphics2D pg, ArrayList<Bird> allBirds, int millis) {
+	void update(PGraphicsJava2D pg, ArrayList<Bird> allBirds, int millis) {
 
 		for (Bird b : birds) {
 			sketcher.setGraphics(pg);

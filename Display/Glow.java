@@ -10,18 +10,20 @@ public class Glow {
 
 	private static DwFilter		filter;
 	private static PGraphics2D	pg_render, pg_luminance, pg_bloom;
+	
+	private static String renderer = PConstants.P2D;
 
 	public static void setupGlow(PApplet parent, DwFilter _filter) {
 		
 		filter = _filter;
 
-		pg_render = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_render = (PGraphics2D) parent.createGraphics(parent.width, parent.height, renderer);
 		pg_render.smooth(8);
 
-		pg_luminance = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_luminance = (PGraphics2D) parent.createGraphics(parent.width, parent.height, renderer);
 		pg_luminance.smooth(8);
 
-		pg_bloom = (PGraphics2D) parent.createGraphics(parent.width, parent.height, PConstants.P2D);
+		pg_bloom = (PGraphics2D) parent.createGraphics(parent.width, parent.height, renderer);
 		pg_bloom.smooth(8);
 	}
 

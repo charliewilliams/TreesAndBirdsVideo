@@ -6,6 +6,7 @@ import java.util.Random;
 import org.gicentre.handy.HandyRenderer;
 
 import Model.Note;
+import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.opengl.PGraphics2D;
@@ -124,7 +125,7 @@ public class Tree {
 		}
 	}
 
-	void renderTrees(PGraphics2D pg_trees, HandyRenderer sketcher) {
+	void renderTrees(PGraphicsJava2D pg_trees, HandyRenderer sketcher) {
 
 		if (root == null) {
 			return;
