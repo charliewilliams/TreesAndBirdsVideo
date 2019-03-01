@@ -16,7 +16,7 @@ import processing.opengl.PGraphics2D;
 
 public class Bird {
 
-	static boolean debugDrawLandingPoints = false;
+	static boolean debugDrawLandingPoints = true;
 
 	public enum State {
 		flying, to_land, landed
@@ -24,10 +24,10 @@ public class Bird {
 
 	static private float	neighborhoodRadius	= 75;	// radius in which it looks for fellow boids
 	static private float	desiredseparation	= 25.0f;
-	static private float	maxSteerForce		= 0.3f;	// 0.1f; //maximum magnitude of the steering vector
+	static private float	maxSteerForce		= 0.3f;	//0.3f;	// 0.1f; //maximum magnitude of the steering vector
 	private float			maxSpeed			= 6;	// 4; //maximum magnitude for the velocity vector
 
-	private float	cohesionMultiplier		= 1; //3;
+	private float	cohesionMultiplier		= 1;	//3;
 	private float	alignmentMultiplier		= 0.5f;
 	private float	separationMultiplier	= 3;
 	private boolean	avoidBirds				= true;
@@ -58,6 +58,8 @@ public class Bird {
 	static private int	birdCount	= 0;
 	private int			birdSerialNumber;
 	private Random		rand;
+
+	public boolean debug = false;
 
 	public Bird(Note n, PVector stage, PVector initialPos, double flapSpeed_, int millis, Random rand, float maxSpeed,
 			boolean startLandingTimer) {
@@ -108,17 +110,16 @@ public class Bird {
 		if (landingSite != null) {
 
 			float landingSiteRadius = 15;
-			float landingSiteMult = 0.05f;
+			float landingSiteMult = 0.0075f;
 			if (PVector.dist(pos, landingSite) < landingSiteRadius) {
 				state = State.landed;
-			} 
-			else {
-				vel.add(PVector.mult(steer(landingSite, true), landingSiteMult));
-//				acc.add(PVector.mult(steer(landingSite, true), landingSiteMult));
+			} else {
+				//				vel.add(PVector.mult(steer(landingSite, true), landingSiteMult));
+				acc.add(PVector.mult(steer(landingSite, true), landingSiteMult));
 			}
 		}
-		
-			flock(allBirds, myFlock);
+
+		flock(allBirds, myFlock);
 		move();
 		render(pg, sketcher);
 	}
@@ -136,7 +137,7 @@ public class Bird {
 			return;
 		}
 		// don't ever fly below your current point
-		bottomWallY = pos.y;
+		bottomWallY = pos.y + 10;
 
 		// New landing site, offstage
 		landingSite = new PVector(Util.coinToss() ? -40 : stage.x + 40, Util.randomf(stage.y / 2, -stage.y / 2));
@@ -188,8 +189,8 @@ public class Bird {
 		flap = Math.sin(t);
 	}
 
-	private int lastTickMillis;
-	private boolean landingTimerStarted = false;
+	private int		lastTickMillis;
+	private boolean	landingTimerStarted	= false;
 
 	void startLandingTimer(int millis) {
 		landingTimerMillis = (int) Util.randomf(8000f, 15000f, rand);
@@ -199,7 +200,7 @@ public class Bird {
 
 	// This timer counts how long the bird has been flying and makes it land after `landingTimerMillis`.
 	void tickLandingTimer(int millis) {
-		
+
 		if (!landingTimerStarted) {
 			return;
 		}
@@ -242,24 +243,18 @@ public class Bird {
 
 	void move() {
 
-		// flapspeed: PApplet.map(baseSize, 2f, 10f, 0.5f, 0.01f);
-		// i.e. bigger birds flap slower
-		// However that means that the same multiplier on flap will make
-		// smaller birds jerk all over the place; we need to multiply smaller
-		// birds by a smaller number
+		if (debug) {
+			PApplet.println(acc, vel, pos);
+		}
 
-		float slowestFlapSpeed = 0.125f;
-		float fastestFlapSpeed = 0.5f;
-		acc.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, fastestFlapSpeed, slowestFlapSpeed);
 		vel.add(acc); // add acceleration to velocity
 		vel.limit(maxSpeed); // make sure the velocity vector magnitude does not exceed maxSpeed
 		pos.add(vel); // add velocity to position
-		//		pos.y += flap / 20;
 		acc.mult(0); // reset acceleration
 	}
 
-	float	lastTheta	= -1;
-	float	maxRotation	= (float) Math.toRadians(30);
+	//	float	lastTheta	= -1;
+	//	float	maxRotation	= (float) Math.toRadians(30);
 
 	void render(PGraphicsJava2D ps, HandyRenderer sketcher) {
 
@@ -269,12 +264,23 @@ public class Bird {
 
 		// Draw a triangle rotated in the direction of velocity
 		float theta = (float) (vel.heading() + Math.toRadians(90));
-		if (theta > maxRotation) {
-			theta = PApplet.lerp(lastTheta, theta, 0.25f); // lerp to maybe fix judder?
-		}
-		lastTheta = theta;
+		//		if (theta > maxRotation) {
+		//			theta = PApplet.lerp(lastTheta, theta, 0.25f); // lerp to maybe fix judder?
+		//		}
+		//		lastTheta = theta;
 
 		float r = size * (float) (flap / 3 + 0.5);
+
+		PVector drawPos = pos.copy();
+
+		// flapspeed: PApplet.map(baseSize, 2f, 10f, 0.5f, 0.01f);
+		// i.e. bigger birds flap slower
+		// However that means that the same multiplier on flap will make
+		// smaller birds jerk all over the place; we need to multiply smaller
+		// birds by a smaller number
+		float slowestFlapSpeed = 0.125f;
+		float fastestFlapSpeed = 0.5f;
+		drawPos.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, fastestFlapSpeed, slowestFlapSpeed);
 
 		ps.fill(hue, sat, bri);
 		ps.stroke(hue, 100, 50);
@@ -283,9 +289,9 @@ public class Bird {
 		// drawWalls(ps);
 
 		ps.pushMatrix();
-		ps.translate(pos.x, pos.y);
+		ps.translate(drawPos.x, drawPos.y);
 		ps.rotate(theta);
-		
+
 		sketcher.beginShape(PConstants.POLYGON);
 
 		sketcher.vertex(0, -size * 2);
@@ -296,7 +302,7 @@ public class Bird {
 		sketcher.endShape(PConstants.CLOSE);
 		ps.popMatrix();
 
-		if (debugDrawLandingPoints) {
+		if (debugDrawLandingPoints && state == State.to_land) {
 			drawLandingPoint(ps);
 		}
 	}

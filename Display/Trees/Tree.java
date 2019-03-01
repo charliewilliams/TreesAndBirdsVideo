@@ -60,12 +60,12 @@ public class Tree {
 		return true;
 	}
 
-	public boolean addLeaf(Leaf.LeafShape leafType, PGraphics pg) {
+	public boolean addLeaf(Leaf.LeafShape leafType, PGraphics pg, PGraphics pg_glow) {
 
 		if (root == null) {
 			return false;
 		}
-		Leaf l = root.addLeaf(leafType, pg);
+		Leaf l = root.addLeaf(leafType, pg, pg_glow);
 		if (l == null) {
 			return false;
 		}

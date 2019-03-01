@@ -20,8 +20,8 @@ public class Main extends PApplet {
 	boolean		efficientRender			= true;
 	boolean		renderStars				= false;
 	boolean		renderSnow				= false;
-	boolean		renderGlow				= false;
-	boolean		playMusic				= false;
+	boolean		renderGlow				= true;
+	boolean		playMusic				= true;
 	boolean		isStarRender			= false;
 	int			_frameRate				= 30;
 	int			prerollMillis			= renderVideo ? 10000 : 0;
@@ -58,10 +58,10 @@ public class Main extends PApplet {
 	//			int debugOffsetMillis = melodyStart;
 	//	int debugOffsetMillis = risingMel;
 	//	int debugOffsetMillis = repeatedNotes;
-					int debugOffsetMillis = bigReturnMinus;
+//					int debugOffsetMillis = bigReturnMinus;
 	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
-	//		int	debugOffsetMillis	= outro;
+			int	debugOffsetMillis	= outro;
 	int durationMillis;
 	
 	public static String renderer = P2D;

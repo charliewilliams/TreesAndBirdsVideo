@@ -53,19 +53,19 @@ public class BirdManager {
 		return m;
 	}
 
-	public void addNote(Note n, boolean fromRight, int millis) {
-		addNote(n, fromRight, millis, 0, true);
+	public Bird addNote(Note n, boolean fromRight, int millis) {
+		return addNote(n, fromRight, millis, 0, true);
 	}
 
-	public void addNote(Note n, boolean fromRight, int millis, float maxSpeed) {
-		addNote(n, fromRight, millis, maxSpeed, true);
+	public Bird addNote(Note n, boolean fromRight, int millis, float maxSpeed) {
+		return addNote(n, fromRight, millis, maxSpeed, true);
 	}
 
-	public void addNote(Note n, boolean fromRight, int millis, boolean startLandingTimer) {
-		addNote(n, fromRight, millis, 0, startLandingTimer);
+	public Bird addNote(Note n, boolean fromRight, int millis, boolean startLandingTimer) {
+		return addNote(n, fromRight, millis, 0, startLandingTimer);
 	}
 
-	public void addNote(Note n, boolean fromRight, int millis, float maxSpeed, boolean startLandingTimer) {
+	public Bird addNote(Note n, boolean fromRight, int millis, float maxSpeed, boolean startLandingTimer) {
 
 		// Notes are added ~500ms before they sound; use `timestamp` to determine when they should take visual effect
 		int idx = n.pitch % 12;
@@ -86,7 +86,10 @@ public class BirdManager {
 		//		posY += Util.randomf(-50f, 50f);
 		PVector pos = new PVector(posX, posY);
 
-		allBirds.add(f.addBird(stage, pos, millis, maxSpeed, startLandingTimer));
+		Bird bird = f.addBird(stage, pos, millis, maxSpeed, startLandingTimer);
+		allBirds.add(bird);
+		
+		return bird;
 	}
 
 	public void buildDebugBirds() {

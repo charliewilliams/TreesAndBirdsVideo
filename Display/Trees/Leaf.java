@@ -139,7 +139,7 @@ public class Leaf {
 		return shape;
 	}
 
-	Leaf(LeafShape ls, PVector pos, float hue, PGraphics pg) {
+	Leaf(LeafShape ls, PVector pos, float hue, PGraphics pg, PGraphics glow) {
 
 		this.pos = pos.copy();
 		float posDrift = 5;
@@ -154,7 +154,7 @@ public class Leaf {
 		fallSpeed = Util.randomf(0.5f, 1);
 		fallHue = Util.randomf(0, 50);
 		shape = createShape(pg, ls);
-		glowShape = createShape(pg, ls); // annoying that we can't copy it, oh well.
+		glowShape = createShape(glow, ls); // annoying that we can't copy it, oh well.
 		glowShape.setFill(0xFFFFFFFF);
 	}
 
@@ -180,6 +180,7 @@ public class Leaf {
 	void drawGlow(PGraphics2D pg) {
 		
 		if (glowAmount < 0.01) {
+			glowAmount = 0;
 			return;
 		}
 		

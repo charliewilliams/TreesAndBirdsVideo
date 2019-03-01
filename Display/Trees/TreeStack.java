@@ -127,7 +127,7 @@ public class TreeStack {
 		ArrayList<Tree> ts = (ArrayList<Tree>) trees.clone();
 		Collections.shuffle(ts);
 		for (Tree t : ts) {
-			if (t.addLeaf(leafShape, pg_leaves)) {
+			if (t.addLeaf(leafShape, pg_leaves, pg_glow)) {
 				return;
 			}
 		}
@@ -256,7 +256,9 @@ public class TreeStack {
 
 	void glowRoot() {
 		for (Tree t : trees) {
-			t.root.glow();
+			if (t.root != null) {
+				t.root.glow();
+			}
 		}
 	}
 

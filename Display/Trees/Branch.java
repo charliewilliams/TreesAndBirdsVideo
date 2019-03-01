@@ -345,11 +345,11 @@ public class Branch {
 		return flower;
 	}
 
-	Leaf addLeaf(Leaf.LeafShape leafType, PGraphics pg) {
-		return addLeaf(leafType, pg, end);
+	Leaf addLeaf(Leaf.LeafShape leafType, PGraphics pg, PGraphics pg_glow) {
+		return addLeaf(leafType, pg, pg_glow, end);
 	}
 
-	Leaf addLeaf(Leaf.LeafShape leafType, PGraphics pg, PVector pos) {
+	Leaf addLeaf(Leaf.LeafShape leafType, PGraphics pg, PGraphics pg_glow, PVector pos) {
 
 		if (leaf != null) {
 			return null;
@@ -358,7 +358,7 @@ public class Branch {
 		ArrayList<Branch> cs = (ArrayList<Branch>) children.clone();
 		Collections.shuffle(cs);
 		for (Branch child : cs) {
-			Leaf l = child.addLeaf(leafType, pg);
+			Leaf l = child.addLeaf(leafType, pg, pg_glow);
 			if (l != null) {
 				return l;
 			}
@@ -367,7 +367,7 @@ public class Branch {
 		if (isRoot) {
 			return null;
 		}
-		leaf = new Leaf(leafType, pos, hue, pg);
+		leaf = new Leaf(leafType, pos, hue, pg, pg_glow);
 		return leaf;
 	}
 
