@@ -42,7 +42,7 @@ public class Branch {
 	static private float	piOver15	= (float) (Math.PI / 15.0);
 
 	private PVector	driftSpeed;
-	private PVector	driftMag;
+	private PVector	driftMag; // INVERTED - bigger means less movement; it's a divisor. :/
 
 	private float alpha;
 
@@ -66,7 +66,7 @@ public class Branch {
 		angle = PVector.angleBetween(end, origin);
 
 		driftSpeed = new PVector(Util.randomf(800, 1200, rand), Util.randomf(2000, 2500, rand));
-		driftMag = new PVector(Util.randomf(10, 30, rand), Util.randomf(20, 30, rand));
+		driftMag = new PVector(Util.randomf(2.5f, 20, rand), Util.randomf(5, 20, rand));
 	}
 
 	// Normal branch
@@ -87,7 +87,7 @@ public class Branch {
 		angle = PVector.angleBetween(end, origin);
 		circleAlpha = maxAlpha;
 
-		this.driftSpeed = driftSpeed.copy().mult(0.9f);
+		this.driftSpeed = driftSpeed.copy().mult(0.95f);
 		this.driftMag = driftMag.copy().mult(1.15f);
 	}
 
