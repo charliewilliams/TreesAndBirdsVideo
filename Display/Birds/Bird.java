@@ -16,7 +16,7 @@ import processing.opengl.PGraphics2D;
 
 public class Bird {
 
-	static boolean debugDrawLandingPoints = true;
+	static boolean debugDrawLandingPoints = false;
 
 	public enum State {
 		flying, to_land, landed
