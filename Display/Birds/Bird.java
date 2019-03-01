@@ -51,7 +51,6 @@ public class Bird {
 
 	float		bottomWallY;
 	private int	landingTimerMillis;
-	private int	toLandTimerMillis;
 
 	Note note;
 
@@ -101,7 +100,6 @@ public class Bird {
 			render(pg, sketcher);
 			return;
 		case to_land:
-			tickToLandTimer(millis);
 			break;
 		}
 
@@ -214,15 +212,6 @@ public class Bird {
 			landingSite = TreeManager.instance().acquireLandingSite(this, note);
 			landingTimerStarted = true;
 		}
-	}
-
-	// This timer counts how long we've been trying to land for; the landing site's pull gets stronger the longer we've been waiting
-	private int lastToLandTickMillis;
-
-	void tickToLandTimer(int millis) {
-
-		int millisSinceLastTick = millis - lastToLandTickMillis;
-		toLandTimerMillis += millisSinceLastTick;
 	}
 
 	///// -----------behaviors---------------
