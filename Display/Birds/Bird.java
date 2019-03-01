@@ -269,7 +269,7 @@ public class Bird {
 		// birds by a smaller number
 		float slowestFlapSpeed = 0.125f;
 		float fastestFlapSpeed = 0.5f;
-		drawPos.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, fastestFlapSpeed, slowestFlapSpeed);
+		drawPos.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, fastestFlapSpeed, slowestFlapSpeed) * 10;
 
 		ps.fill(hue, sat, bri);
 		ps.stroke(hue, 100, 50);
