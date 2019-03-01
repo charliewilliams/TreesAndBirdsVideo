@@ -115,7 +115,6 @@ public class Flower {
 
 		if (pos.y >= groundY) {
 
-			isFalling = false;
 			if (alpha > 0) {
 				alpha *= 0.97;
 				satBri *= 0.95;
