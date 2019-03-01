@@ -40,7 +40,7 @@ public class Glow {
 		// can just be skipped
 //		filter.bloom.setBlurLayers(10);
 		filter.bloom.param.mult = 8; // 1 to 10
-		filter.bloom.param.radius = 2f; // 0 to 1
+		filter.bloom.param.radius = 1f; // 0 to 1
 //		filter.bloom.apply(pg_luminance, pg_bloom, pg_render);
 		filter.bloom.apply(pg_luminance, pg_bloom, dest);
 		
