@@ -108,7 +108,7 @@ public class Bird {
 		if (landingSite != null) {
 
 			float landingSiteRadius = 15;
-			float landingSiteMult = 0.0075f;
+			float landingSiteMult = 0.025f;
 			if (PVector.dist(pos, landingSite) < landingSiteRadius) {
 				state = State.landed;
 			} else {
