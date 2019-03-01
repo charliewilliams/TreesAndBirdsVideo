@@ -130,10 +130,7 @@ public class Bird {
 	}
 
 	void flyAway(PVector stage, int millis) {
-
-		if (state != State.landed) {
-			return;
-		}
+		
 		// don't ever fly below your current point
 		bottomWallY = pos.y + 10;
 
