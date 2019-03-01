@@ -233,16 +233,12 @@ public class Leaf {
 		if (pos.y >= groundY) {
 
 			if (alp > 0) {
-				alp *= 0.99;
+				alp *= 0.95;
 				sat *= 0.95;
-			} else {
-				isFalling = false;
 			}
 			return;
 		}
 
-		sat *= 0.95;
-		bri *= 0.95;
 		pos.y += fallSpeed;
 		pos.x += (parent.noise(pos.y) - 0.5) * 4;
 		angle += (parent.noise(pos.y) - 0.5) * 0.25;
