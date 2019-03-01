@@ -55,7 +55,7 @@ public class Main extends PApplet {
 
 	int	millisOffset		= 500;
 	int	debugOffsetMillis	= 0;
-	//			int debugOffsetMillis = melodyStart;
+//				int debugOffsetMillis = melodyStart;
 	//	int debugOffsetMillis = risingMel;
 	//	int debugOffsetMillis = repeatedNotes;
 //					int debugOffsetMillis = bigReturnMinus;
@@ -212,7 +212,7 @@ public class Main extends PApplet {
 			Snow.render(frameCount);
 		}
 
-		String txt_fps = String.format("frame %d / %d (%2.0f%%) | %2.0f fps", frameCount, totalFrames, frameCount/(float)totalFrames, frameRate);
+		String txt_fps = String.format("frame %d / %d (%2.0f%%) | %2.0f fps", frameCount, totalFrames, frameCount/(float)totalFrames * 100, frameRate);
 		surface.setTitle(txt_fps);
 
 		if (renderVideo) {
