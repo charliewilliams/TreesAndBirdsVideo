@@ -75,8 +75,8 @@ public class Bird {
 			this.maxSpeed = maxSpeed;
 		}
 
-		sat = Util.randomf(50, 80, rand);
-		bri = Util.randomf(50, 80, rand);
+		sat = Util.randomf(70, 100, rand);
+		bri = Util.randomf(60, 90, rand);
 		flapSpeed = flapSpeed_ + Util.randomf(-0.05f, 0.05f, rand);
 
 		birdSerialNumber = birdCount++;
