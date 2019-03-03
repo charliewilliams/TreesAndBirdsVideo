@@ -19,7 +19,7 @@ public class BirdManager {
 	private Random				r				= new Random(0);
 	private Flock[]				flocks			= new Flock[12];
 	ArrayList<Bird>				allBirds		= new ArrayList<Bird>();
-	private PGraphicsJava2D			pg;
+	private PGraphicsJava2D		pg;
 	private PVector				stage;
 	private static PVector		offScreenArea	= new PVector(100, 50);
 
@@ -53,19 +53,7 @@ public class BirdManager {
 		return m;
 	}
 
-	public Bird addNote(Note n, boolean fromRight, int millis) {
-		return addNote(n, fromRight, millis, 0, true);
-	}
-
-	public Bird addNote(Note n, boolean fromRight, int millis, float maxSpeed) {
-		return addNote(n, fromRight, millis, maxSpeed, true);
-	}
-
-	public Bird addNote(Note n, boolean fromRight, int millis, boolean startLandingTimer) {
-		return addNote(n, fromRight, millis, 0, startLandingTimer);
-	}
-
-	public Bird addNote(Note n, boolean fromRight, int millis, float maxSpeed, boolean startLandingTimer) {
+	private Flock flockForNote(Note n, boolean createIfNeeded) {
 
 		// Notes are added ~500ms before they sound; use `timestamp` to determine when they should take visual effect
 		int idx = n.pitch % 12;
@@ -80,6 +68,25 @@ public class BirdManager {
 			flocks[idx] = f;
 		}
 
+		return f;
+	}
+
+	public Bird addNote(Note n, boolean fromRight, int millis) {
+		return addNote(n, fromRight, millis, 0, true);
+	}
+
+	public Bird addNote(Note n, boolean fromRight, int millis, float maxSpeed) {
+		return addNote(n, fromRight, millis, maxSpeed, true);
+	}
+
+	public Bird addNote(Note n, boolean fromRight, int millis, boolean startLandingTimer) {
+		return addNote(n, fromRight, millis, 0, startLandingTimer);
+	}
+
+	public Bird addNote(Note n, boolean fromRight, int millis, float maxSpeed, boolean startLandingTimer) {
+
+		Flock f = flockForNote(n, true);
+
 		float posX = fromRight ? stage.x - offScreenArea.x : offScreenArea.x;
 		float posY = r.nextFloat() * stage.y * 0.3333f;
 		posX += Util.randomf(-5f, 5f);
@@ -88,7 +95,7 @@ public class BirdManager {
 
 		Bird bird = f.addBird(stage, pos, millis, maxSpeed, startLandingTimer);
 		allBirds.add(bird);
-		
+
 		return bird;
 	}
 
@@ -136,11 +143,33 @@ public class BirdManager {
 		}
 	}
 
-	public void flyAwayAllBirds(int millis) {
+	public void flyAwayAllBirds(Note n, int millis) {
+		
+		int numTries = 0;
+		int maxTries = 12;
+		
+		// First, try to fly away the flock that goes with this note.
+		// If they've already flown, fly some random other flock
+		while (numTries < maxTries) {
+			
+			Flock f = flockForNote(n, false);
+
+			if (f != null) {
+				if (f.flyAway(stage, millis)) {
+					return;
+				}
+			}
+			
+			n = new Note((int)Util.random(0, 12));
+			numTries++;
+		}
+	}
+
+	public void getBirdsOffstage(Note n) {
 
 		for (Flock f : flocks) {
 			if (f != null) {
-				f.flyAway(stage, millis);
+				f.getOffstage();
 			}
 		}
 	}

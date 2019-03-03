@@ -72,11 +72,22 @@ public class Flock {
 		}
 	}
 
-	void flyAway(PVector stage, int millis) {
+	void getOffstage() {
 
 		for (Bird b : birds) {
-			b.flyAway(stage, millis);
+			b.getOffstage();
 		}
+	}
+
+	boolean flyAway(PVector stage, int millis) {
+
+		boolean hasFlown = false;
+		
+		for (Bird b : birds) {
+			hasFlown |= b.flyAway(stage, millis);
+		}
+		
+		return hasFlown;
 	}
 
 	void cleanUpOffscreenBirds(PVector stage) {
@@ -87,6 +98,7 @@ public class Flock {
 		for (Bird b : birds) {
 
 			if (b.pos().x < -pad || b.pos().x > stage.x + pad || b.pos().y < -pad) {
+//				PApplet.println("Removing bird at " + b.pos() + "; flock has " + birds.size());
 				toRemove.add(b);
 			}
 		}

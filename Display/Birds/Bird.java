@@ -127,13 +127,19 @@ public class Bird {
 		}
 	}
 
-	void flyAway(PVector stage, int millis) {
-		
+	boolean flyAway(PVector stage, int millis) {
+
+		if (state != State.landed) {
+			return false;
+		}
+
 		// don't ever fly below your current point
 		bottomWallY = pos.y + 10;
+		
+		avoidCeiling = true;
 
 		// New landing site, offstage
-		landingSite = new PVector(Util.coinToss() ? -40 : stage.x + 40, Util.randomf(stage.y / 2, -stage.y / 2));
+		landingSite = new PVector(Util.coinToss() ? -40 : stage.x + 40, Util.randomf(stage.y / 2, -stage.y / 4));
 		state = State.flying;
 		startLandingTimer(millis);
 		cohesionMultiplier = 0.1f;
@@ -141,12 +147,26 @@ public class Bird {
 		avoidWalls = false;
 
 		// upward momentum
-		pos.x += Util.randomf(-10, 10);
+		pos.x += Util.randomf(-5, 5);
 		pos.y += Util.randomf(-10, 0);
-		acc = new PVector(Util.randomf(-20, 20), 0);
+		acc = new PVector(Util.randomf(-5, 5), Util.randomf(-10, 10));
+
+		return true;
+	}
+
+	void getOffstage() {
+
+		if (landingSite == null) {
+			landingSite = new PVector(Util.coinToss() ? -40 : stage.x + 40, Util.randomf(stage.y / 2, -stage.y / 4));
+		}
+
+		state = State.to_land;
+		avoidWalls = false;
+		avoidCeiling = false;
 	}
 
 	private boolean	avoidWalls				= true;
+	private boolean	avoidCeiling			= true;
 	static float	flyingWallAvoidWeight	= 10;
 	static float	landingWallAvoidWeight	= 4;
 
@@ -156,17 +176,20 @@ public class Bird {
 
 		PVector avoidGround = avoid(new PVector(pos.x, bottomWallY), true);
 		acc.add(PVector.mult(avoidGround, wallAvoidWeight));
+		
+		if (avoidCeiling) {
+			PVector avoidCeilingV = avoid(new PVector(pos.x, 0), true);
+			acc.add(PVector.mult(avoidCeilingV, flyingWallAvoidWeight));
+		}
 
 		if (!avoidWalls || state == State.to_land) {
 			return;
 		}
 
-		PVector avoidCeiling = avoid(new PVector(pos.x, 0), true);
 		PVector avoidLeftWall = avoid(new PVector(0, pos.y), true);
 		PVector avoidRightWall = avoid(new PVector(stage.x, pos.y), true);
 
 		acc.add(PVector.mult(avoidLeftWall, wallAvoidWeight));
-		acc.add(PVector.mult(avoidCeiling, wallAvoidWeight));
 		acc.add(PVector.mult(avoidRightWall, wallAvoidWeight));
 	}
 
