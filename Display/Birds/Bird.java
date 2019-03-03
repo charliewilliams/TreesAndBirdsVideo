@@ -100,22 +100,20 @@ public class Bird {
 			render(pg, sketcher);
 			return;
 		case to_land:
+			if (landingSite != null) {
+
+				float landingSiteRadius = 15;
+				float landingSiteMult = 0.025f;
+				if (PVector.dist(pos, landingSite) < landingSiteRadius) {
+					state = State.landed;
+				} else {
+					acc.add(PVector.mult(steer(landingSite, true), landingSiteMult));
+				}
+			}
 			break;
 		}
 
 		checkAvoidWalls();
-
-		if (landingSite != null) {
-
-			float landingSiteRadius = 15;
-			float landingSiteMult = 0.025f;
-			if (PVector.dist(pos, landingSite) < landingSiteRadius) {
-				state = State.landed;
-			} else {
-				//				vel.add(PVector.mult(steer(landingSite, true), landingSiteMult));
-				acc.add(PVector.mult(steer(landingSite, true), landingSiteMult));
-			}
-		}
 
 		flock(allBirds, myFlock);
 		move();
