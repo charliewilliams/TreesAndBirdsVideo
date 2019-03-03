@@ -5,7 +5,6 @@ import Display.Glow;
 import Display.SceneManager;
 import Display.Stars;
 import Display.Birds.BirdManager;
-import Display.Trees.Snow;
 import Display.Trees.TreeManager;
 import Model.NoteManager;
 import Model.Section;
@@ -16,11 +15,14 @@ import processing.sound.SoundFile;
 
 public class Main extends PApplet {
 
-	boolean		renderVideo				= true;
+	//	boolean		renderVideo				= true;
+	boolean renderGlow = true;
+
+	boolean renderVideo = false;
+	//	boolean		renderGlow				= false;
+
 	boolean		efficientRender			= true;
 	boolean		renderStars				= false;
-	boolean		renderSnow				= false;
-	boolean		renderGlow				= true;
 	boolean		playMusic				= false;
 	boolean		isStarRender			= false;
 	int			_frameRate				= 30;
@@ -53,17 +55,17 @@ public class Main extends PApplet {
 
 	Section section = Section.preroll;
 
-	int	millisOffset		= 500;
-	int	debugOffsetMillis	= 0;
-//				int debugOffsetMillis = melodyStart;
-	//	int debugOffsetMillis = risingMel;
-	//	int debugOffsetMillis = repeatedNotes;
-//					int debugOffsetMillis = bigReturnMinus;
+	int millisOffset = 500;
+	//	int	debugOffsetMillis	= 0;
+	//				int debugOffsetMillis = melodyStart;
+	//		int debugOffsetMillis = risingMel;
+//	int debugOffsetMillis = repeatedNotes;
+						int debugOffsetMillis = bigReturnMinus;
 	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
-//			int	debugOffsetMillis	= outro;
+	//			int	debugOffsetMillis	= outro;
 	int durationMillis;
-	
+
 	public static String renderer = P2D;
 
 	public void settings() {
@@ -95,7 +97,6 @@ public class Main extends PApplet {
 		new TreeManager(this, labelFont);
 		TreeManager.instance().renderGlow = renderGlow;
 		new BirdManager(this);
-		Snow.setupSnow(this);
 
 		if (isStarRender) {
 			Stars.setupGlow(this, filter);
@@ -139,7 +140,7 @@ public class Main extends PApplet {
 			clear();
 			//			background(255);
 		}
-		
+
 		if (!renderVideo) {
 			background(255);
 		}
@@ -160,11 +161,6 @@ public class Main extends PApplet {
 		switch (section) {
 		case preroll:
 		case start:
-			if (renderSnow) {
-				Snow.addSnowTick(millis);
-			}
-			break;
-
 		case melodyStart:
 			break;
 
@@ -177,19 +173,15 @@ public class Main extends PApplet {
 			break;
 
 		case bigReturn:
-			BirdManager.instance().flyAwayAllBirds(millis);
 			break;
 
 		case highMel:
 			BirdManager.instance().cleanUpOffscreenBirds();
-			Snow.addSnowTick(millis);
 			break;
 
 		case outro:
 		case end:
-			if (renderSnow) {
-				Snow.addSnowTick(millis);
-			}
+
 			BirdManager.instance().landAllBirds();
 			break;
 		}
@@ -208,27 +200,29 @@ public class Main extends PApplet {
 			Stars.renderStars(millis, this, frameCount);
 
 		}
-		if (renderSnow) {
-			Snow.render(frameCount);
-		}
 
-		String txt_fps = String.format("frame %d / %d (%2.0f%%) | %2.0f fps", frameCount, totalFrames, frameCount/(float)totalFrames * 100, frameRate);
+		String txt_fps = String.format("frame %d / %d (%2.0f%%) | %2.0f fps", frameCount, totalFrames,
+				frameCount / (float) totalFrames * 100, frameRate);
 		surface.setTitle(txt_fps);
 
 		if (renderVideo) {
-			//			saveFrame("video-export/#####.png");
+
 			saveTransparentFrame("output");
-			
+
 			clear();
 			TreeManager.instance().drawGlow(this);
-			
+
 			saveTransparentFrame("glow");
 
 			if (frameCount > totalFrames) {
 				exit();
 			}
+
 		} else if (section.length() <= 1) {
 			exit();
+
+		} else if (renderGlow) {
+			TreeManager.instance().drawGlow(this);
 		}
 
 		fill(0);
