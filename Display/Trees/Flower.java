@@ -38,7 +38,7 @@ public class Flower {
 			int idx = rnd.nextInt(types.length);
 			FlowerType type = types[idx];
 
-			if (usedTypes.contains(types)) {
+			if (usedTypes.contains(type)) {
 				continue;
 			}
 			usedTypes.add(type);

@@ -43,7 +43,7 @@ public class Leaf {
 			int idx = rnd.nextInt(types.length);
 			LeafShape type = types[idx];
 
-			if (usedTypes.contains(types)) {
+			if (usedTypes.contains(type)) {
 				continue;
 			}
 			usedTypes.add(type);
