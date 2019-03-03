@@ -123,6 +123,7 @@ public class NoteManager {
 			case highMel:
 				TreeManager.instance().dropFlower(note);
 				TreeManager.instance().dropLeaf(note);
+				TreeManager.instance().dropLeaf(note);
 				TreeManager.instance().turnLeafColorTick(millis);
 				break;
 			case outro:
@@ -170,6 +171,8 @@ public class NoteManager {
 					Stars.addStar(note);
 				}
 				TreeManager.instance().dropFlower(note);
+				TreeManager.instance().dropLeaf(note);
+				TreeManager.instance().dropLeaf(note);
 				TreeManager.instance().dropLeaf(note);
 				break;
 			case outro:

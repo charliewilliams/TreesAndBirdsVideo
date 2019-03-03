@@ -39,7 +39,7 @@ public class TreeStack {
 	private float			labelXOffset				= 0;
 	private float			labelXOffsetAmount			= 15;
 	private float[]			labelXOffsetDirections		= { 1, 1, 1, -1, 1, -1, -1, 1, 1, 1, -1, -1 };
-	private Random			rand						= new Random();
+	private Random			rand						= new Random(0);
 
 	TreeStack(int numChildren, PApplet parent, PFont font, Note n, PVector pos, Leaf.LeafShape leafShape,
 			boolean renderGlow, long seed, long seedStride) {
