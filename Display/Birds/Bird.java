@@ -264,9 +264,9 @@ public class Bird {
 		// However that means that the same multiplier on flap will make
 		// smaller birds jerk all over the place; we need to multiply smaller
 		// birds by a smaller number
-		float slowestFlapSpeed = 0.125f;
-		float fastestFlapSpeed = 0.5f;
-		drawPos.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, fastestFlapSpeed, slowestFlapSpeed) * 10;
+		float smallestFlapMovement = 2.0f;
+		float biggestFlapMovement = 4.0f;
+		drawPos.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, biggestFlapMovement, smallestFlapMovement);
 
 		ps.fill(hue, sat, bri);
 		ps.stroke(hue, 100, 50);
