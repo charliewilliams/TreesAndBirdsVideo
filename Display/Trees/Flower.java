@@ -5,6 +5,7 @@ import java.util.Random;
 
 import Util.Util;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
@@ -58,6 +59,9 @@ public class Flower {
 	void draw(PApplet parent, PGraphics pg, boolean forGlow) {
 
 		if (!forGlow) {
+			
+			pg.colorMode(PConstants.HSB, 360, 100, 100, 100);
+			
 			if (currentScale < nominalScale) {
 				currentScale += 0.05f;
 			}
@@ -65,7 +69,7 @@ public class Flower {
 				fallTick(parent);
 			}
 		}
-
+		
 		pg.noStroke();
 		pg.pushMatrix();
 		pg.translate(pos.x, pos.y);

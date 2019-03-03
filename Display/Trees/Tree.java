@@ -91,21 +91,7 @@ public class Tree {
 
 	public void turnLeafColorTick(int millis) {
 
-//		Section s = Section.forMillis(millis);
-		ArrayList<Leaf> leavesToTurn;
-
-		// For the first x/y of bigReturn, turn only half the leaves
-//		if (s == Section.bigReturn && millis < s.startTime() + s.length() / 3) {
-//
-//			leavesToTurn = new ArrayList<Leaf>((ArrayList<Leaf>) allLeaves.clone());
-//			Collections.shuffle(leavesToTurn);
-//			leavesToTurn = new ArrayList<Leaf>(leavesToTurn.subList(0, allLeaves.size() / 2));
-//			
-//		} else {
-			leavesToTurn = allLeaves;
-//		}
-
-		for (Leaf l : leavesToTurn) {
+		for (Leaf l : allLeaves) {
 			l.turnColorTick();
 		}
 	}

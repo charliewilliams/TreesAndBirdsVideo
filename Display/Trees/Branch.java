@@ -213,7 +213,7 @@ public class Branch {
 		stroke = Math.min(stroke, maxStroke);
 		float weight = Util.logMapf(maxGlow, 255, 0, stroke, 0.0f);
 
-		float color = 127;
+		float color = 127; // tone down the glow
 
 		pg_glow.strokeWeight(weight);
 		pg_glow.stroke(color);
