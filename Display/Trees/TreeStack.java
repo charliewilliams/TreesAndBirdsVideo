@@ -82,7 +82,7 @@ public class TreeStack {
 		}
 
 		sketcher = HandyPresets.createWaterAndInk(parent); // new HandyRenderer(a);
-		sketcher.setRoughness(Util.randomf(0, 1.5f, rand));
+		sketcher.setRoughness(Util.randomf(0.5f, 1.5f, rand));
 		sketcher.setGraphics(pg_trees);
 
 		labelXOffset = labelXOffsetDirections[n.pitch % 12] * labelXOffsetAmount;
