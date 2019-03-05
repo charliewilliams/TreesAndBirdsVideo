@@ -15,10 +15,10 @@ import processing.sound.SoundFile;
 
 public class Main extends PApplet {
 
-	//	boolean		renderVideo				= true;
-	boolean renderGlow = true;
+	boolean	renderVideo	= true;
+	boolean	renderGlow	= true;
 
-	boolean renderVideo = false;
+	//	boolean renderVideo = false;
 	//	boolean		renderGlow				= false;
 
 	boolean		efficientRender			= true;
@@ -55,12 +55,12 @@ public class Main extends PApplet {
 
 	Section section = Section.preroll;
 
-	int millisOffset = 500;
-	//	int	debugOffsetMillis	= 0;
+	int	millisOffset		= 500;
+	int	debugOffsetMillis	= 0;
 	//				int debugOffsetMillis = melodyStart;
 	//		int debugOffsetMillis = risingMel;
-//	int debugOffsetMillis = repeatedNotes;
-						int debugOffsetMillis = bigReturnMinus;
+	//	int debugOffsetMillis = repeatedNotes;
+	//						int debugOffsetMillis = bigReturnMinus;
 	//	int debugOffsetMillis = bigReturn;
 	//	int	debugOffsetMillis	= highMel;
 	//			int	debugOffsetMillis	= outro;
@@ -193,6 +193,8 @@ public class Main extends PApplet {
 
 		TreeManager.instance().updateRender(millis);
 		TreeManager.instance().drawTrees(millis);
+		saveTransparentFrame("trees"); // save intermediate trees 
+
 		BirdManager.instance().updateAndDraw(millis);
 		TreeManager.instance().drawOverlay();
 

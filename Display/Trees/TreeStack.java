@@ -229,8 +229,6 @@ public class TreeStack {
 	void drawBack() {
 		parent.blendMode(PConstants.BLEND);
 		parent.image(pg_trees, 0, 0);
-
-		//				pg_trees.save("tmp/pg-trees-" + n.pitchClass + "-" + parent.frameCount + ".png");
 	}
 
 	void drawLeaves() {
