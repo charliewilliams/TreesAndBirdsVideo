@@ -127,7 +127,7 @@ public class NoteManager {
 				TreeManager.instance().turnLeafColorTick(millis);
 				break;
 			case outro:
-				
+
 				TreeManager.instance().dropAllLeaves(millis);
 			case end:
 				if (isStarRender) {
@@ -157,17 +157,24 @@ public class NoteManager {
 				TreeManager.instance().addNote(note, millis, false);
 				TreeManager.instance().addLeafOrFlower(note, Util.coinToss());
 				break;
+				
 			case bigReturn:
-				for (int i = 0; i < Util.random(5, 9); i++) {
-					boolean startLandingTimer = false;
-					BirdManager.instance().addNote(note, fromRight, millis, startLandingTimer);
-				}
-				
+
 				BirdManager.instance().flyAwayAllBirds(note, millis);
-				
+
+				if (section.pctDone(millis) > 0.65f) {
+					BirdManager.instance().getBirdsOffstage(note);
+				} else {
+					for (int i = 0; i < Util.random(5, 9); i++) {
+						boolean startLandingTimer = false;
+						BirdManager.instance().addNote(note, fromRight, millis, startLandingTimer);
+					}
+				}
+
 				TreeManager.instance().addNote(note, millis, false);
 				TreeManager.instance().dropFlower(note);
 				break;
+				
 			case highMel:
 				birdCount = -1;
 				BirdManager.instance().getBirdsOffstage(note);
