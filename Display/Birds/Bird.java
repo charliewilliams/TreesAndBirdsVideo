@@ -135,7 +135,7 @@ public class Bird {
 
 		// don't ever fly below your current point
 		bottomWallY = pos.y + 10;
-		
+
 		avoidCeiling = true;
 
 		// New landing site, offstage
@@ -176,7 +176,7 @@ public class Bird {
 
 		PVector avoidGround = avoid(new PVector(pos.x, bottomWallY), true);
 		acc.add(PVector.mult(avoidGround, wallAvoidWeight));
-		
+
 		if (avoidCeiling) {
 			PVector avoidCeilingV = avoid(new PVector(pos.x, 0), true);
 			acc.add(PVector.mult(avoidCeilingV, flyingWallAvoidWeight));
@@ -287,7 +287,10 @@ public class Bird {
 		// birds by a smaller number
 		float smallestFlapMovement = 2.0f;
 		float biggestFlapMovement = 4.0f;
-		drawPos.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, biggestFlapMovement, smallestFlapMovement);
+
+		if (state != State.landed) {
+			drawPos.y += flap * PApplet.map((float) flapSpeed, 0.5f, 0.01f, biggestFlapMovement, smallestFlapMovement);
+		}
 
 		ps.fill(hue, sat, bri);
 		ps.stroke(hue, 100, 50);
