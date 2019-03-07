@@ -5,6 +5,8 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.opengl.PGraphics2D;
 
+OpenSimplexNoise noise;
+
 int totalFrames = 13250;
 
 //float cameraZ = 600;
@@ -19,7 +21,7 @@ float t = 0;
 float startX = 0;
 float startY = 10000;
 PVector pos = new PVector(startX, startY, 999);
-float deltaZ = 0.0001;
+float deltaZ = 0.001;
 
 float startX2 = 7458;
 float startY2 = 23840;
@@ -35,6 +37,8 @@ void setup() {
   groundColor = color(37, 42, 100);
   skyBackgroundColor = color(223, 40, 46);
   paper = color(39, 5, 100); // paper beige
+  
+  noise = new OpenSimplexNoise(0);
 }
 
 public void draw() {
@@ -42,6 +46,7 @@ public void draw() {
   generateSky();
 
   saveFrame("sky/#####.png");
+  println(frameCount);
 
   if (frameCount > totalFrames) {
     exit();
@@ -71,9 +76,10 @@ void generateSky() {
     //draw clouds
     for (int x = 0; x < width; x += 2) {
 
-      float n = noise(pos.x + x / 200.0, pos.y + y / 50.0, pos.z);
-      float n2 = noise(pos2.x + x / 2000.0, pos2.y + y / 500.0, pos.z);
-      n += map(n2, 0, 1, -1, 1);
+      float n = (float)noise.eval(pos.x + x / 200.0, pos.y + y / 50.0, pos.z);
+      n = map(n, -1, 1, 0, 1);
+      float n2 = (float)noise.eval(pos2.x + x / 2000.0, pos2.y + y / 500.0, pos.z);
+      n += n2 / 2; //map(n2, 0, 1, -1, 1);
 
       fill(paper, n * PApplet.map(y, 0, height * 0.666667f, 100, 0));
       ellipse(x, y, skyNodeSize, skyNodeSize);
