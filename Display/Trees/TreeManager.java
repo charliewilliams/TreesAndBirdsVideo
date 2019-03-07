@@ -188,7 +188,7 @@ public class TreeManager {
 			TreeStack stack = pitchClassTrees[i];
 			if (stack != null) {
 				stack.drawBack();
-				stack.drawDebugLabel(millis);
+//				stack.drawDebugLabel(millis);
 			}
 		}
 	}

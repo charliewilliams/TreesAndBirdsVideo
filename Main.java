@@ -194,10 +194,16 @@ public class Main extends PApplet {
 		TreeManager.instance().updateRender(millis);
 		TreeManager.instance().drawTrees(millis);
 		saveTransparentFrame("trees"); // save intermediate trees 
+		clear();
 
 		BirdManager.instance().updateAndDraw(millis);
+		saveTransparentFrame("birds"); // save intermediate trees
+		clear();
+		
 		TreeManager.instance().drawOverlay();
-
+		saveTransparentFrame("leaves"); // save intermediate trees
+		clear();
+		
 		if (renderStars) {
 			Stars.renderStars(millis, this, frameCount);
 
@@ -209,9 +215,9 @@ public class Main extends PApplet {
 
 		if (renderVideo) {
 
-			saveTransparentFrame("output");
+//			saveTransparentFrame("output");
 
-			clear();
+//			clear();
 			TreeManager.instance().drawGlow(this);
 
 			saveTransparentFrame("glow");
